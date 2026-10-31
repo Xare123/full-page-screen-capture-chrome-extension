@@ -1,0 +1,69 @@
+{
+  "version": "2.3.1",
+  "observedAtUTC": "2026-10-31 03:59:41 UTC",
+  "runtimeCommit": "788a7af5d53fc616e90c8d16425cc6463cd11f1a",
+  "documentationBase": "dc912cd4cf720710fe9ff9ea480823a8682d4c9e",
+  "currentChecks": {
+    "unit": 36,
+    "chromiumExtensionScenarios": 294,
+    "renderingEngineScenarios": 75,
+    "uniqueTotal": 405,
+    "productionPackageSmoke": "passed",
+    "focusedEditorScenarios": 35,
+    "focusedEditorScenariosAlreadyIncludedInExtensionTotal": true
+  },
+  "verificationJob": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41165757681/job/124432844208",
+  "focusedEditorJob": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41165757681/job/124432844309",
+  "compressionEvidence": {
+    "baselineCommit": "3dcd40a2548c4300ca0c1f36aa5c05362b5d701c",
+    "passedSweeps": 20,
+    "passedConfigurations": 7835,
+    "scope": "Unchanged non-text export path; matrix seeds tiles with annotations: [].",
+    "job": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41164228114/job/124428189820",
+    "unchangedFiles": [
+      "src/app.js",
+      "src/graphics.js",
+      "src/image-layout.js",
+      "src/pdf.js",
+      "src/pdf-layout.js",
+      "src/core.js",
+      "tests/e2e/compression-matrix.spec.js"
+    ],
+    "repeatOnRuntimeCommit": {
+      "statusAtObservation": "in_progress",
+      "job": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41165757681/job/124432844173"
+    }
+  },
+  "distribution": {
+    "artifactId": 13028828493,
+    "artifactURL": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41165757681/artifacts/13028828493",
+    "sha256": "697d7e69f77a68518b1543b66c2df30055e7d58c3d40ecf707e657bb4e841035",
+    "bytes": 3362205,
+    "entries": 221,
+    "rootManifest": true,
+    "nestedZip": false,
+    "artifactDigestMatchedIndependentDeliveredFileReadback": true
+  },
+  "reviews": {
+    "independentAstraSourceReview": "approved",
+    "independentAstraSourcePackageAndCIEvidenceReview": "approved",
+    "scope": "Reviewed runtime and successful focused/full verification; does not claim unfinished repeat compression job passed."
+  },
+  "smoke": {
+    "releaseManifestUnmodified": true,
+    "hostPermissions": false,
+    "pageErrors": 0,
+    "exactPNGPreservation": true,
+    "inlineTextWithoutModal": true,
+    "localInter": true,
+    "transparentDefault": true,
+    "cropAndEditableTextAfterReload": true,
+    "styledExport": true
+  },
+  "limits": [
+    "Text comparisons permit one-pixel rasterization proximity; synthetic IME events do not establish every native OS input method.",
+    "Earlier local Chrome147/155 regressions passed before the paragraph-bidi correction; final rerun was interrupted by the cloud workspace outage, so it is not claimed as passing.",
+    "The website remains public on its previously deployed release. New website publication is blocked by the unavailable cloud workspace; use the verified distribution artifact.",
+    "This record is a timestamped verification snapshot. Follow the linked CI run for the repeat job's later result."
+  ]
+}
