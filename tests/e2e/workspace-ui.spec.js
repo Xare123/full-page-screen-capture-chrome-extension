@@ -1,6 +1,19 @@
 import { test, expect } from "./fixtures.js";
 import { openImage } from "./editor-helpers.js";
 import AxeBuilder from "@axe-core/playwright";
+test("guide wraps long shortcut URLs with wide fallback font metrics", async ({
+  studio,
+}) => {
+  const { page } = studio;
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.locator("#nav-guide").click();
+  await page.addStyleTag({
+    content: ".guide-list p { font-family: monospace !important; }",
+  });
+  await expect
+    .poll(() => page.evaluate(() => document.body.scrollWidth <= innerWidth))
+    .toBeTruthy();
+});
 for (const [width, height] of [
   [320, 740],
   [390, 844],

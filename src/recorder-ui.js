@@ -407,7 +407,8 @@ export function createRecorder({ toast, fail, importFrame }) {
     for (const input of edit.querySelectorAll("input,select,button"))
       input.disabled = locked || active;
     importVideoButton.disabled = locked || active;
-    list.inert = locked || active;
+    // Playback of a saved item does not change the separate live session.
+    list.inert = locked;
     cancelExport.hidden = !locked;
     cancelExport.disabled = !locked;
     downloadCompressed.disabled = locked || active || !compressed;

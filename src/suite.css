@@ -184,6 +184,8 @@
   margin: 24px 0;
 }
 .guide-list article {
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding: 24px;
   background: #fff;
   border: 1px solid #e8e0ef;
