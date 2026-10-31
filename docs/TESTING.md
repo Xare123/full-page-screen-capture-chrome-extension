@@ -69,3 +69,10 @@ Private user uploads remain outside source fixtures and all release/site archive
 Synthetic composition events deliberately complete after Export/Copy clicks and across a microtask checkpoint. Clipboard invocation remains inside the originating click while its image promise waits for final text. Cancel abandons a waiting export; deleting during an edit restores the original object with one Undo. These tests do not establish behavior for every native OS input method. Forced-color tests verify that later layers and final redactions still cover active editable text. All fonts load from the extension package, without runtime network access.
 
 A separate paragraph-bidi regression varies wrapping around Hebrew, Arabic, numbers and a dash across eight widths, then covers joining/diacritics, parentheses, tabs, isolates and explicit directional overrides. It compares real native typing pixels with the exported PNG in both directions without weakening the 98%/one-pixel threshold. Later passing CI runs establish the fix in the Ubuntu environment that exposed it.
+
+
+## Recording compression and UI validation
+
+The functional recording-compression matrix covers WebM and MP4 inputs/outputs, four aspect ratios, decoded corner markers, video DTS order, audio, originals, trim/mute, preview/download byte identity, cancellation and navigation. UI checks cover 320–1920 px widths, short windows and WCAG A/AA across the suite views. The real-time motion-cadence benchmarks run separately with one worker; concurrent encodes can limit a browser’s available decode frames, so this is a controlled quality measurement rather than a guaranteed frame rate under arbitrary load. Frame-slot unit cases separately exercise source timestamp jitter.
+
+After building, `node scripts/probe-recording-edges.mjs` checks a verified rotated MP4 display matrix and a synthetic 4K input using native compression. It requires FFmpeg with the `-display_rotation` input option; run it separately from the browser matrix. Like the headed six-minute stress script, it uses synthetic local fixtures and does not establish physical-device coverage.

@@ -20,7 +20,9 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run build
       - run: npm test
-      - run: npm run test:e2e -- --grep-invert 'input →' --fully-parallel --workers=3
+      - run: npm run test:e2e -- --grep-invert 'input →|motion cadence' --fully-parallel --workers=3
+      # Cadence is a real-time quality measurement; run without competing encodes.
+      - run: npm run test:e2e -- --grep 'motion cadence' --workers=1
       - run: npm run test:engines
       - run: npm run package
       - run: node scripts/release-smoke.mjs

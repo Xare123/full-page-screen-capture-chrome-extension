@@ -329,6 +329,7 @@ test("compression cancellation, retry, trim and mute retain original bytes", asy
   }
 });
 
+// Run these cadence benchmarks in isolation; the parallel suite verifies integrity under load.
 for (const format of ["webm", "mp4"])
   test(`${format} Balanced and Clear presets retain their requested motion cadence`, async ({
     studio,
