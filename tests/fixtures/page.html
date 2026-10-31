@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fieldnotes — A slower kind of Sunday</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: #faf8f2;
+        color: #333c35;
+        font:
+          16px/1.8 Georgia,
+          serif;
+      }
+      header {
+        height: 70px;
+        border-bottom: 1px solid #dddcd0;
+        padding: 18px 7%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #faf8f2;
+      }
+      header strong {
+        font-size: 23px;
+        letter-spacing: -1px;
+      }
+      nav {
+        font: 11px system-ui;
+        color: #6a756a;
+        display: flex;
+        gap: 25px;
+      }
+      .intro {
+        padding: 65px 7% 55px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .intro h1 {
+        font-size: 62px;
+        line-height: 1.06;
+        font-weight: 400;
+        letter-spacing: -2px;
+        margin: 20px 0;
+      }
+      .intro p {
+        font: 13px/1.8 system-ui;
+        color: #7c8376;
+        max-width: 320px;
+      }
+      .eyebrow {
+        font: 10px system-ui;
+        letter-spacing: 2px;
+        color: #90907b;
+      }
+      .landscape {
+        height: 320px;
+        width: 40%;
+        background: #e7e1cb;
+        border-radius: 160px 160px 0 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .sun {
+        position: absolute;
+        background: #ce996a;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        top: 64px;
+        right: 40px;
+      }
+      .hill {
+        position: absolute;
+        width: 450px;
+        height: 270px;
+        border-radius: 50%;
+        background: #a5ad91;
+        bottom: -175px;
+        left: -115px;
+        transform: rotate(12deg);
+      }
+      .hill.two {
+        background: #657d69;
+        bottom: -200px;
+        left: 70px;
+      }
+      .quote {
+        background: #e8ecdf;
+        padding: 55px 12%;
+        text-align: center;
+        font-size: 30px;
+        line-height: 1.5;
+      }
+      .quote small {
+        display: block;
+        font: 10px system-ui;
+        letter-spacing: 1.5px;
+        color: #7c8a72;
+        margin-top: 15px;
+      }
+      article {
+        padding: 65px 14%;
+        max-width: 1150px;
+        margin: auto;
+      }
+      h2 {
+        font-size: 32px;
+        font-weight: 400;
+        letter-spacing: -0.8px;
+      }
+      article p {
+        font-size: 16px;
+        color: #687263;
+      }
+      .note {
+        margin: 40px 0;
+        padding: 30px;
+        background: #eee8da;
+        border-left: 3px solid #bdab86;
+        font-size: 20px;
+      }
+      .sticky-heading {
+        position: sticky;
+        top: 0;
+        background: #d5decc;
+        color: #435442;
+        padding: 20px;
+        font: 14px system-ui;
+        margin: 25px 0;
+      }
+      .band {
+        height: 320px;
+        background: #d7e1d1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #657d69;
+        font-size: 31px;
+      }
+      footer {
+        height: 160px;
+        padding: 35px 7%;
+        background: #344c40;
+        color: #d4ddcd;
+        font-size: 24px;
+      }
+      .private {
+        font: 13px system-ui;
+        color: #e3bd3d;
+      }
+      .probe {
+        height: 80px;
+        background: rgb(201, 71, 113);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>fieldnotes.</strong>
+      <nav><span>JOURNAL</span><span>PLACES</span><span>ABOUT</span></nav>
+    </header>
+    <section class="intro">
+      <div>
+        <span class="eyebrow">ISSUE 024 · THE SLOW LIVING SERIES</span>
+        <h1>A slower kind<br />of Sunday.</h1>
+        <p>
+          Finding a little more room for the things that matter. A field guide
+          to taking the long way home.
+        </p>
+        <span class="eyebrow">WORDS BY ALEX MORGAN</span>
+      </div>
+      <div class="landscape">
+        <div class="sun"></div>
+        <div class="hill"></div>
+        <div class="hill two"></div>
+      </div>
+    </section>
+    <section class="quote">
+      “Sometimes the most productive thing<br />you can do is simply
+      notice.”<small>NOTES FROM THE WEEKEND</small>
+    </section>
+    <article>
+      <span class="eyebrow">01 / BEGIN WHERE YOU ARE</span>
+      <h2>There is no perfect place to start.</h2>
+      <p>
+        The morning arrived slowly. No alarms, no list of places to be. Just a
+        patch of sunlight moving across the kitchen floor, and the quiet promise
+        of a day without a plan.
+      </p>
+      <p>
+        We took the path through the old orchard. The trees were just beginning
+        to turn, and somewhere beyond the stone wall a dog was making a very
+        convincing case for staying outside.
+      </p>
+      <div class="sticky-heading" id="sticky-probe">
+        A sticky section heading that must stay in the captured document.
+      </div>
+      <div class="note">
+        Leave a little room for the unexpected.<br />It tends to be where the
+        good things happen.
+      </div>
+      <h2>The art of paying attention.</h2>
+      <p>
+        Put your phone away for a moment. Take the longer route. Ask a question
+        you do not already know the answer to. These are small things, but small
+        things have a way of adding up.
+      </p>
+      <p class="private">Private reference: 4829-7391</p>
+      <p>
+        Somewhere along the way, we stopped thinking about where we were going
+        and started enjoying where we were. That felt like enough.
+      </p>
+    </article>
+    <div class="probe" id="color-probe"></div>
+    <section class="band">A little less hurry. A little more here.</section>
+    <footer>
+      See you out there.
+      <p style="font: 11px system-ui">
+        FIELDNOTES · INDEPENDENT STORIES FOR A THOUGHTFUL LIFE
+      </p>
+    </footer>
+  </body>
+</html>

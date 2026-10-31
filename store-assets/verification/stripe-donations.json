@@ -1,0 +1,21 @@
+{
+  "stripe_context": "acct_1TkE3h7GJHMQOC7d",
+  "account_identity_verified": true,
+  "livemode": true,
+  "payment_link_id": "plink_1US2aR7GJHMQOC7dYDYJ1ym0",
+  "payment_link_url": "https://donate.stripe.com/00waERaKJ819bVF0vw4Ja02",
+  "price_id": "price_1US2aJ7GJHMQOC7dN4fqrKWV",
+  "product_id": "prod_VSyXMcR0NZlO6i",
+  "currency": "usd",
+  "minimum_minor_units": 100,
+  "suggested_minor_units": 500,
+  "customer_chooses_amount": true,
+  "recurring": false,
+  "all_features_free": true,
+  "payment_submitted_during_verification": false,
+  "website_audience": "owner-private by user request",
+  "hosted_checkout_visually_verified": true,
+  "hosted_checkout_amount_edit_control_visible": true,
+  "hosted_checkout_donate_button_visible": true,
+  "hosted_checkout_browser_errors": []
+}

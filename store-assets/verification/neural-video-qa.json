@@ -1,0 +1,44 @@
+{
+  "info": {
+    "duration": 95,
+    "readyState": 4,
+    "captionCues": 29,
+    "source": "http://127.0.0.1:4312/assets/capture-studio-tutorial.mp4?v=neural-1"
+  },
+  "checks": [
+    {
+      "time": 1,
+      "readyState": 4,
+      "activeCaption": [
+        "Capture Studio."
+      ]
+    },
+    {
+      "time": 43,
+      "readyState": 4,
+      "activeCaption": [
+        "For sensitive details, use solid Redact."
+      ]
+    },
+    {
+      "time": 77,
+      "readyState": 4,
+      "activeCaption": [
+        "Rasterize makes image-based copies and removes searchable text and interactive features."
+      ]
+    },
+    {
+      "time": 94.5,
+      "readyState": 4,
+      "activeCaption": [
+        "All yours."
+      ]
+    }
+  ],
+  "mobile": {
+    "videoWidth": 344,
+    "viewport": 390,
+    "overflow": false
+  },
+  "errors": []
+}

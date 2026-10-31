@@ -1,0 +1,29 @@
+{
+  "title": "Capture Studio: Free Full-Page Screenshots & PDF Compression",
+  "titleCharacters": 60,
+  "descriptionCharacters": 1835,
+  "videoDurationSeconds": 95,
+  "chapterStartsSeconds": [
+    0,
+    16,
+    26,
+    39,
+    50,
+    61,
+    71,
+    84
+  ],
+  "allChaptersAtLeast10Seconds": true,
+  "thumbnail": {
+    "dimensions": [
+      1280,
+      720
+    ],
+    "format": "JPEG",
+    "mode": "RGB",
+    "bytes": 164682,
+    "sha256": "3d4962324ac2f1aa1fbe211c65019e8ebcae1e1ca8e082dc7a92637119bdcb08"
+  },
+  "generatedMaster": "/workspace/full-page-screen-capture-chrome-extension/store-assets/branding/masters/youtube-thumbnail-generated.png",
+  "youtubeUploaded": false
+}

@@ -1,0 +1,15 @@
+{
+  "projectId": "appgprj_6ad54460f9608191b1cae4e3ca2fdc8a",
+  "versionId": "appgprj_6ad54460f9608191b1cae4e3ca2fdc8a~appgver_07d8c4f8606081919cdd72abe8893bfb",
+  "versionNumber": 9,
+  "deploymentId": "appgdep_6adf9047c5388191949e9a0e96925790",
+  "status": "succeeded",
+  "url": "https://capture-studio-free.xare123.chatgpt.site",
+  "updatedAt": "2026-10-26T17:39:29.626404+00:00",
+  "sourceCommit": "c1f92832c6b7cba6c23b02c8b91dca1b7e1884aa",
+  "audience": "public",
+  "accessRevision": 2,
+  "verificationFileURL": "https://capture-studio-free.xare123.chatgpt.site/google1eca9ffddc7b177b.html",
+  "googleOwnershipStatus": "Verification file installed and publicly reachable; awaiting Google's Verify result.",
+  "publicHTTPChecks": "artifacts/public-site-http-2026-10-26.json"
+}

@@ -1,0 +1,4 @@
+recordings/
+video-build/
+__pycache__/
+*.pyc

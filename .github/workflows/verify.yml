@@ -1,0 +1,53 @@
+name: Verify Capture Studio
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm run build
+      - run: npm test
+      - run: npm run test:e2e -- --grep-invert 'input →' --fully-parallel --workers=3
+      - run: npm run test:engines
+      - run: npm run package
+      - run: node scripts/release-smoke.mjs
+      - run: python3 scripts/package-source.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capture-studio-artifacts
+          path: |
+            release/
+            artifacts/
+            playwright-report/
+  compression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:e2e -- tests/e2e/compression-matrix.spec.js --grep 'input →' --workers=3
+        env:
+          CS_MATRIX_REPORT: artifacts/ci-compression-matrix.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capture-studio-compression-matrix
+          path: |
+            artifacts/
+            test-results/

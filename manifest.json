@@ -1,23 +1,51 @@
 {
-  "name": "Full Page Screen Capture",
-  "version": "1.0.1",
-  "manifest_version": 2,
-  "description": "Screen capture your current page in entirety and reliably!",
-  "browser_action": {
-    "default_icon": "icon-999.png",
-    "default_popup": "popup.html"
-  },
-  "commands": {
-    "_execute_browser_action": {
-      "suggested_key": {
-        "default": "Alt+Shift+P"
-      }
+  "manifest_version": 3,
+  "incognito": "not_allowed",
+  "name": "Capture Studio \u2014 Full Page & PDF",
+  "version": "2.3.1",
+  "minimum_chrome_version": "147",
+  "description": "Capture full pages, edit, redact, and compress images or PDFs. Free, private, and entirely on your device.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Capture Studio",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
     }
   },
-  "permissions": [ "activeTab", "storage", "unlimitedStorage" ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "unlimitedStorage",
+    "clipboardWrite"
+  ],
+  "commands": {
+    "capture-full-page": {
+      "suggested_key": {
+        "default": "Alt+Shift+P",
+        "mac": "Alt+Shift+P"
+      },
+      "description": "Capture the full page"
+    },
+    "open-studio": {
+      "suggested_key": {
+        "default": "Alt+Shift+O"
+      },
+      "description": "Open Capture Studio"
+    }
+  },
   "icons": {
-    "16": "icon16-999.png",
-    "48": "icon48-999.png",
-    "128": "icon128-999.png"
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'none'; worker-src 'self'; connect-src 'self'"
   }
 }

@@ -1,0 +1,15 @@
+{
+  "projectId": "appgprj_6ad54460f9608191b1cae4e3ca2fdc8a",
+  "versionId": "appgprj_6ad54460f9608191b1cae4e3ca2fdc8a~appgver_b10072f9e9888191aea92451525a1974",
+  "versionNumber": 10,
+  "deploymentId": "appgdep_6adf9382ba148191ba96a436d12e477e",
+  "status": "succeeded",
+  "url": "https://capture-studio-free.xare123.chatgpt.site",
+  "updatedAt": "2026-10-26T17:53:17.923488+00:00",
+  "sourceCommit": "cf2c7a28bbadc3de33c83313780ea53417938dc3",
+  "audience": "public",
+  "thumbnailURL": "https://capture-studio-free.xare123.chatgpt.site/assets/youtube-thumbnail-1280x720.jpg",
+  "titleURL": "https://capture-studio-free.xare123.chatgpt.site/downloads/youtube-title.txt",
+  "descriptionURL": "https://capture-studio-free.xare123.chatgpt.site/downloads/youtube-description.txt",
+  "youtubeUploaded": false
+}

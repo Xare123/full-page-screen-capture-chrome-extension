@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sunday dispatch — A week worth keeping · Demo email</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: #203e3a;
+        background: #eaf0eb;
+      }
+      .top {
+        height: 80px;
+        padding: 0 34px;
+        display: flex;
+        align-items: center;
+        gap: 100px;
+      }
+      .brand {
+        font:
+          28px Georgia,
+          serif;
+        letter-spacing: -1px;
+      }
+      .search {
+        height: 42px;
+        flex: 1;
+        max-width: 700px;
+        background: #dfe8e1;
+        border-radius: 24px;
+        padding: 14px 24px;
+        font-size: 12px;
+        color: #668075;
+      }
+      .avatar {
+        margin-left: auto;
+        background: #335f54;
+        color: #fff;
+        border-radius: 50%;
+        padding: 11px;
+        font-size: 11px;
+      }
+      .folders {
+        position: absolute;
+        top: 98px;
+        left: 25px;
+        width: 210px;
+        height: 640px;
+        overflow: auto;
+      }
+      .compose {
+        background: #bcd5c6;
+        border: 0;
+        padding: 18px 27px;
+        border-radius: 14px;
+        color: #204b3f;
+        font-weight: bold;
+        margin-bottom: 24px;
+      }
+      .folders p {
+        font-size: 13px;
+        padding: 12px 20px;
+        margin: 0;
+      }
+      .folders p.active {
+        background: #d7e4d9;
+        font-weight: bold;
+        border-radius: 0 24px 24px 0;
+      }
+      .demo-label {
+        margin-top: 30px !important;
+        font-size: 10px !important;
+        letter-spacing: 1px;
+        color: #779084;
+      }
+      .shell {
+        position: absolute;
+        inset: 88px 28px 24px 258px;
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .actions {
+        height: 58px;
+        border-bottom: 1px solid #e9ebe5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        font-size: 16px;
+        color: #64786e;
+      }
+      .reading {
+        position: absolute;
+        inset: 58px 0 0;
+        overflow: auto;
+        background: #fff;
+        scrollbar-gutter: stable;
+      }
+      .message-meta {
+        padding: 32px 42px 28px;
+        max-width: 900px;
+        margin: auto;
+      }
+      h1 {
+        font-size: 24px;
+        margin: 0 0 25px;
+        font-weight: 500;
+      }
+      .sender {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        font-size: 12px;
+      }
+      .sender b {
+        font-size: 13px;
+      }
+      .sender small {
+        display: block;
+        color: #7d8a81;
+        margin-top: 5px;
+      }
+      .sender .date {
+        margin-left: auto;
+        font-size: 11px;
+        color: #7d8a81;
+      }
+      .sender .dot {
+        background: #e8d0a9;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font:
+          22px Georgia,
+          serif;
+      }
+      .newsletter {
+        max-width: 760px;
+        margin: 0 auto 48px;
+        background: #f6f2e8;
+      }
+      .masthead {
+        padding: 30px 40px;
+        border-bottom: 1px solid #284f4322;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .masthead strong {
+        font:
+          24px Georgia,
+          serif;
+        letter-spacing: -0.7px;
+      }
+      .masthead span {
+        font-size: 9px;
+        letter-spacing: 1.4px;
+        color: #a06b40;
+      }
+      .hero {
+        padding: 46px 42px 35px;
+      }
+      .kicker {
+        font-size: 10px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        color: #b3693c;
+      }
+      h2 {
+        font:
+          55px/0.98 Georgia,
+          serif;
+        letter-spacing: -2px;
+        margin: 22px 0 24px;
+      }
+      .hero p {
+        font-size: 14px;
+        line-height: 1.8;
+        max-width: 510px;
+        color: #5b7165;
+      }
+      .art {
+        height: 285px;
+        position: relative;
+        overflow: hidden;
+        background: #c6dacc;
+      }
+      .art svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .block {
+        padding: 36px 42px;
+        border-bottom: 1px solid #284f4322;
+      }
+      .block h3 {
+        font:
+          31px/1.1 Georgia,
+          serif;
+        letter-spacing: -0.7px;
+        margin: 12px 0 18px;
+      }
+      .block p {
+        font-size: 14px;
+        line-height: 1.85;
+        color: #52685c;
+      }
+      .block .tag {
+        font-size: 10px;
+        letter-spacing: 1.7px;
+        color: #a46a41;
+      }
+      .twocol {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+      }
+      .mini {
+        background: #e2e5d5;
+        padding: 22px;
+      }
+      .mini:nth-child(2) {
+        background: #e8d5ba;
+      }
+      .mini h4 {
+        font:
+          25px Georgia,
+          serif;
+        margin: 0 0 15px;
+      }
+      .mini p {
+        font-size: 12px;
+      }
+      .quote {
+        padding: 50px;
+        background: #244f43;
+        color: #fcf3e4;
+        font:
+          30px/1.3 Georgia,
+          serif;
+        text-align: center;
+      }
+      .receipt {
+        margin-top: 25px;
+        padding: 22px;
+        background: white;
+        font-size: 12px;
+        line-height: 2;
+      }
+      .receipt span {
+        float: right;
+      }
+      .end {
+        padding: 35px 42px;
+        background: #e7dcc5;
+        color: #6e795f;
+        text-align: center;
+        font-size: 10px;
+        line-height: 1.8;
+      }
+      .note {
+        font-size: 10px !important;
+        color: #a46a41 !important;
+        letter-spacing: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">Sunday mail.</div>
+      <div class="search">Search your mail</div>
+      <div class="avatar">JD</div>
+    </header>
+    <nav class="folders" aria-label="Mail folders">
+      <button class="compose">＋ Compose</button>
+      <p class="active">Inbox <span style="float: right">12</span></p>
+      <p>Starred</p>
+      <p>Sent</p>
+      <p>Drafts</p>
+      <p>Travel notes</p>
+      <p>Newsletters</p>
+      <p>Archive</p>
+      <p class="demo-label">FICTIONAL DEMO ACCOUNT</p>
+    </nav>
+    <div class="shell">
+      <div class="actions">
+        <span>← &nbsp;&nbsp; ▣ &nbsp;&nbsp; ▤ &nbsp;&nbsp; ⌫</span
+        ><span style="font-size: 11px">1 of 12 &nbsp;&nbsp; ‹ &nbsp; ›</span>
+      </div>
+      <main
+        class="reading"
+        id="reading-pane"
+        aria-label="Newsletter reading pane"
+      >
+        <div class="message-meta">
+          <h1>A week worth keeping.</h1>
+          <div class="sender">
+            <div class="dot">f</div>
+            <div>
+              <b>Fieldnotes Weekly</b> &lt;newsletter@example.com&gt;<small
+                >to me</small
+              >
+            </div>
+            <span class="date">Sunday, 09:00 AM</span>
+          </div>
+        </div>
+        <article class="newsletter">
+          <div class="masthead">
+            <strong>fieldnotes.</strong><span>THE SUNDAY DISPATCH / DEMO</span>
+          </div>
+          <div class="hero">
+            <div class="kicker">A FEW GOOD THINGS, COLLECTED.</div>
+            <h2>Make room for<br />a little wonder.</h2>
+            <p>
+              This week: a road that leads to the coast, a recipe worth sharing,
+              and the small pleasure of paying attention.
+            </p>
+          </div>
+          <div class="art">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 285">
+              <rect width="760" height="285" fill="#c9dbcf" />
+              <circle cx="570" cy="87" r="58" fill="#d69054" />
+              <path
+                d="m0 205 160-137 180 171 220-160 200 164v42H0"
+                fill="#79a38e"
+              />
+              <path d="M0 230q190-145 395 0t365-20v75H0" fill="#315e4d" />
+              <path d="M0 275q140-70 320-5T760 265v20H0" fill="#193f3a" />
+            </svg>
+          </div>
+          <section class="block">
+            <div class="tag">01 / SOMEWHERE TO GO</div>
+            <h3>The long way is<br />sometimes the right way.</h3>
+            <p>
+              On the map, it looks like a detour. In real life, it is a line of
+              cypress trees, a roadside farm stand, and a curve in the road
+              where the whole ocean suddenly appears.
+            </p>
+            <p>
+              We spent a day on the fictional North Point coast with no
+              reservations and a very short list. Here are the moments we would
+              happily do again.
+            </p>
+            <div class="twocol">
+              <div class="mini">
+                <h4>The first stop</h4>
+                <p>
+                  A little bakery, still warm bread, and coffee on a bench
+                  facing the water.
+                </p>
+              </div>
+              <div class="mini">
+                <h4>The last light</h4>
+                <p>
+                  One quiet overlook. Bring a layer and stay until the sky
+                  changes color.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section class="block">
+            <div class="tag">02 / SOMETHING TO MAKE</div>
+            <h3>A table for whoever<br />shows up.</h3>
+            <p>
+              Sunday lunch does not need a special occasion. A pot of beans, a
+              crisp salad, and a loaf of good bread are more than enough to
+              begin.
+            </p>
+            <p>
+              Our favorite detail: setting out an extra plate, just in case.
+            </p>
+            <div class="receipt">
+              <strong>THE SIMPLE SUNDAY LIST</strong><br />White beans &
+              seasonal vegetables <span>For the pot</span><br />Crusty bread &
+              good olive oil <span>For the table</span><br />Citrus & fresh
+              herbs <span>For the finish</span>
+            </div>
+          </section>
+          <div class="quote">
+            “A good week is made of little<br />things you decided to notice.”
+          </div>
+          <section class="block">
+            <div class="tag">03 / SOMETHING TO KEEP</div>
+            <h3>Three lines a day.</h3>
+            <p>
+              A place. A detail. A feeling. That is the whole notebook practice.
+              No perfect sentences, no pressure to fill a page — just a few
+              words to help the day stay with you.
+            </p>
+            <p>
+              This week, our pages held a crooked blue door, the smell of rain
+              on warm pavement, and a conversation with a stranger who knew a
+              better way home.
+            </p>
+          </section>
+          <section class="block">
+            <div class="tag">UNTIL NEXT SUNDAY</div>
+            <h3>Keep the good bits.</h3>
+            <p>
+              Save this dispatch for a slower afternoon. Forward it to someone
+              you would like to take the scenic route with.
+            </p>
+            <p class="note">
+              Fictional newsletter · all names and details are examples.
+            </p>
+          </section>
+          <footer class="end">
+            FIELDNOTES WEEKLY · EXAMPLE EDITION<br />Sent to reader@example.com
+            · Subscription ID DEMO-2026-028<br />Unsubscribe · Update
+            preferences · View in browser<br /><br />You reached the end. Thanks
+            for reading.
+          </footer>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "capture-studio",
+  "version": "2.3.1",
+  "private": true,
+  "type": "module",
+  "description": "A free, local-first full-page capture, editing, and compression studio.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/unit/*.test.js",
+    "test:e2e": "playwright test",
+    "verify": "npm run build && npm test && npm run test:e2e",
+    "package": "npm run build && python3 scripts/package.py",
+    "test:matrix": "node scripts/test-matrix.mjs",
+    "test:engines": "playwright test --config tests/engines/playwright.config.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.4.299"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "esbuild": "^0.28.2",
+    "pngjs": "^7.0.0",
+    "prettier": "^3.9.10",
+    "fflate": "^0.8.3"
+  }
+}

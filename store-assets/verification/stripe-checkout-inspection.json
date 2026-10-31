@@ -1,0 +1,62 @@
+{
+  "frames": [
+    {
+      "host": "donate.stripe.com",
+      "productNamed": true,
+      "hasAmount": false,
+      "buttons": [
+        "",
+        "",
+        "",
+        "",
+        "DonateProcessing"
+      ],
+      "inputs": 3
+    },
+    {
+      "host": "js.stripe.com",
+      "productNamed": false,
+      "hasAmount": false,
+      "buttons": [],
+      "inputs": 0
+    },
+    {
+      "host": "js.stripe.com",
+      "productNamed": false,
+      "hasAmount": false,
+      "buttons": [],
+      "inputs": 0
+    },
+    {
+      "host": "js.stripe.com",
+      "productNamed": false,
+      "hasAmount": false,
+      "buttons": [],
+      "inputs": 0
+    },
+    {
+      "host": "js.stripe.com",
+      "productNamed": false,
+      "hasAmount": false,
+      "buttons": [],
+      "inputs": 0
+    },
+    {
+      "host": "js.stripe.com",
+      "productNamed": false,
+      "hasAmount": false,
+      "buttons": [],
+      "inputs": 0
+    },
+    {
+      "host": "js.stripe.com",
+      "productNamed": false,
+      "hasAmount": false,
+      "buttons": [],
+      "inputs": 0
+    }
+  ],
+  "failed": [],
+  "exceptions": [],
+  "paymentSubmitted": false
+}

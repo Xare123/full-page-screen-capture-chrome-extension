@@ -1,0 +1,120 @@
+{
+  "created": "2026-10-18T22:18:18.946Z",
+  "extensionVersion": "2.2.0",
+  "viewport": {
+    "width": 1280,
+    "height": 800
+  },
+  "fictionalContent": true,
+  "errors": [],
+  "scenes": [
+    {
+      "name": "capture-options",
+      "page": "popup",
+      "start": 0.382,
+      "end": 4.382
+    },
+    {
+      "name": "pane-option",
+      "page": "popup",
+      "start": 4.383,
+      "end": 7.384
+    },
+    {
+      "name": "full-capture",
+      "page": "fieldnotes",
+      "start": 7.816,
+      "end": 12.816
+    },
+    {
+      "name": "region-capture",
+      "page": "fieldnotes",
+      "start": 13.529,
+      "end": 17.53
+    },
+    {
+      "name": "email-auto",
+      "page": "email",
+      "start": 0.608,
+      "end": 6.609
+    },
+    {
+      "name": "email-manual",
+      "page": "email",
+      "start": 6.649,
+      "end": 13.348
+    },
+    {
+      "name": "email-result",
+      "page": "editor-full-auto-4",
+      "start": 10.061,
+      "end": 15.065
+    },
+    {
+      "name": "annotate",
+      "page": "editor-full-auto-2",
+      "start": 26.349,
+      "end": 35.356
+    },
+    {
+      "name": "redact-undo",
+      "page": "editor-full-auto-2",
+      "start": 35.998,
+      "end": 42.013
+    },
+    {
+      "name": "pdf-options",
+      "page": "editor-full-auto-2",
+      "start": 42.021,
+      "end": 50.024
+    },
+    {
+      "name": "pdf-export",
+      "page": "editor-full-auto-2",
+      "start": 50.6,
+      "end": 54.603
+    },
+    {
+      "name": "image-compression",
+      "page": "editor-full-auto-2",
+      "start": 54.605,
+      "end": 61.607
+    },
+    {
+      "name": "pdf-compression",
+      "page": "editor-full-auto-2",
+      "start": 61.667,
+      "end": 67.669
+    },
+    {
+      "name": "raster-options",
+      "page": "editor-full-auto-2",
+      "start": 67.784,
+      "end": 71.788
+    },
+    {
+      "name": "library",
+      "page": "editor-full-auto-2",
+      "start": 73.589,
+      "end": 79.591
+    },
+    {
+      "name": "install",
+      "page": "install",
+      "start": 0.475,
+      "end": 5.476
+    }
+  ],
+  "pages": {
+    "control": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@a654f416639ab1ca6ace2f1bed4dc27d.webm",
+    "fieldnotes": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@1fd95c7c36f568f64a2b86fd8ea3cf5c.webm",
+    "popup": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@a9d6b41edd1b7805b2e809786f89873b.webm",
+    "editor-full-auto-2": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@81ce34ce2caf485c2c7489e565855326.webm",
+    "editor-visible-auto-3": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@29d72cd4bbbcfd265cafbdb7627501ca.webm",
+    "editor-region-auto-3": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@89bbd08cf962bd5bc9c8507db88424bb.webm",
+    "email": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@21dacdc2f4f2675b82335a615fa5de92.webm",
+    "editor-full-auto-4": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@4d4275e6269136bb8ff53ac8e16cde20.webm",
+    "editor-full-pick-5": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@224e01d4a664c9e95f0b8880eefca353.webm",
+    "install": "/workspace/full-page-screen-capture-chrome-extension/store-assets/source/recordings/page@a173d1651232ff11ba457683465065f6.webm"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "extensionVersion": "2.2.5",
+  "projectId": "appgprj_6ad54460f9608191b1cae4e3ca2fdc8a",
+  "deploymentId": "appgdep_6ad9053618d88191ad2969c54bf6ca03",
+  "versionId": "appgprj_6ad54460f9608191b1cae4e3ca2fdc8a~appgver_7d592cfa0e94819191e2935e0818a3f5",
+  "status": "succeeded",
+  "url": "https://capture-studio-free.xare123.chatgpt.site",
+  "updatedAt": "2026-10-21T18:32:31.422730+00:00",
+  "audience": "owner-private",
+  "operation": "save_version_and_deploy_private",
+  "sourceCommit": "78a518871da780a55fed44eb9f45e77bf2515ad2",
+  "localReferencesChecked": 61,
+  "downloadSHA256": "59a7a71f6eeb5528cd44aa3ecf52bf6587fdc1947ca48f94d3041a6e1e8b9200",
+  "privateAttachmentExcluded": true,
+  "archiveMatchesPushedSource": true,
+  "archiveFiles": 30,
+  "archiveBytes": 24239722,
+  "archiveSHA256": "3b90294e895e3c3b7d51b2fb6479a2638588a31bd67b94116311c821e8d120d2",
+  "websiteSourceArchive": {
+    "file": "capture-studio-website-source.zip",
+    "files": 33,
+    "bytes": 24247128,
+    "sha256": "37ea88650d40b840e7b466456e43e977d0aacf613863e6777ebbe4577571ee12"
+  }
+}

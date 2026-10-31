@@ -1,0 +1,356 @@
+{
+  "duration": 95.0,
+  "dimensions": [
+    1280,
+    800
+  ],
+  "codec": "H.264/AAC",
+  "chapters": [
+    {
+      "title": "Your whole workflow. All yours.",
+      "base_duration": 4,
+      "shots": [
+        [
+          "intro",
+          4
+        ]
+      ],
+      "text": "Capture Studio. Your free, private workspace for the pages worth saving.",
+      "duration": 5.5,
+      "start": 0.0,
+      "voice": "Capture Studio. Your free, private workspace for the pages worth saving.",
+      "spoken_seconds": 5.126,
+      "shot_timing": [
+        {
+          "name": "intro",
+          "start": 0.0,
+          "duration": 5.5,
+          "frames": 132,
+          "anchor_sentence": null
+        }
+      ]
+    },
+    {
+      "title": "01 / Install the unpacked extension",
+      "base_duration": 9,
+      "shots": [
+        [
+          "install",
+          9
+        ]
+      ],
+      "text": "First, unzip the download. Open Chrome\u2019s extensions page and turn on Developer mode. Click Load unpacked, choose the extracted folder, and pin Capture Studio.",
+      "duration": 11.0,
+      "start": 5.5,
+      "voice": "First, unzip the download. Open Chrome\u2019s extensions page and turn on Developer mode. Click Load unpacked, choose the extracted folder, and pin Capture Studio.",
+      "spoken_seconds": 10.619,
+      "shot_timing": [
+        {
+          "name": "install",
+          "start": 5.5,
+          "duration": 11.0,
+          "frames": 264,
+          "anchor_sentence": null
+        }
+      ]
+    },
+    {
+      "title": "02 / Choose how much to capture",
+      "base_duration": 10,
+      "shots": [
+        [
+          "capture-options",
+          4
+        ],
+        [
+          "full-capture",
+          3
+        ],
+        [
+          "region-capture",
+          3
+        ]
+      ],
+      "text": "Open a page and choose how much to capture: the full page, the visible area, or a selected region. Keep the page active while capture runs.",
+      "duration": 10.0,
+      "start": 16.5,
+      "voice": "Open a page and choose how much to capture: the full page, the visible area, or a selected region. Keep the page active while capture runs.",
+      "spoken_seconds": 9.307,
+      "shot_timing": [
+        {
+          "name": "capture-options",
+          "start": 16.5,
+          "duration": 4.0,
+          "frames": 96,
+          "anchor_sentence": null
+        },
+        {
+          "name": "full-capture",
+          "start": 20.5,
+          "duration": 3.0,
+          "frames": 72,
+          "anchor_sentence": null
+        },
+        {
+          "name": "region-capture",
+          "start": 23.5,
+          "duration": 3.0,
+          "frames": 72,
+          "anchor_sentence": null
+        }
+      ]
+    },
+    {
+      "title": "03 / Capture the complete email",
+      "base_duration": 11,
+      "shots": [
+        [
+          "email-auto",
+          3.5
+        ],
+        [
+          "email-manual",
+          3.5
+        ],
+        [
+          "email-result",
+          4
+        ]
+      ],
+      "text": "Capturing a long email? Auto can find the reading pane. To pick a different area, choose scrolling area, click Full page, then select the message. Capture Studio stitches that pane from start to finish.",
+      "shot_sentence_anchors": [
+        0,
+        2,
+        3
+      ],
+      "duration": 12.5,
+      "start": 26.5,
+      "voice": "Capturing a long email? Auto can find the reading pane. To pick a different area, choose scrolling area, click Full page, then select the message. Capture Studio stitches that pane from start to finish.",
+      "spoken_seconds": 12.443,
+      "shot_timing": [
+        {
+          "name": "email-auto",
+          "start": 26.5,
+          "duration": 3.7083333333333335,
+          "frames": 89,
+          "anchor_sentence": 0
+        },
+        {
+          "name": "email-manual",
+          "start": 30.208333333333332,
+          "duration": 5.25,
+          "frames": 126,
+          "anchor_sentence": 2
+        },
+        {
+          "name": "email-result",
+          "start": 35.458333333333336,
+          "duration": 3.5416666666666665,
+          "frames": 85,
+          "anchor_sentence": 3
+        }
+      ]
+    },
+    {
+      "title": "04 / Annotate, redact, refine",
+      "base_duration": 11,
+      "shots": [
+        [
+          "annotate",
+          7
+        ],
+        [
+          "redact-undo",
+          4
+        ]
+      ],
+      "text": "Make your point with arrows, highlights, text, or numbered steps. For sensitive details, use solid Redact. You can undo and redo as you go.",
+      "shot_sentence_anchors": [
+        0,
+        1
+      ],
+      "duration": 11.0,
+      "start": 39.0,
+      "voice": "Make your point with arrows, highlights, text, or numbered steps. For sensitive details, use solid Redact. You can undo and redo as you go.",
+      "spoken_seconds": 9.126,
+      "shot_timing": [
+        {
+          "name": "annotate",
+          "start": 39.0,
+          "duration": 3.8333333333333335,
+          "frames": 92,
+          "anchor_sentence": 0
+        },
+        {
+          "name": "redact-undo",
+          "start": 42.833333333333336,
+          "duration": 7.166666666666667,
+          "frames": 172,
+          "anchor_sentence": 1
+        }
+      ]
+    },
+    {
+      "title": "05 / Put your PDF on the right page",
+      "base_duration": 11,
+      "shots": [
+        [
+          "pdf-options",
+          8
+        ],
+        [
+          "pdf-export",
+          3
+        ]
+      ],
+      "text": "For a PDF, Auto suggests a paper size and orientation. Choose a standard size, or use Image-sized for one continuous page per capture part. Then export.",
+      "shot_sentence_anchors": [
+        0,
+        2
+      ],
+      "duration": 11.5,
+      "start": 50.0,
+      "voice": "For a PDF, Auto suggests a paper size and orientation. Choose a standard size, or use Image-sized for one continuous page per capture part. Then export.",
+      "spoken_seconds": 11.089,
+      "shot_timing": [
+        {
+          "name": "pdf-options",
+          "start": 50.0,
+          "duration": 9.583333333333334,
+          "frames": 230,
+          "anchor_sentence": 0
+        },
+        {
+          "name": "pdf-export",
+          "start": 59.583333333333336,
+          "duration": 1.9166666666666667,
+          "frames": 46,
+          "anchor_sentence": 2
+        }
+      ]
+    },
+    {
+      "title": "06 / Lighter images, measured results",
+      "base_duration": 8,
+      "shots": [
+        [
+          "image-compression",
+          8
+        ]
+      ],
+      "text": "Need a smaller image? Choose JPEG or WebP, then adjust the size or quality. Check export size shows the actual file size before you save.",
+      "duration": 10.0,
+      "start": 61.5,
+      "voice": "Need a smaller image? Choose JPEG or WebP, then adjust the size or quality. Check export size shows the actual file size before you save.",
+      "spoken_seconds": 9.873,
+      "shot_timing": [
+        {
+          "name": "image-compression",
+          "start": 61.5,
+          "duration": 10.0,
+          "frames": 240,
+          "anchor_sentence": null
+        }
+      ]
+    },
+    {
+      "title": "07 / Compress an existing PDF",
+      "base_duration": 12,
+      "shots": [
+        [
+          "pdf-compression",
+          7
+        ],
+        [
+          "raster-options",
+          5
+        ]
+      ],
+      "text": "For an existing PDF, try Optimize to keep text and vectors. Rasterize makes image-based copies and removes searchable text and interactive features. Savings depend on the file.",
+      "shot_sentence_anchors": [
+        0,
+        1
+      ],
+      "duration": 12.5,
+      "start": 71.5,
+      "voice": "For an existing PDF, try Optimize to keep text and vectors. Rasterize makes image-based copies and removes searchable text and interactive features. Savings depend on the file.",
+      "spoken_seconds": 12.454,
+      "shot_timing": [
+        {
+          "name": "pdf-compression",
+          "start": 71.5,
+          "duration": 4.416666666666667,
+          "frames": 106,
+          "anchor_sentence": 0
+        },
+        {
+          "name": "raster-options",
+          "start": 75.91666666666667,
+          "duration": 8.083333333333334,
+          "frames": 194,
+          "anchor_sentence": 1
+        }
+      ]
+    },
+    {
+      "title": "08 / Keep your collection local",
+      "base_duration": 7,
+      "shots": [
+        [
+          "library",
+          7
+        ]
+      ],
+      "text": "Your captures stay in this browser. Search, reopen, and keep creating. Export important files as a backup.",
+      "duration": 7.0,
+      "start": 84.0,
+      "voice": "Your captures stay in this browser. Search, reopen, and keep creating. Export important files as a backup.",
+      "spoken_seconds": 6.993,
+      "shot_timing": [
+        {
+          "name": "library",
+          "start": 84.0,
+          "duration": 7.0,
+          "frames": 168,
+          "anchor_sentence": null
+        }
+      ]
+    },
+    {
+      "title": "Every pixel. All yours.",
+      "base_duration": 4,
+      "shots": [
+        [
+          "outro",
+          4
+        ]
+      ],
+      "text": "Capture Studio. Every pixel. All yours.",
+      "duration": 4.0,
+      "start": 91.0,
+      "voice": "Capture Studio. Every pixel. All yours.",
+      "spoken_seconds": 3.942,
+      "shot_timing": [
+        {
+          "name": "outro",
+          "start": 91.0,
+          "duration": 4.0,
+          "frames": 96,
+          "anchor_sentence": null
+        }
+      ]
+    }
+  ],
+  "narration": {
+    "engine": "Kokoro-82M v1.0",
+    "voice": "af_heart",
+    "speed": 0.98,
+    "language": "en-us",
+    "model_sha256": "7d5df8ecf7d4b1878015a32686053fd0eebe2bc377234608764cc0ef3636a6c5",
+    "voices_sha256": "bca610b8308e8d99f32e6fe4197e7ec01679264efed0cac9140fe9c29f1fbf7d",
+    "source_peak": 0.7644532322883606,
+    "sentence_caption_count": 29,
+    "speech_time_stretched": false
+  },
+  "source": "Real MV3 UI recordings; editorial title cards and popup inset only"
+}

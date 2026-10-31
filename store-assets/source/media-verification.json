@@ -1,0 +1,71 @@
+{
+  "screenshots": [
+    {
+      "path": "screenshots/01-private-capture-library.jpg",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "format": "JPEG",
+      "channels": "RGB / no alpha",
+      "sha256": "5cced3553c0c697290100e691b0b1da0fb74ac924316b8a812b0958b84651969"
+    },
+    {
+      "path": "screenshots/02-annotate-full-page.jpg",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "format": "JPEG",
+      "channels": "RGB / no alpha",
+      "sha256": "abb335a9868080a231f7eb23c5cdd987f4a43405f61e71c3ecfc9a11d536a1fe"
+    },
+    {
+      "path": "screenshots/03-complete-email.jpg",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "format": "JPEG",
+      "channels": "RGB / no alpha",
+      "sha256": "b48872930db10140ec31cf383d669055cb745d490680af9724502f88cb881452"
+    },
+    {
+      "path": "screenshots/04-flexible-pdf-export.jpg",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "format": "JPEG",
+      "channels": "RGB / no alpha",
+      "sha256": "46559c06fa54d3cf266d085551da044e9ba5607af51a112a6e8de29062b34c63"
+    },
+    {
+      "path": "screenshots/05-local-pdf-compression.jpg",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "format": "JPEG",
+      "channels": "RGB / no alpha",
+      "sha256": "b726ed9cdbb196b8744120fbec2d31c8c85e320209296d827bd5decaf6b7a1df"
+    }
+  ],
+  "video": {
+    "path": "video/capture-studio-tutorial.mp4",
+    "dimensions": [
+      1280,
+      800
+    ],
+    "durationSeconds": 95.0,
+    "audioDurationSeconds": 95.0,
+    "videoCodec": "h264",
+    "pixelFormat": "yuv420p",
+    "audioCodec": "aac",
+    "audioSampleRate": "48000",
+    "bytes": 5225571,
+    "sha256": "71a67906fa4154b6e33df792e66e1841f6082ec8247606a9d1a7e091bc8a90ef",
+    "captionCues": 29
+  },
+  "source": "Actual extension UI and fictional local example pages. No customer data. Captions and narration supplied."
+}

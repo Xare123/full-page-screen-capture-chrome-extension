@@ -1,0 +1,43 @@
+Capture full webpages and long emails, edit and redact screenshots, then export PDFs or smaller images—all in one free Chrome extension.
+
+Get Capture Studio:
+https://capture-studio-free.xare123.chatgpt.site/
+
+Download the extension:
+https://capture-studio-free.xare123.chatgpt.site/downloads/capture-studio-2.3.1.zip
+
+In this quick start, you'll learn how to:
+• Capture a full webpage, a visible area or a selected region.
+• Select a scrolling email or reading pane.
+• Add arrows, text, highlights and solid redactions.
+• Crop, rotate and refine your screenshots.
+• Export PNG, JPEG, WebP or PDF files.
+• Choose PDF paper sizes and orientation.
+• Compress images and existing PDFs.
+• Keep captures in a searchable local library.
+
+Every included feature is free. No subscription, trial or watermark. Capture, editing, compression and storage run locally in your browser profile.
+
+CHAPTERS
+00:00 Introduction and installation
+00:16 Choose what to capture
+00:26 Capture a complete email
+00:39 Annotate, redact and refine
+00:50 Export a PDF
+01:01 Compress an image
+01:11 Compress an existing PDF
+01:24 Your local capture library
+
+Requires desktop Chrome 147 or newer. This walkthrough demonstrates the unpacked installation using Developer mode and Load unpacked; follow the website's installation guide.
+
+Help:
+https://capture-studio-free.xare123.chatgpt.site/support/
+
+Privacy:
+https://capture-studio-free.xare123.chatgpt.site/privacy/
+
+Compression savings depend on the original file. Raster PDF compression creates image-based copies and removes searchable text and interactive PDF features; keep the original when those matter. Export important captures as backups before uninstalling or clearing extension data.
+
+All demonstration content is fictional. Narration is AI-generated.
+
+#CaptureStudio #ChromeExtension #FullPageScreenshot

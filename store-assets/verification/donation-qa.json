@@ -1,0 +1,50 @@
+{
+  "local": [
+    {
+      "width": 1440,
+      "route": "/",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 1440,
+      "route": "/privacy/",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 390,
+      "route": "/",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 390,
+      "route": "/privacy/",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 320,
+      "route": "/",
+      "overflow": false,
+      "violations": []
+    },
+    {
+      "width": 320,
+      "route": "/privacy/",
+      "overflow": false,
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "navigationVerified": true,
+  "newTabOpenerExposed": false,
+  "external": {
+    "status": 200,
+    "renderedProductName": true,
+    "url": "https://donate.stripe.com/00waERaKJ819bVF0vw4Ja02",
+    "pageTitle": "Gizelle & Rami Abdi"
+  },
+  "paymentSubmitted": false
+}

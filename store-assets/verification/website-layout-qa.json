@@ -1,0 +1,108 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "route": "/",
+      "overflow": false,
+      "scrollWidth": 1440,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 1440,
+      "route": "/support/",
+      "overflow": false,
+      "scrollWidth": 1440,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 1440,
+      "route": "/privacy/",
+      "overflow": false,
+      "scrollWidth": 1440,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 768,
+      "route": "/",
+      "overflow": false,
+      "scrollWidth": 768,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 768,
+      "route": "/support/",
+      "overflow": false,
+      "scrollWidth": 768,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 768,
+      "route": "/privacy/",
+      "overflow": false,
+      "scrollWidth": 768,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 390,
+      "route": "/",
+      "overflow": false,
+      "scrollWidth": 390,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 390,
+      "route": "/support/",
+      "overflow": false,
+      "scrollWidth": 390,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 390,
+      "route": "/privacy/",
+      "overflow": false,
+      "scrollWidth": 390,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 320,
+      "route": "/",
+      "overflow": false,
+      "scrollWidth": 320,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 320,
+      "route": "/support/",
+      "overflow": false,
+      "scrollWidth": 320,
+      "broken": [],
+      "violations": []
+    },
+    {
+      "width": 320,
+      "route": "/privacy/",
+      "overflow": false,
+      "scrollWidth": 320,
+      "broken": [],
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "media": {
+    "duration": 87,
+    "currentTime": 0.424631,
+    "readyState": 4,
+    "captions": 1,
+    "captionCues": 31
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "version": "2.3.1",
+  "assets": [
+    {
+      "path": "branding/README.md",
+      "bytes": 4112,
+      "sha256": "1d6d4c2c364e14302db4925b25c83a15bcc5c38c14b4d00af0e1f4beabdbfe99"
+    },
+    {
+      "path": "branding/asset-validation.json",
+      "bytes": 1177,
+      "sha256": "5e36b72c4425d5f51dae011c0c4763a6b0f7b15c82e016b89ef25c8c915fc197"
+    },
+    {
+      "path": "branding/build-assets.mjs",
+      "bytes": 4930,
+      "sha256": "7a9a206364720d495a9063469f3fee65687f327e0026e5262c5282e3803e3251"
+    },
+    {
+      "path": "branding/icon-context-preview.png",
+      "bytes": 15559,
+      "sha256": "473e3b935760b7638593ce117cb6b42584f8108c311ee02ad0d6284f07a1bf69",
+      "width": 600,
+      "height": 300,
+      "mode": "RGB",
+      "format": "PNG"
+    },
+    {
+      "path": "branding/icon128.png",
+      "bytes": 12697,
+      "sha256": "3a1522d569e7956ba8eeeb30233ffa182d3da45da23e5f560c9bd7bc13fcb2cd",
+      "width": 128,
+      "height": 128,
+      "mode": "RGBA",
+      "format": "PNG"
+    },
+    {
+      "path": "branding/icon16.png",
+      "bytes": 646,
+      "sha256": "83d59267a7a2fc0c07e3fcd5783d16face199c1c2a70454459fbf263da7a65c3",
+      "width": 16,
+      "height": 16,
+      "mode": "RGBA",
+      "format": "PNG"
+    },
+    {
+      "path": "branding/icon48.png",
+      "bytes": 2836,
+      "sha256": "017927faf6ad9df39079bc0151508c42d40f9d69c86eb7d01769c59ac6ab2ad2",
+      "width": 48,
+      "height": 48,
+      "mode": "RGBA",
+      "format": "PNG"
+    },
+    {
+      "path": "branding/icon512.png",
+      "bytes": 179701,
+      "sha256": "e75c010d79936ca7cc4e10fb9dbe337790ed93635e9253708cb63cc0dd5f9890",
+      "width": 512,
+      "height": 512,
+      "mode": "RGBA",
+      "format": "PNG"
+    },
+    {
+      "path": "branding/marquee-promo-1400x560.png",
+      "bytes": 571898,
+      "sha256": "8ce9474c0cc5894a8e4cd8af075659578af06fc61f14fd93e955aa7d38e44dc5",
+      "width": 1400,
+      "height": 560,
+      "mode": "RGB",
+      "format": "PNG"
+    },
+    {
+      "path": "branding/small-promo-440x280.png",
+      "bytes": 114983,
+      "sha256": "41d3890abff304d5c03b77836d641eb7ee1516d4f887c6227d9daac818073a20",
+      "width": 440,
+      "height": 280,
+      "mode": "RGB",
+      "format": "PNG"
+    },
+    {
+      "path": "screenshots/01-private-capture-library.jpg",
+      "bytes": 168332,
+      "sha256": "5cced3553c0c697290100e691b0b1da0fb74ac924316b8a812b0958b84651969",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "screenshots/02-annotate-full-page.jpg",
+      "bytes": 142148,
+      "sha256": "abb335a9868080a231f7eb23c5cdd987f4a43405f61e71c3ecfc9a11d536a1fe",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "screenshots/03-complete-email.jpg",
+      "bytes": 132610,
+      "sha256": "b48872930db10140ec31cf383d669055cb745d490680af9724502f88cb881452",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "screenshots/04-flexible-pdf-export.jpg",
+      "bytes": 144404,
+      "sha256": "46559c06fa54d3cf266d085551da044e9ba5607af51a112a6e8de29062b34c63",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "screenshots/05-local-pdf-compression.jpg",
+      "bytes": 105191,
+      "sha256": "b726ed9cdbb196b8744120fbec2d31c8c85e320209296d827bd5decaf6b7a1df",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "video/captions.vtt",
+      "bytes": 2238,
+      "sha256": "946428d76d36b60c492d32b39e8b72f73ed518e3b2a25a1734c6d75f42bbfffc"
+    },
+    {
+      "path": "video/capture-studio-tutorial.mp4",
+      "bytes": 5225571,
+      "sha256": "71a67906fa4154b6e33df792e66e1841f6082ec8247606a9d1a7e091bc8a90ef"
+    },
+    {
+      "path": "video/transcript.md",
+      "bytes": 2222,
+      "sha256": "be487241b1d7ab638617f466d63d7cd15ac42f30ac558d683a95f7162f8af580"
+    },
+    {
+      "path": "video/tutorial-poster.jpg",
+      "bytes": 45459,
+      "sha256": "538cd66d62b013aec166132d645a92d7f711d76e7c3adbcf39b80cc4c2c9ad3e",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "video/youtube-metadata.md",
+      "bytes": 2334,
+      "sha256": "ada2434f83a0e41ff044d331f01126ff2c06bd5402471fcee890902cf8dfa75f"
+    }
+  ],
+  "narration": {
+    "engine": "Kokoro-82M v1.0",
+    "voice": "af_heart",
+    "duration_seconds": 95,
+    "sentence_captions": 29
+  }
+}

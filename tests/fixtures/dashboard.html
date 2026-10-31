@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dashboard with fixed bars</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: white;
+        font: 16px system-ui;
+        color: #27344b;
+      }
+      #sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 240px;
+        background: rgb(36, 53, 42);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        padding: 26px 20px;
+      }
+      #sidebar h2 {
+        font-size: 20px;
+      }
+      #nav-marker {
+        margin-top: 66px;
+        height: 26px;
+        background: rgb(240, 174, 37);
+      }
+      #nav-end {
+        margin-top: auto;
+        padding: 20px;
+      }
+      #header {
+        position: fixed;
+        top: 0;
+        left: 240px;
+        right: 0;
+        height: 72px;
+        background: rgb(18, 59, 124);
+        color: white;
+        padding: 22px;
+        z-index: 4;
+      }
+      #footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 54px;
+        background: rgb(214, 73, 140);
+        z-index: 5;
+        padding: 15px;
+        color: white;
+      }
+      #dynamic-header {
+        position: relative;
+        height: 50px;
+        background: rgb(185, 182, 254);
+      }
+      body.scrolled #dynamic-header {
+        position: fixed;
+        top: 72px;
+        left: 240px;
+        right: 0;
+        z-index: 3;
+      }
+      #transformed-widget {
+        position: fixed;
+        top: 120px;
+        right: 20px;
+        width: 100px;
+        height: 100px;
+        transform: scale(0.5);
+        background: rgb(46, 164, 79);
+        z-index: 6;
+      }
+      main {
+        margin-left: 240px;
+        padding-top: 100px;
+        height: 2660px;
+      }
+      section {
+        padding: 30px 50px;
+        height: 610px;
+        border-bottom: 1px solid #ccc;
+      }
+      h1 {
+        font-size: 36px;
+      }
+      #sticky {
+        position: sticky;
+        top: 72px;
+        height: 64px;
+        background: rgb(58, 186, 195);
+        z-index: 2;
+      }
+      #sticky-child {
+        position: absolute;
+        right: 30px;
+        bottom: 10px;
+        width: 40px;
+        height: 20px;
+        background: rgb(118, 51, 188);
+      }
+      #nested {
+        transform: translateZ(0);
+        position: relative;
+        height: 70px;
+        margin-top: 50px;
+      }
+      #local-fixed {
+        position: fixed;
+        left: 20px;
+        top: 10px;
+        width: 40px;
+        height: 20px;
+        background: rgb(175, 78, 16);
+      }
+    </style>
+  </head>
+  <body>
+    <aside id="sidebar">
+      <h2>Dashboard</h2>
+      <span>Home · Payments · Reports</span>
+      <div id="nav-marker"></div>
+      <div id="nav-end">Settings</div>
+    </aside>
+    <header id="header">Account overview</header>
+    <div id="transformed-widget"></div>
+    <main>
+      <div id="dynamic-header">
+        Appears as a pinned bar only after scrolling
+      </div>
+      <section>
+        <h1>Today</h1>
+        <p>Your balances and activity.</p>
+        <div id="nested"><div id="local-fixed"></div></div>
+      </section>
+      <section>
+        <h2>Overview</h2>
+        <p>Charts and customer activity.</p>
+      </section>
+      <div id="sticky">
+        <strong>Keep this section heading</strong
+        ><span id="sticky-child"></span>
+      </div>
+      <section>
+        <h2>Details</h2>
+        <p>A complete view of the account.</p>
+      </section>
+      <section><h2>More activity</h2></section>
+    </main>
+    <footer id="footer">Developer toolbar · belongs at the bottom</footer>
+    <script>
+      addEventListener("scroll", () =>
+        document.body.classList.toggle("scrolled", scrollY > 100),
+      );
+    </script>
+  </body>
+</html>

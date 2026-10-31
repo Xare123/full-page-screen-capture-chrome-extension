@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Fieldnotes — A slower kind of weekend · Demo</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: auto;
+      }
+      body {
+        margin: 0;
+        background: #f5f2e8;
+        color: #173e3d;
+        font-family: Arial, sans-serif;
+      }
+      header {
+        height: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 7%;
+        border-bottom: 1px solid #173e3d22;
+      }
+      .wordmark {
+        font-family: Georgia, serif;
+        font-size: 31px;
+        font-weight: 700;
+        letter-spacing: -1.5px;
+      }
+      .wordmark span {
+        color: #cf6d3d;
+      }
+      nav {
+        display: flex;
+        gap: 32px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      nav .issue {
+        color: #b75c35;
+      }
+      main {
+        max-width: 1120px;
+        margin: auto;
+      }
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 2.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #b75c35;
+      }
+      .intro {
+        padding: 56px 0 43px;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 75px;
+        align-items: end;
+      }
+      h1 {
+        font:
+          76px/0.98 Georgia,
+          serif;
+        letter-spacing: -3.8px;
+        margin: 20px 0 0;
+      }
+      .intro p {
+        font-size: 15px;
+        line-height: 1.9;
+        max-width: 340px;
+        margin: 0 0 3px;
+      }
+      .landscape {
+        height: 400px;
+        overflow: hidden;
+        position: relative;
+        background: #d3e5dd;
+      }
+      .landscape svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .landscape .label {
+        position: absolute;
+        left: 27px;
+        bottom: 24px;
+        color: #fff;
+        font-size: 11px;
+        letter-spacing: 2px;
+        font-weight: bold;
+      }
+      .landscape .number {
+        position: absolute;
+        top: 24px;
+        right: 27px;
+        font-size: 11px;
+        letter-spacing: 1.5px;
+        color: #315651;
+      }
+      .section {
+        padding: 65px 0;
+        border-bottom: 1px solid #173e3d33;
+      }
+      .section-heading {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 65px;
+      }
+      h2 {
+        font:
+          43px/1.1 Georgia,
+          serif;
+        letter-spacing: -1.5px;
+        margin: 18px 0 28px;
+      }
+      .section p {
+        font-size: 15px;
+        line-height: 1.9;
+        color: #496260;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-top: 38px;
+      }
+      .card {
+        background: #e6e9dd;
+        padding: 30px;
+        min-height: 245px;
+      }
+      .card:nth-child(2) {
+        background: #ebd2b9;
+      }
+      .card:nth-child(3) {
+        background: #cfdfd9;
+      }
+      .card .number {
+        font:
+          38px Georgia,
+          serif;
+        color: #b26945;
+      }
+      .card h3 {
+        font:
+          24px Georgia,
+          serif;
+        margin: 22px 0 12px;
+      }
+      .card p {
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .quote {
+        font:
+          45px/1.25 Georgia,
+          serif;
+        letter-spacing: -1px;
+        padding: 50px 80px;
+        text-align: center;
+        background: #173e3d;
+        color: #f7f1e4;
+        margin: 55px 0;
+      }
+      .itinerary {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 40px;
+        padding: 25px 0;
+        border-top: 1px solid #173e3d33;
+      }
+      .itinerary strong {
+        font-size: 13px;
+      }
+      .itinerary p {
+        margin: 0;
+      }
+      .notes {
+        background: #e8ddc7;
+        padding: 35px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+      .notes h3 {
+        font:
+          30px Georgia,
+          serif;
+        margin: 0 0 20px;
+      }
+      .notes p {
+        font-size: 13px;
+        margin: 5px 0;
+      }
+      .demo {
+        color: #a05d3d;
+        font-size: 10px;
+        letter-spacing: 1.4px;
+        text-transform: uppercase;
+      }
+      footer {
+        padding: 40px 0 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+      }
+      .tag {
+        border: 1px solid #173e3d66;
+        border-radius: 100px;
+        padding: 8px 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wordmark">fieldnotes<span>.</span></div>
+      <nav>
+        <span>Places</span><span>People</span><span>A way of seeing</span
+        ><span class="issue">ISSUE 028 / DEMO</span>
+      </nav>
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <div class="eyebrow">A little further from the everyday</div>
+          <h1>A slower kind<br />of weekend.</h1>
+        </div>
+        <p>
+          Take the winding road. Stay for the view.<br />A small field guide to
+          finding more in less —<br />one unhurried moment at a time.
+        </p>
+      </section>
+      <div class="landscape">
+        <svg
+          viewBox="0 0 1120 400"
+          preserveAspectRatio="xMidYMid slice"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="1120" height="400" fill="#d3e5dd" />
+          <circle cx="850" cy="122" r="75" fill="#d18a50" />
+          <path
+            d="M0 270 210 82 430 280 650 98 850 282 1030 142 1120 217V400H0Z"
+            fill="#7eaaa0"
+          />
+          <path
+            d="m0 320 280-185 284 225 260-181 296 161v60H0Z"
+            fill="#477a6d"
+          />
+          <path
+            d="M0 350q190-130 380 0T770 325q160-100 350 0v75H0"
+            fill="#174f49"
+          />
+          <path
+            d="M710 400q-110-115-30-180 20 55 108 80t110 100"
+            fill="#8aa891"
+          />
+          <path
+            d="M725 400q-90-110-45-180 12 65 100 90t104 90"
+            fill="#e5d4a8"
+          />
+          <g fill="#163f3e">
+            <path d="m105 185-31 90h62z" />
+            <path d="m145 225-30 88h60z" />
+            <path d="m1030 205-38 110h76z" />
+          </g>
+        </svg>
+        <div class="number">36.27° N / 121.80° W</div>
+        <div class="label">01 — FOLLOW THE QUIET ROUTE</div>
+      </div>
+      <section class="section">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">The art of paying attention</div>
+            <h2>Room to wander.<br />Time to notice.</h2>
+          </div>
+          <p>
+            Our favorite trips leave space for the unexpected: a footpath that
+            bends toward the sea, a bakery before the morning rush, a
+            conversation that becomes the best part of the day. This weekend, we
+            are leaving the checklist at home.
+          </p>
+        </div>
+        <div class="cards">
+          <div class="card">
+            <span class="number">01</span>
+            <h3>Find your horizon</h3>
+            <p>
+              Start early. Follow the coastal trail until the city feels a
+              little further away.
+            </p>
+          </div>
+          <div class="card">
+            <span class="number">02</span>
+            <h3>Make a small stop</h3>
+            <p>
+              A table in the sun, fresh bread, and nowhere else you need to be.
+            </p>
+          </div>
+          <div class="card">
+            <span class="number">03</span>
+            <h3>Bring a little back</h3>
+            <p>
+              Keep a few notes. The details are what turn a place into a memory.
+            </p>
+          </div>
+        </div>
+      </section>
+      <div class="quote">
+        “The best part of going somewhere<br />is giving yourself time to be
+        there.”
+      </div>
+      <section class="section">
+        <div class="eyebrow">A loose plan for a good day</div>
+        <h2>Less schedule.<br />More possibility.</h2>
+        <div class="itinerary">
+          <strong>08:30 / SET OUT</strong>
+          <p>
+            Coffee to go, a light layer, and the scenic route. Let the road
+            choose the soundtrack.
+          </p>
+        </div>
+        <div class="itinerary">
+          <strong>11:00 / WALK A LITTLE</strong>
+          <p>
+            Find a trail with a view. Take the long way back. Stop whenever the
+            light catches your eye.
+          </p>
+        </div>
+        <div class="itinerary">
+          <strong>14:00 / STAY A WHILE</strong>
+          <p>
+            Lunch at a little neighborhood spot. Ask someone what they love most
+            about the place.
+          </p>
+        </div>
+        <div class="itinerary">
+          <strong>17:30 / FOLLOW THE LIGHT</strong>
+          <p>
+            One more detour before home. Write down three things you want to
+            remember.
+          </p>
+        </div>
+      </section>
+      <section class="section">
+        <div class="notes">
+          <div>
+            <h3>Notes for the road.</h3>
+            <p>Pack water, comfortable shoes, and a notebook.</p>
+            <p>Choose marked trails. Leave places as you found them.</p>
+          </div>
+          <div>
+            <p><strong>TRIP REFERENCE</strong> · DEMO-028</p>
+            <p><strong>CONTACT</strong> · hello@example.com</p>
+            <p class="demo">Fictional sample content for Capture Studio</p>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div class="wordmark">fieldnotes<span>.</span></div>
+        <span>A small collection of places worth keeping.</span
+        ><span class="tag">EXAMPLE EDITION</span>
+      </footer>
+    </main>
+  </body>
+</html>

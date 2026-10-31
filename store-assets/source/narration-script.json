@@ -1,0 +1,163 @@
+{
+  "voice": "af_heart",
+  "engine": "Kokoro-82M v1.0",
+  "speed": 0.98,
+  "language": "en-us",
+  "chapters": [
+    {
+      "title": "Your whole workflow. All yours.",
+      "base_duration": 4,
+      "shots": [
+        [
+          "intro",
+          4
+        ]
+      ],
+      "text": "Capture Studio. Your free, private workspace for the pages worth saving."
+    },
+    {
+      "title": "01 / Install the unpacked extension",
+      "base_duration": 9,
+      "shots": [
+        [
+          "install",
+          9
+        ]
+      ],
+      "text": "First, unzip the download. Open Chrome\u2019s extensions page and turn on Developer mode. Click Load unpacked, choose the extracted folder, and pin Capture Studio."
+    },
+    {
+      "title": "02 / Choose how much to capture",
+      "base_duration": 10,
+      "shots": [
+        [
+          "capture-options",
+          4
+        ],
+        [
+          "full-capture",
+          3
+        ],
+        [
+          "region-capture",
+          3
+        ]
+      ],
+      "text": "Open a page and choose how much to capture: the full page, the visible area, or a selected region. Keep the page active while capture runs."
+    },
+    {
+      "title": "03 / Capture the complete email",
+      "base_duration": 11,
+      "shots": [
+        [
+          "email-auto",
+          3.5
+        ],
+        [
+          "email-manual",
+          3.5
+        ],
+        [
+          "email-result",
+          4
+        ]
+      ],
+      "text": "Capturing a long email? Auto can find the reading pane. To pick a different area, choose scrolling area, click Full page, then select the message. Capture Studio stitches that pane from start to finish.",
+      "shot_sentence_anchors": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "title": "04 / Annotate, redact, refine",
+      "base_duration": 11,
+      "shots": [
+        [
+          "annotate",
+          7
+        ],
+        [
+          "redact-undo",
+          4
+        ]
+      ],
+      "text": "Make your point with arrows, highlights, text, or numbered steps. For sensitive details, use solid Redact. You can undo and redo as you go.",
+      "shot_sentence_anchors": [
+        0,
+        1
+      ]
+    },
+    {
+      "title": "05 / Put your PDF on the right page",
+      "base_duration": 11,
+      "shots": [
+        [
+          "pdf-options",
+          8
+        ],
+        [
+          "pdf-export",
+          3
+        ]
+      ],
+      "text": "For a PDF, Auto suggests a paper size and orientation. Choose a standard size, or use Image-sized for one continuous page per capture part. Then export.",
+      "shot_sentence_anchors": [
+        0,
+        2
+      ]
+    },
+    {
+      "title": "06 / Lighter images, measured results",
+      "base_duration": 8,
+      "shots": [
+        [
+          "image-compression",
+          8
+        ]
+      ],
+      "text": "Need a smaller image? Choose JPEG or WebP, then adjust the size or quality. Check export size shows the actual file size before you save."
+    },
+    {
+      "title": "07 / Compress an existing PDF",
+      "base_duration": 12,
+      "shots": [
+        [
+          "pdf-compression",
+          7
+        ],
+        [
+          "raster-options",
+          5
+        ]
+      ],
+      "text": "For an existing PDF, try Optimize to keep text and vectors. Rasterize makes image-based copies and removes searchable text and interactive features. Savings depend on the file.",
+      "shot_sentence_anchors": [
+        0,
+        1
+      ]
+    },
+    {
+      "title": "08 / Keep your collection local",
+      "base_duration": 7,
+      "shots": [
+        [
+          "library",
+          7
+        ]
+      ],
+      "text": "Your captures stay in this browser. Search, reopen, and keep creating. Export important files as a backup."
+    },
+    {
+      "title": "Every pixel. All yours.",
+      "base_duration": 4,
+      "shots": [
+        [
+          "outro",
+          4
+        ]
+      ],
+      "text": "Capture Studio. Every pixel. All yours."
+    }
+  ]
+}

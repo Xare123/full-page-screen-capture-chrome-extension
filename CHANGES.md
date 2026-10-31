@@ -1,3 +1,89 @@
+# Capture Studio 2.3.1
+
+- Type and edit text directly on the image, with a native caret, selection, multiline input, paste and typing undo. Remove the text-entry modal.
+- Default new text to locally bundled Inter, dark charcoal, and a transparent background. Change its font, size, foreground or background after placement; clear the background again at any time.
+- Keep typing and style changes in one cancellable transaction. Commit before export, copy, transforms, or navigation; wait for the final input-method composition without losing clipboard activation.
+- Match browser wrapping and Unicode text geometry during editing and export; preserve existing annotation layers and final redactions above active text.
+- Retain movement, resizing, post-capture cropping, legacy project rendering, and the existing local-only permissions.
+
+# Capture Studio 2.3.0
+
+- Add adjustable post-capture cropping with preview, resize/move handles, precise bounds, Apply/Cancel and Undo.
+- Make placed text selectable, movable, resizable and editable; add font-size, text color, background color, transparency and keyboard controls. Width wraps content and height expands to fit.
+- Preserve annotation layers through crop and rotation, including older text and fractional saved-crop scaling. Keep Pan and native image context actions.
+- Preserve actual redaction coverage through repeated transforms and bake existing masks before resampling. Block alternate copy/export paths while a crop is pending.
+- Keep all runtime code local, with unchanged permissions and no new dependencies.
+
+# Capture Studio 2.2.5
+
+- Always export a single PNG, JPG, WebP or PDF file. Removed image ZIP output and its unused runtime dependency.
+- Automatically fit a complete image to the largest safe uniform scale at or below the requested size. Show actual dimensions and effective scale, including internal fits below 1% for extreme pages.
+- Preserve valid original tile placement. Edited or legacy parts with unavailable placement form one clearly labeled vertical composition in saved order, using the same scale with transparent or white padding.
+- Fix fractional crop metadata being rounded twice in size previews; single-image planning and encoding now resize the original crop bounds once.
+- Added systematic image/PDF compression regressions across supported input/output types, every size and quality setting, geometry limits, decoded edges, alpha/redactions, legacy edits, cleanup, navigation and one-file downloads.
+
+## Capture Studio 2.2.4
+
+- Export every original capture part as one complete image when the selected size fits safely. Whole-capture dimensions and shared rounded edges preserve proportions and the final row/column at fractional scales.
+- Add a fit-to-one-image control that chooses the largest safe scale, from 1–100%. Larger exports retain all parts in a ZIP, with an explicit separate-parts option.
+- Label the current editing part, complete export dimensions, ZIP fallback, and current/first-part copy actions. Opening another capture resets export scope to the complete capture.
+- Preserve independently cropped or rotated parts as separate images; undo restores the original joining layout. PDF includes every selected part and uses the same resize dimensions down to 1%.
+- Flatten edits before resizing, preserve PNG/WebP transparency, keep JPEG backgrounds white, and process one bounded source tile at a time with cleanup after failures. Export snapshots prevent navigation from changing a pending file or its filename/cache.
+
+## Capture Studio 2.2.3
+
+- Keep image context menus open after right-click release in Chrome 147, with explicit outside-click dismissal, keyboard navigation and focus restoration.
+- Keep newly inserted fixed navigation at the correct page edge even when a website replaces the original node while capture is scrolling. Existing page content keeps its original document position.
+- Exclude external top-layer dialogs, popovers and their independent backdrops from pane captures while preserving their open state and pane-owned surfaces.
+- Track temporary style ownership across cloned DOM nodes, including delayed insertion, so replacement elements can recover their original styles and retain page-authored changes.
+- Added broad fictional email, web-page, policy, image and PDF matrices, plus actual Chromium/Firefox/WebKit content-layout checks. Full extension testing uses real Chrome for Testing 147, Chrome Stable and Playwright Chromium executables; this does not introduce Firefox or Safari extension support.
+- Added reproducible browser inventory/results, native screenshot scale/pixel oracles, failure captures and expanded CI verification. Test fixtures clean up browser profiles even when setup fails.
+
+## Capture Studio 2.2.2
+
+- Fixed horizontal lines at email capture joins caused by toolbar shadows and scroll-edge decorations spilling into the reading pane. Pane captures suppress surrounding overlay paint while retaining actual message borders, shadows, and generated content.
+- Added paint-order checks for transparent panes so partial and nested backgrounds remain visible, even when a background child has a larger z-index inside a lower stacking context.
+- Re-evaluate live computed styles, pane opacity, and pseudo-elements during scrolling. Toolbar replacement, updated classes/stylesheets, and opaque-to-transparent theme changes are handled during capture; page-authored opacity/shadow changes survive cleanup.
+- Added native screenshot pixel comparisons, long-message boundary checks, fractional-scale capture, transparent/background controls, CSS replacement/theme changes, and exact restoration after success, cancellation, and failure. Two independent Astra reviews verified the corrections.
+
+## Capture Studio 2.2.1
+
+- Coalesced rapid autosaves, retained the latest redacted thumbnail through renames and part changes, and made failed writes retryable without false version conflicts. Conflict copies regenerate their flattened thumbnail.
+- Removed hidden-library rebuilding during edits, reused the full-size render canvas, and exported unchanged full-size PNGs without decoding or re-encoding.
+- Batched fixed-element layout operations, refreshed preparation timeouts for document captures, and normalized wide document scrolling for root/body RTL overrides.
+- Validate document geometry and actual scroll positions around every screenshot, release capture canvases on failure, and honor cancellation or source-tab changes during final saving/checks.
+- Locked PDF compression settings during work, added early cancellation checks, and bounded excessive PDF pagination while keeping tiny-width slices inside page margins.
+- Added large-library/rapid-edit benchmarks, 24-megapixel imports, malformed and oversized files, PDF cancellation/recovery, RTL document pixel checks, fixed-heavy layouts, storage failure retries, and capture cancellation boundary regressions. Two independent Astra reviews verified the fixes.
+
+## Capture Studio 2.2.0
+
+- Added automatic detection of dominant scrolling reading panes for long emails and app layouts, while preserving ordinary document capture.
+- Added **Full-page target** options: Auto, Main page only, and an accessible scrolling-area picker with pointer and keyboard controls.
+- Stitch only the pane’s client area, with border/scrollbar exclusion, rounded screenshot edges, actual screenshot scaling, horizontal and RTL scrolling, and full-content export.
+- Scoped sticky/fixed-bar handling to captured content, suppressed overlapping app overlays, preserved virtualized rendering, and primed lazy images without expanding the pane.
+- Restore pane/ancestor/page scroll and exact inline declarations on success, cancellation, and failure. Validate target visibility, connectivity, geometry, clipping, content dimensions, and screenshot scale throughout capture.
+- Added real-browser Gmail-style, virtualized, nested, RTL, lazy-image, high-DPI, restoration, selection, and failure regressions; two Astra implementation reviews and final reproduction checks.
+
+## Capture Studio 2.1.0
+
+- Fixed smart placement of viewport-fixed headers, bottom toolbars, and full-height sidebars. Sticky elements retain their flow and child positioning. Added a **Hide fixed bars** preference.
+- Preserved fixed elements inside clipping ancestors, scaled widgets, closed offscreen drawers, scroll-triggered headers, and original inline CSS declarations during restoration.
+- Restored native right-click image actions in Pan previews, plus full-resolution copy/save actions in the editor and library. Preview actions include flattened edits and redactions, including after rotate/undo/redo.
+- Added automatic PDF paper/orientation recommendations and a live page estimate, 13 common paper formats, explicit orientation, and continuous image-sized pages.
+- Added capture-pixel, CSS restoration, preview/clipboard, PDF media-box, and layout regressions; two further Astra reviews and verification.
+
+## Capture Studio 2.0.0
+
+- Rebuilt the extension for Manifest V3 with a full-screen local capture and editing studio.
+- Added full-page, visible-area, and region capture with progress, delay, cancellation, restoration, and safe image splitting.
+- Added a searchable local library, import, autosave, version conflict recovery, annotations, redaction, crop, rotation, undo, and redo.
+- Added PNG/JPEG/WebP export and compression, multi-part ZIP export, paginated PDF export, and local PDF optimization/raster compression.
+- Bundled all runtime dependencies locally. No accounts, payments, watermarks, telemetry, or cloud uploads.
+- Added unit, browser, accessibility, and lifecycle regression checks; two Astra reviews and follow-up verification.
+- Requires Chrome 147+. Incognito support is explicitly disabled.
+
+## Original extension history
+
 Screen capture your current page in entirety and reliably!
 
 The simplest way to take a full page screenshot of your current browser window. Click on the extension in your browser bar (or press Alt+Shift+P), watch the extension catpure each part of the page, and be transported to a new tab of your image that you can right-click to save-as or just drag to your desktop. No bloat, just a simple way to turn a full web page into an image.
@@ -7,7 +93,6 @@ The only way to screenshot the entire page is to scroll to each visible part, so
 This is an open source project. Visit the Full Page Screen Capture Github page for more information, bug reports, or to contribute:
 
 https://github.com/mrcoles/full-page-screen-capture-chrome-extension
-
 
 Change Log:
 

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mail with a long reading pane</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font: 16px system-ui;
+      }
+      #mail-app {
+        position: fixed;
+        inset: 0;
+        background: rgb(235, 240, 248);
+      }
+      #app-toolbar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 88px;
+        padding: 24px;
+        background: rgb(175, 20, 50);
+        color: white;
+      }
+      #folders {
+        position: absolute;
+        top: 110px;
+        left: 24px;
+        width: 250px;
+        height: 760px;
+        overflow: auto;
+        background: rgb(25, 60, 90);
+        color: white;
+      }
+      #folders div {
+        height: 15000px;
+        padding: 24px;
+      }
+      #reading-pane {
+        position: absolute;
+        top: 120.5px;
+        left: 320.5px;
+        width: 1050px;
+        height: 760px;
+        overflow: auto;
+        border: 4px solid rgb(11, 22, 33);
+        border-radius: 24px;
+        scrollbar-gutter: stable;
+        background: white;
+      }
+      #message-heading {
+        position: sticky;
+        top: 0;
+        height: 48px;
+        background: rgb(118, 51, 188);
+        padding: 10px 40px;
+        color: white;
+        z-index: 3;
+      }
+      .message-row {
+        height: 120px;
+        padding: 20px 40px;
+      }
+      #message-end {
+        height: 32px;
+        background: rgb(230, 119, 72);
+      }
+      #pane-fixed-footer {
+        position: fixed;
+        left: 340.5px;
+        top: 852.5px;
+        width: 180px;
+        height: 24px;
+        background: rgb(214, 73, 140);
+        z-index: 5;
+      }
+      #toast {
+        position: fixed;
+        left: 624.5px;
+        top: 300.5px;
+        width: 100px;
+        height: 30px;
+        background: rgb(255, 0, 0);
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mail-app">
+      <header id="app-toolbar">Mail · Search · Account</header>
+      <nav id="folders" aria-label="Mail folders">
+        <div>Inbox · Sent · Archive · Labels</div>
+      </nav>
+      <main id="reading-pane" aria-label="Message reading pane">
+        <div id="message-heading">A long message</div>
+        <article id="message-body"></article>
+        <div id="message-end"></div>
+        <div id="pane-fixed-footer"></div>
+      </main>
+      <div id="toast"></div>
+    </div>
+    <script>
+      const colors = [
+        "rgb(40, 100, 160)",
+        "rgb(60, 150, 110)",
+        "rgb(190, 160, 70)",
+        "rgb(100, 130, 190)",
+      ];
+      const body = document.querySelector("#message-body");
+      for (let i = 0; i < 36; i++) {
+        const row = document.createElement("div");
+        row.className = "message-row";
+        row.style.background = colors[i % colors.length];
+        row.textContent = `Message section ${i + 1} · contents of a long email`;
+        body.append(row);
+      }
+    </script>
+  </body>
+</html>
