@@ -227,7 +227,14 @@ export async function exportGIF(
           pixels: pixels.buffer,
           width: canvas.width,
           height: canvas.height,
-          delay: 1000 / fps,
+          // GIF stores hundredths of a second. Distribute rounding across
+          // frames so 8/12 fps clips keep their selected total duration.
+          delay: Math.max(
+            10,
+            (Math.round(Math.min(end - start, (i + 1) / fps) * 100) -
+              Math.round((i / fps) * 100)) *
+              10,
+          ),
         },
         [pixels.buffer],
       );

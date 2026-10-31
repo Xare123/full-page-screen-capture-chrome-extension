@@ -283,6 +283,16 @@ test("real native camera recording persists chunks, pauses, survives hidden stud
     expect([gifBytes.readUInt16LE(6), gifBytes.readUInt16LE(8)]).toEqual([
       640, 480,
     ]);
+    const gifPath = join(dir, "clip.gif");
+    await writeFile(gifPath, gifBytes);
+    const gifInfo = JSON.parse(
+      execFileSync(
+        "ffprobe",
+        ["-v", "error", "-show_format", "-of", "json", gifPath],
+        { encoding: "utf8" },
+      ),
+    );
+    expect(Number(gifInfo.format.duration)).toBeCloseTo(1, 2);
     const frameWait = page.waitForEvent("download");
     await page
       .getByRole("button", { name: "Save frame PNG", exact: true })
