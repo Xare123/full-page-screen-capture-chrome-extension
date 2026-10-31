@@ -91,7 +91,7 @@ Your local workspace is not a backup. Export files you want to keep. Clearing ex
 
 - Screen, camera and microphone recording uses the browser's native chooser/consent. Shared audio and MP4 depend on browser/platform support; protected media may be blank. This is not a multitrack video editor. Trims export in real time; edited video output is bounded to 512 MB, and GIFs to 20 seconds/240 frames. Original recording chunks remain available.
 - A closed, sleeping or permission-revoked browser can delay reminders. They are local notifications, not email or synchronized reminders. Clearing browser data removes recordings, notes and boards too.
-- On-page redactions over moving fixed/sticky content, unverifiable generated overflow or changing source geometry stop full/element capture. Use visible/region capture, or redact after full capture in the studio. This safeguard prevents a shifted mask from exposing content. The embedded editor authenticates one source document and capture, and cannot enumerate the library.
+- Apply solid redaction after a full-page/element capture in the studio. On-page solid masks are supported for visible-area and selected-region captures with Clean capture off; those captures preserve the current layout. This boundary prevents scrolling or layout preparation from moving content outside a mask. The embedded editor authenticates one source document and capture, and cannot enumerate the library.
 
 - Chrome blocks capture scripting on browser settings, the Web Store, other extensions, and some built-in viewers. For `file://` pages, enable **Allow access to file URLs** in extension settings.
 - Incognito mode is explicitly disabled; captures are supported in regular browser profiles only.

@@ -217,7 +217,9 @@ test("real native camera recording persists chunks, pauses, survives hidden stud
         { encoding: "utf8" },
       ),
     );
-    expect(probe.streams[0]).toMatchObject({
+    expect(
+      probe.streams.find((stream) => stream.codec_type === "video"),
+    ).toMatchObject({
       codec_type: "video",
       width: 640,
       height: 480,
@@ -299,85 +301,97 @@ test.describe("native tab chooser", () => {
       "--auto-select-tab-capture-source-by-title=Capture Suite Source",
     ],
   });
-  test("native browser-tab region recording keeps crop geometry and includes a positioned camera bubble", async ({
-    studio,
-  }) => {
-    test.setTimeout(45000);
-    const { page, context, origin } = studio;
-    await context.grantPermissions(["camera", "microphone"]);
-    const source = await context.newPage();
-    await source.goto("http://127.0.0.1:4173");
-    await source.setContent(
-      "<title>Capture Suite Source</title><style>html,body{margin:0;width:100%;height:100%;background:linear-gradient(to right,#ef4444 50%,#2563eb 50%)}</style>",
-    );
-    await page.bringToFront();
-    await page.locator("#nav-recordings").click();
-    await page.locator("#record-source").selectOption("region");
-    await page.getByLabel("Camera bubble", { exact: true }).check();
-    await page
-      .getByRole("button", { name: "Choose source", exact: true })
-      .click();
-    await expect(
-      page.getByRole("button", { name: "Start recording", exact: true }),
-    ).toBeVisible({ timeout: 15000 });
-    const box = await page.locator("#record-ink").boundingBox();
-    await page.mouse.move(box.x + box.width * 0.5 + 1, box.y + 1);
-    await page.mouse.down();
-    await page.mouse.move(box.x + box.width - 1, box.y + box.height - 1);
-    await page.mouse.up();
-    await page
-      .getByRole("button", { name: "Start recording", exact: true })
-      .click();
-    await expect(page.locator("#record-state")).toContainText("Recording");
-    await source.bringToFront();
-    await page.waitForTimeout(1800);
-    await page.bringToFront();
-    await page.getByRole("button", { name: "Stop", exact: true }).click();
-    await expect(page.locator("#video-player")).toBeVisible();
-    const wait = page.waitForEvent("download");
-    await page
-      .getByRole("button", { name: "Download original", exact: true })
-      .click();
-    const file = await wait,
-      dir = await mkdtemp(join(tmpdir(), "capture-region-"));
-    try {
-      const path = join(dir, "region.webm");
-      await writeFile(path, await readFile(await file.path()));
-      const probe = JSON.parse(
-        execFileSync(
-          "ffprobe",
-          ["-v", "error", "-show_streams", "-of", "json", path],
-          { encoding: "utf8" },
-        ),
+  for (const recordingFormat of ["webm", "mp4"])
+    test(`native browser-tab region ${recordingFormat} keeps crop geometry and includes a positioned camera bubble`, async ({
+      studio,
+    }) => {
+      test.setTimeout(45000);
+      const { page, context, origin } = studio;
+      await context.grantPermissions(["camera", "microphone"]);
+      const source = await context.newPage();
+      await source.goto("http://127.0.0.1:4173");
+      await source.setContent(
+        "<title>Capture Suite Source</title><style>html,body{margin:0;width:100%;height:100%;background:linear-gradient(to right,#ef4444 50%,#2563eb 50%)}</style>",
       );
-      expect(probe.streams[0].width / probe.streams[0].height).toBeCloseTo(
-        0.75,
-        1,
-      );
-      expect(probe.streams[0].height).toBeLessThanOrEqual(1080);
-      execFileSync("ffmpeg", [
-        "-v",
-        "error",
-        "-i",
-        path,
-        "-frames:v",
-        "1",
-        "-f",
-        "image2",
-        join(dir, "frame.png"),
-      ]);
-      const { PNG } = await import("pngjs"),
-        png = PNG.sync.read(await readFile(join(dir, "frame.png"))),
-        at = (x, y) => [
-          ...png.data.subarray(
-            (Math.floor(y) * png.width + Math.floor(x)) * 4,
-            (Math.floor(y) * png.width + Math.floor(x)) * 4 + 3,
+      await page.bringToFront();
+      await page.locator("#nav-recordings").click();
+      if (recordingFormat === "mp4")
+        test.skip(
+          await page
+            .getByLabel("Format", { exact: true })
+            .locator('option[value="mp4"]')
+            .isDisabled(),
+          "Native MP4 encoding is unavailable on this browser/platform.",
+        );
+      await page
+        .getByLabel("Format", { exact: true })
+        .selectOption(recordingFormat);
+      await page.locator("#record-source").selectOption("region");
+      await page.getByLabel("Camera bubble", { exact: true }).check();
+      await page
+        .getByRole("button", { name: "Choose source", exact: true })
+        .click();
+      await expect(
+        page.getByRole("button", { name: "Start recording", exact: true }),
+      ).toBeVisible({ timeout: 15000 });
+      const box = await page.locator("#record-ink").boundingBox();
+      await page.mouse.move(box.x + box.width * 0.5 + 1, box.y + 1);
+      await page.mouse.down();
+      await page.mouse.move(box.x + box.width - 1, box.y + box.height - 1);
+      await page.mouse.up();
+      await page
+        .getByRole("button", { name: "Start recording", exact: true })
+        .click();
+      await expect(page.locator("#record-state")).toContainText("Recording");
+      await source.bringToFront();
+      await page.waitForTimeout(1800);
+      await page.bringToFront();
+      await page.getByRole("button", { name: "Stop", exact: true }).click();
+      await expect(page.locator("#video-player")).toBeVisible();
+      const wait = page.waitForEvent("download");
+      await page
+        .getByRole("button", { name: "Download original", exact: true })
+        .click();
+      const file = await wait,
+        dir = await mkdtemp(join(tmpdir(), "capture-region-"));
+      try {
+        const path = join(dir, `region.${recordingFormat}`);
+        await writeFile(path, await readFile(await file.path()));
+        const probe = JSON.parse(
+          execFileSync(
+            "ffprobe",
+            ["-v", "error", "-show_streams", "-of", "json", path],
+            { encoding: "utf8" },
           ),
-        ];
-      const pixel = at(png.width * 0.3, png.height * 0.3);
-      expect(pixel[2]).toBeGreaterThan(pixel[0] + 80);
-    } finally {
-      await rm(dir, { recursive: true, force: true });
-    }
-  });
+        );
+        expect(probe.streams[0].width / probe.streams[0].height).toBeCloseTo(
+          0.75,
+          1,
+        );
+        expect(probe.streams[0].height).toBeLessThanOrEqual(1080);
+        execFileSync("ffmpeg", [
+          "-v",
+          "error",
+          "-i",
+          path,
+          "-frames:v",
+          "1",
+          "-f",
+          "image2",
+          join(dir, "frame.png"),
+        ]);
+        const { PNG } = await import("pngjs"),
+          png = PNG.sync.read(await readFile(join(dir, "frame.png"))),
+          at = (x, y) => [
+            ...png.data.subarray(
+              (Math.floor(y) * png.width + Math.floor(x)) * 4,
+              (Math.floor(y) * png.width + Math.floor(x)) * 4 + 3,
+            ),
+          ];
+        const pixel = at(png.width * 0.3, png.height * 0.3);
+        expect(pixel[2]).toBeGreaterThan(pixel[0] + 80);
+      } finally {
+        await rm(dir, { recursive: true, force: true });
+      }
+    });
 });

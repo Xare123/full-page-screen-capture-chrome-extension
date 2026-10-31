@@ -47,7 +47,7 @@ async function captureEditor(studio, options) {
     .toBeTruthy();
   return editor;
 }
-test("on-page redactions become editable layers at the original email scroll position", async ({
+test("on-page drawings become editable layers at the original email scroll position", async ({
   studio,
 }) => {
   const { context, page } = studio,
@@ -65,7 +65,7 @@ test("on-page redactions become editable layers at the original email scroll pos
   });
   await source.bringToFront();
   await page.evaluate(() => chrome.runtime.sendMessage({ type: "CS_PRESENT" }));
-  await clickAX(context, source, "Redact");
+  await clickAX(context, source, "Rectangle");
   await source.mouse.move(950, 300);
   await source.mouse.down();
   await source.mouse.move(1150, 380);
@@ -78,20 +78,20 @@ test("on-page redactions become editable layers at the original email scroll pos
   );
   const project = await saved(editor);
   expect(
-    project.images[0].annotations.some((a) => a.type === "redact"),
+    project.images[0].annotations.some((a) => a.type === "rectangle"),
   ).toBeTruthy();
   const output = await exportFile(editor),
     png = PNG.sync.read(output.bytes),
     x = Math.round(1050 - origin.x),
-    y = Math.round(340 - origin.y + origin.scroll),
+    y = Math.round(300 - origin.y + origin.scroll),
     at = (x, y) => [
       ...png.data.subarray(
         (y * png.width + x) * 4,
         (y * png.width + x) * 4 + 4,
       ),
     ];
-  expect(at(x, y)).toEqual([17, 17, 17, 255]);
-  expect(at(x, y + 1000)).not.toEqual([17, 17, 17, 255]);
+  expect(at(x, y)).toEqual([121, 85, 232, 255]);
+  expect(at(x, y + 1000)).not.toEqual([121, 85, 232, 255]);
   expect(
     await source.locator("#reading-pane").evaluate((p) => p.scrollTop),
   ).toBe(333);
@@ -133,7 +133,7 @@ test("page annotation text stays inside the closed shadow and remains editable a
   await expect(editor.locator("#text-edit")).toBeEnabled();
 });
 
-for (const kind of ["fixed", "sticky", "overflow"])
+for (const kind of ["fixed", "sticky", "overflow", "closed-shadow"])
   test(`full capture refuses a displaced on-page mask over ${kind} content`, async ({
     studio,
   }) => {
@@ -144,12 +144,12 @@ for (const kind of ["fixed", "sticky", "overflow"])
         ? "http://127.0.0.1:4173/email"
         : "http://127.0.0.1:4173",
     );
-    if (kind === "fixed" || kind === "overflow") {
+    if (kind !== "sticky") {
       await source.setContent(
         "<style>body{height:4000px;margin:0}header{position:fixed;left:700px;top:200px;width:500px;height:80px;background:#fff}</style><header>PRIVATE FIXED LABEL</header><p>Long source fixture</p>",
       );
-      if (kind === "overflow")
-        await source.evaluate(() => {
+      if (["overflow", "closed-shadow"].includes(kind))
+        await source.evaluate((kind) => {
           const header = document.querySelector("header");
           header.style.cssText =
             "position:fixed;left:700px;top:200px;width:0;height:0";
@@ -158,8 +158,10 @@ for (const kind of ["fixed", "sticky", "overflow"])
           child.textContent = "SECRET";
           child.style.cssText =
             "position:absolute;left:50px;top:40px;width:30px;height:20px";
-          header.append(child);
-        });
+          if (kind === "closed-shadow")
+            header.attachShadow({ mode: "closed" }).append(child);
+          else header.append(child);
+        }, kind);
       await source.evaluate(() => scrollTo(0, 500));
     } else
       await source
@@ -170,12 +172,20 @@ for (const kind of ["fixed", "sticky", "overflow"])
       chrome.runtime.sendMessage({ type: "CS_PRESENT" }),
     );
     await clickAX(context, source, "Redact");
-    const y = kind === "sticky" ? 130 : kind === "overflow" ? 200 : 205;
-    await source.mouse.move(kind === "overflow" ? 700 : 800, y);
+    const y =
+      kind === "sticky"
+        ? 130
+        : ["overflow", "closed-shadow"].includes(kind)
+          ? 200
+          : 205;
+    await source.mouse.move(
+      ["overflow", "closed-shadow"].includes(kind) ? 700 : 800,
+      y,
+    );
     await source.mouse.down();
     await source.mouse.move(
-      kind === "overflow" ? 900 : 1100,
-      y + (kind === "overflow" ? 100 : 30),
+      ["overflow", "closed-shadow"].includes(kind) ? 900 : 1100,
+      y + (["overflow", "closed-shadow"].includes(kind) ? 100 : 30),
     );
     await source.mouse.up();
     await page.evaluate(() =>
@@ -198,7 +208,7 @@ for (const kind of ["fixed", "sticky", "overflow"])
         { timeout: 15000 },
       )
       .toBe("error");
-    expect(state.message).toContain("on-page redactions");
+    expect(state.message).toMatch(/on-page redactions/i);
     expect(
       context.pages().filter((p) => p.url().startsWith(`${origin}/app.html`)),
     ).toHaveLength(1);

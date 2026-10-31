@@ -1404,145 +1404,11 @@
     }
     hidePaneOverlays();
   }
-  function maskView(target) {
-    if (target) {
-      const box = clientBox(target);
-      return { left: box.x, top: box.y, ...scrollOffset(target) };
-    }
-    return captureView();
-  }
-  function maskPosition(node, target, range) {
-    const view = maskView(target),
-      r = range ? range.getBoundingClientRect() : node.getBoundingClientRect();
-    return {
-      x: r.x - view.left + view.x,
-      y: r.y - view.top + view.y,
-      width: r.width,
-      height: r.height,
-    };
-  }
-  function checkMaskAnchors() {
-    for (const anchor of saved?.maskAnchors || []) {
-      if (!anchor.node.isConnected)
-        throw new Error(
-          "Content under an on-page redaction changed. Use a visible capture or redact in the studio.",
-        );
-      const r = maskPosition(anchor.node, saved.target, anchor.range);
-      if (
-        ["x", "y", "width", "height"].some(
-          (key) => Math.abs(r[key] - anchor.rect[key]) > 0.75,
-        )
-      )
-        throw new Error(
-          "Content under an on-page redaction moved during full capture. Use a visible capture or redact in the studio.",
-        );
-    }
-  }
-  function prepareMaskAnchors(target, masks) {
-    if (!masks?.length) return [];
-    const anchors = new Map(),
-      rects = masks.map((r) => ({ ...r, x: r.x - scrollX, y: r.y - scrollY }));
-    const moving = target
-      ? target.querySelectorAll("*")
-      : document.querySelectorAll("body *");
-    const styles = new Map(),
-      movingTree = new Map();
-    const style = (node) => {
-      if (!styles.has(node)) styles.set(node, getComputedStyle(node));
-      return styles.get(node);
-    };
-    const inMovingTree = (node) => {
-      if (!node || node === target) return false;
-      if (!movingTree.has(node))
-        movingTree.set(
-          node,
-          ["fixed", "sticky"].includes(style(node).position) ||
-            inMovingTree(node.parentElement),
-        );
-      return movingTree.get(node);
-    };
-    const overlaps = (r) =>
-      r.width &&
-      r.height &&
-      rects.some(
-        (m) =>
-          m.x < r.right &&
-          m.x + m.width > r.left &&
-          m.y < r.bottom &&
-          m.y + m.height > r.top,
-      );
-    const refuse = () => {
-      throw new Error(
-        "Full capture cannot keep on-page redactions aligned over moving sticky or fixed content. Use Visible area, select a region, or redact the finished capture in the studio.",
-      );
-    };
-    for (const node of moving) {
-      const css = style(node);
-      if (
-        css.visibility === "hidden" ||
-        css.display === "none" ||
-        Number(css.opacity) === 0 ||
-        !inMovingTree(node)
-      )
-        continue;
-      // Overflowing descendants and text can paint beyond a zero-size fixed
-      // ancestor. Check their own paint bounds instead of sampling mask points.
-      if (overlaps(node.getBoundingClientRect())) refuse();
-      for (const text of node.childNodes)
-        if (text.nodeType === Node.TEXT_NODE && text.textContent.trim()) {
-          const range = document.createRange();
-          range.selectNodeContents(text);
-          if ([...range.getClientRects()].some(overlaps)) refuse();
-        }
-      // Generated overflow has no DOM rectangle. Its relocation cannot be
-      // verified reliably, so preserve privacy with the visible-capture fallback.
-      for (const pseudo of ["::before", "::after"]) {
-        const paint = getComputedStyle(node, pseudo);
-        if (
-          !["none", "normal"].includes(paint.content) &&
-          paint.visibility !== "hidden" &&
-          paint.display !== "none" &&
-          Number(paint.opacity) !== 0
-        )
-          refuse();
-      }
-    }
-    for (const r of rects)
-      for (const fx of [0.01, 0.5, 0.99])
-        for (const fy of [0.01, 0.5, 0.99]) {
-          const x = r.x + r.width * fx,
-            y = r.y + r.height * fy;
-          if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) continue;
-          const node = document
-            .elementsFromPoint(x, y)
-            .find(
-              (n) =>
-                !n.hasAttribute("data-capture-studio-presentation") &&
-                (!target || (n !== target && target.contains(n))),
-            );
-          if (node && !anchors.has(node)) {
-            let range;
-            if (!node.childElementCount && node.textContent.trim()) {
-              range = document.createRange();
-              range.selectNodeContents(node);
-            }
-            anchors.set(node, {
-              node,
-              range,
-              rect: maskPosition(node, target, range),
-            });
-          }
-        }
-    return [...anchors.values()];
-  }
   async function prepare(message) {
     const target = message.mode === "full" ? selectedTarget : null;
     const element = message.mode === "full" ? selectedElement : null;
-    const maskAnchors =
-      message.mode === "full"
-        ? prepareMaskAnchors(target, message.presentationRedactions)
-        : [];
     restore();
+    if (message.preserveLayout && message.mode !== "full") return dimensions();
     const style = document.createElement("style");
     style.textContent =
       "html{scroll-behavior:auto!important;scroll-snap-type:none!important}*{animation-play-state:paused!important;transition:none!important;caret-color:transparent!important;scroll-behavior:auto!important;scroll-snap-type:none!important}::-webkit-scrollbar{display:none!important}";
@@ -1561,7 +1427,6 @@
       paintStyles: new Map(),
       paintPrefix: `cs-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
       target,
-      maskAnchors,
       originalPane: target
         ? {
             box: clientBox(target),
@@ -1673,7 +1538,6 @@
       await wait(100);
     }
     if (saved !== session) throw new Error("Capture was cancelled.");
-    checkMaskAnchors();
     return dimensions();
   }
   async function scroll(message) {
@@ -1717,7 +1581,6 @@
     if (!saved)
       throw new Error("The capture session expired. Please try again.");
     arm();
-    checkMaskAnchors();
     const { x, y } = captureView();
     return {
       ...dimensions(),
@@ -1798,7 +1661,10 @@
     )
       return;
     const execute = async () => {
-      if (message.type === "CS_PAGE_PING") return true;
+      if (message.type === "CS_PAGE_PING")
+        return {
+          presentationActive: Boolean(globalThis.__captureStudioPresentation),
+        };
       if (message.type === "CS_PAGE_SELECT_ELEMENT") return selectElement();
       if (message.type === "CS_PAGE_PREPARE") return prepare(message);
       if (message.type === "CS_PAGE_TARGET")

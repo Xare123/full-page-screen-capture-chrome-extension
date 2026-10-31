@@ -7,7 +7,7 @@
 - Add separate 100-page whiteboards with templates, editable JSON, privacy-safe flattening, page management and progressive presentations; add notes with search/pins/Done/source links and optional browser reminders.
 - Add configurable page tools, spotlight, pointer, fading ink, lesson reveal, clock/countdown, snapshot zoom, searchable guide and custom drawing keys.
 - Add element capture, optional clean mode, completed-area Stop & edit and a document/project-scoped on-page region editor with tab fallback.
-- Transfer on-page annotations into editable screenshot layers. Keep redactions opaque, include active drafts, mask thumbnails, and refuse unsafe full captures when fixed/sticky or changing geometry would displace a mask.
+- Transfer on-page annotations into editable screenshot layers. Keep redactions opaque, include active drafts, mask thumbnails, and require studio-applied redaction for full/element captures; preserve visible/region mask layouts with Clean capture off.
 - Add callouts, selection/movement/resizing/duplication/deletion for drawing objects, reversible backgrounds/browser frames and explicit sharing actions.
 - Retain complete single-file image compression, all PDF sizes and local existing-PDF compression. Preserve existing capture data and permissions; reminders use optional alarms/notifications.
 

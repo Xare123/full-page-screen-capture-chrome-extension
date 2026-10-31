@@ -331,6 +331,7 @@ export function createRecorder({ toast, fail, importFrame }) {
     sync();
   }
   async function startRecording() {
+    if (session?.state !== "ready") return;
     if (source.value === "region" && !region)
       throw new Error("Drag a region on the preview first.");
     try {

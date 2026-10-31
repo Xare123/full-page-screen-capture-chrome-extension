@@ -220,13 +220,18 @@ export function createSuite(context) {
   );
   document.body.append(finishes);
   async function openShare() {
-    const blob = await context.snapshot(),
-      name = `${context.project().title}.png`,
+    const target = context.project();
+    const blob = await context.snapshot();
+    if (context.project() !== target)
+      throw new Error(
+        "The capture changed. Open Share again for the current image.",
+      );
+    const name = `${target.title}.png`,
       file = new File([blob], name, { type: "image/png" }),
       dialog = el(
         "dialog",
         { className: "suite-dialog" },
-        el("h2", {}, "Share your image"),
+        el("h2", {}, `Share ${target.title}`),
         el(
           "p",
           {},
@@ -235,7 +240,7 @@ export function createSuite(context) {
       );
     const native = button("Share file…", () => {
       void navigator
-        .share({ files: [file], title: context.project().title })
+        .share({ files: [file], title: target.title })
         .catch((error) => {
           if (error.name !== "AbortError") fail(error);
         });

@@ -10,7 +10,7 @@ export const GUIDE = [
   ],
   [
     "Text and privacy",
-    "Text starts with a transparent background and a locally bundled Inter font. Change text color, font and background after placement. Solid redactions draw last in every export. Pixelation is a visual effect; use solid redaction for private content.",
+    "Text starts with a transparent background and a locally bundled Inter font. Change text color, font and background after placement. Solid redactions draw last in every export. For full/element captures, redact in the finished studio capture. On-page masks work in visible/region captures with Clean capture off. Pixelation is a visual effect; use solid redaction for private content.",
   ],
   [
     "Compression and PDF",

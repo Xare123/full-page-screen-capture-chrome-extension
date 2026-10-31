@@ -44,7 +44,7 @@ Capture, recording, OCR, editing, notes, compression and storage happen in your 
 
 Requires Chrome 147 or newer. Chrome-protected pages and incognito capture are not supported. Pane detection does not traverse embedded frames or shadow-root scrollers. Very dynamic, transformed or clipped layouts can have capture limits. Export important files as a backup: uninstalling or clearing extension data removes your local library.
 
-Native recording/audio/MP4 and sharing vary by browser and platform. Trims export in real time; GIFs support up to 20 seconds. Reminders need the browser available. Full captures stop if moving content prevents safe alignment of an on-page redaction; use visible/region capture or redact afterward in the studio.
+Native recording/audio/MP4 and sharing vary by browser and platform. Trims export in real time; GIFs support up to 20 seconds. Reminders need the browser available. Apply solid redaction after full/element capture in the studio. On-page masks work for visible/region capture with Clean capture off.
 
 Use solid redaction for sensitive information. Editable originals remain locally until deleted. Raster PDF compression creates image-based copies and removes searchable text, links, forms, annotations and signatures; keep originals when these matter.
 

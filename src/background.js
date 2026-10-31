@@ -48,6 +48,7 @@ async function assertActive(job) {
     throw new Error(
       "Capture stopped because the page or active tab changed. Keep the source tab open and try again.",
     );
+  if (job.documentId) await pageMessage(job.tab.id, "PING");
   return tab;
 }
 async function runCapture(job) {
@@ -78,6 +79,7 @@ async function runCapture(job) {
     });
     job.documentId = injection?.[0]?.documentId;
     injected = true;
+    const pageToolsState = await pageMessage(job.tab.id, "PING");
     job.presentation = await chrome.tabs
       .sendMessage(
         job.tab.id,
@@ -85,6 +87,21 @@ async function runCapture(job) {
         { documentId: job.documentId },
       )
       .catch(() => null);
+    if (pageToolsState?.presentationActive && !job.presentation?.ok)
+      throw new Error(
+        "Page tools could not prepare a safe capture. Reload the webpage and try again.",
+      );
+    const onPageMasks = (job.presentation?.annotations || []).filter(
+      (a) => a.type === "redact",
+    );
+    if (onPageMasks.length && ["full", "element"].includes(job.mode))
+      throw new Error(
+        "On-page redactions are supported in Visible area and selected-region captures. For a full-page or element capture, add redactions in the studio after capture.",
+      );
+    if (onPageMasks.length && job.clean)
+      throw new Error(
+        "Turn off Clean capture to keep on-page redactions aligned, or add redactions in the studio after capture.",
+      );
     await assertActive(job);
     let region;
     if (job.mode === "element") {
@@ -131,9 +148,7 @@ async function runCapture(job) {
     const dimensions = await pageMessage(job.tab.id, "PREPARE", {
       mode: job.mode === "element" ? "full" : job.mode,
       clean: job.clean,
-      presentationRedactions: (job.presentation?.annotations || [])
-        .filter((a) => a.type === "redact")
-        .map(redactionBounds),
+      preserveLayout: onPageMasks.length > 0,
       bars: job.bars,
     });
     const full = ["full", "element"].includes(job.mode);
@@ -493,7 +508,8 @@ async function runCapture(job) {
     await assertActive(job);
     await putProject({
       id,
-      title: job.tab.title || "Untitled capture",
+      title:
+        (job.tab.title || "Untitled capture") + (stopped ? " (partial)" : ""),
       source: job.tab.url,
       thumbnail,
       created: Date.now(),

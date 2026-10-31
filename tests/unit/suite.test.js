@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { completedRectangle } from "../../src/capture-coverage.js";
 import {
   fitVideo,
+  containedVideoRect,
   videoRegion,
   validateTrim,
   videoExtension,
@@ -147,4 +148,24 @@ test("affine object transforms keep solid mask coverage conservative", () => {
       r.x + r.width >= original.x + original.width &&
       r.y + r.height >= original.y + original.height,
   );
+});
+
+test("rounded video/GIF output dimensions contain the complete source without stretching", () => {
+  for (const [w, h] of [
+    [1, 16000],
+    [16000, 1],
+    [319, 601],
+    [1920, 1080],
+    [1080, 1920],
+  ]) {
+    const out = fitVideo(w, h, 720),
+      r = containedVideoRect(w, h, out.width, out.height);
+    assert.ok(
+      r.x >= -1e-9 &&
+        r.y >= -1e-9 &&
+        r.x + r.width <= out.width + 1e-9 &&
+        r.y + r.height <= out.height + 1e-9,
+    );
+    assert.ok(Math.abs(r.width / r.height - w / h) < 1e-8);
+  }
 });

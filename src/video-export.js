@@ -1,6 +1,7 @@
 import {
   supportedVideoMime,
   fitVideo,
+  containedVideoRect,
   validateTrim,
   seekableWebM,
 } from "./media-core.js";
@@ -211,7 +212,13 @@ export async function exportGIF(
       await seekVideo(video, Math.min(end - 0.001, start + i / fps));
       ctx.fillStyle = "#fff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const fitted = containedVideoRect(
+        video.videoWidth,
+        video.videoHeight,
+        canvas.width,
+        canvas.height,
+      );
+      ctx.drawImage(video, fitted.x, fitted.y, fitted.width, fitted.height);
       const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data,
         ready = wait("frame");
       worker.postMessage(

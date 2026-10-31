@@ -4,7 +4,9 @@ export const VIDEO_MIMES = {
     "video/webm;codecs=vp8,opus",
     "video/webm",
   ],
-  mp4: ["video/mp4;codecs=avc1.42001E,mp4a.40.2", "video/mp4"],
+  // Let the browser choose a supported codec/profile for the actual dimensions.
+  // A fixed low H.264 level can advertise support but fail at larger resolutions.
+  mp4: ["video/mp4"],
 };
 export function supportedVideoMime(
   format = "webm",
@@ -31,6 +33,17 @@ export function fitVideo(width, height, maxHeight = 1080) {
   return {
     width: Math.max(2, Math.round((width * scale) / 2) * 2),
     height: Math.max(2, Math.round((height * scale) / 2) * 2),
+  };
+}
+export function containedVideoRect(width, height, targetWidth, targetHeight) {
+  const scale = Math.min(targetWidth / width, targetHeight / height),
+    w = width * scale,
+    h = height * scale;
+  return {
+    x: (targetWidth - w) / 2,
+    y: (targetHeight - h) / 2,
+    width: w,
+    height: h,
   };
 }
 export function videoRegion(region, width, height) {

@@ -198,6 +198,10 @@ function fail(error) {
 }
 async function busy(label, callback) {
   if (working) return;
+  if (pendingMask()) {
+    toast("Finish placing the redaction before exporting or copying.");
+    return;
+  }
   if ((await finishText()) === false) return;
   if (working) return;
   cancelGesture();
@@ -221,6 +225,13 @@ async function busy(label, callback) {
 }
 function image() {
   return project?.images[part];
+}
+function pendingMask() {
+  return (
+    draft?.type === "redact" ||
+    objectDraft?.type === "redact" ||
+    drag?.original?.type === "redact"
+  );
 }
 function invalidateExport() {
   exportCache = null;
@@ -988,6 +999,10 @@ function syncPreviewLayers() {
   overlay.tabIndex = tool === "select" ? -1 : 0;
 }
 async function flattenedPNG(record) {
+  if (record === image() && pendingMask())
+    throw new Error(
+      "Finish placing the redaction before exporting or copying.",
+    );
   if (
     !record.annotations?.length &&
     !record.crop &&
@@ -2175,6 +2190,10 @@ function copyImage(source) {
   });
 }
 function cropExportBlocked(source) {
+  if (!source?.id && pendingMask()) {
+    toast("Finish placing the redaction before exporting or copying.");
+    return true;
+  }
   if (!source?.id && tool === "crop" && cropPreview) {
     toast("Apply or cancel the crop before exporting or copying.");
     return true;
@@ -2628,18 +2647,34 @@ if (!embedded) {
     },
     openProject,
     commit: async () => {
+      if (pendingMask())
+        throw new Error(
+          "Finish placing the redaction before exporting or copying.",
+        );
       if ((await finishText()) === false)
         throw new Error("Finish composing text first.");
       await flushSaves();
       if (cropPreview) throw new Error("Apply or cancel the crop first.");
     },
     snapshot: async () => {
+      const target = project;
+      if (pendingMask())
+        throw new Error(
+          "Finish placing the redaction before exporting or copying.",
+        );
       if ((await finishText()) === false)
         throw new Error("Finish composing text first.");
       await flushSaves();
       if (cropPreview) throw new Error("Apply or cancel the crop first.");
-      if (!image()) throw new Error("Open an image first.");
-      return flattenedPNG(image());
+      if (!target || project !== target || !image())
+        throw new Error(
+          "The capture changed. Open the tool again for the current image.",
+        );
+      if (pendingMask())
+        throw new Error(
+          "Finish placing the redaction before exporting or copying.",
+        );
+      return flattenedPNG(structuredClone(image()));
     },
     importImage: async (blob, title) => {
       await importFiles([

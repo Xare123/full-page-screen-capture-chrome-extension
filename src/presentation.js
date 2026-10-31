@@ -887,6 +887,20 @@ import { setTextMeasurementRoot } from "./native-text-layout.js";
       respond({ ok: true });
     }
   });
+  globalThis.__captureStudioPresentation = {
+    toggle: () => {
+      visible = !visible;
+      host.style.setProperty(
+        "display",
+        visible ? "block" : "none",
+        "important",
+      );
+      if (!visible) {
+        select("interact");
+        endZoom();
+      }
+    },
+  };
   const loaded = await chrome.storage.local.get(["pageToolbar", "drawingKeys"]);
   if (loaded.pageToolbar) {
     const next = loaded.pageToolbar;
@@ -902,20 +916,6 @@ import { setTextMeasurementRoot } from "./native-text-layout.js";
   applySettings();
   fit();
   select("interact");
-  globalThis.__captureStudioPresentation = {
-    toggle: () => {
-      visible = !visible;
-      host.style.setProperty(
-        "display",
-        visible ? "block" : "none",
-        "important",
-      );
-      if (!visible) {
-        select("interact");
-        endZoom();
-      }
-    },
-  };
   window.addEventListener(
     "pagehide",
     (event) => {
