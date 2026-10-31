@@ -1,0 +1,284 @@
+{
+  "version": "3.1.0",
+  "status": "verified",
+  "observedAtUTC": "2026-10-31T17:16:45.635022+00:00",
+  "runtimeCommit": "7d7a9bd9a4ca947c2f87b6ed4adf3d38b28c99b5",
+  "runtimeSourceTree": "c751b645bbca0f2e9939a646f0efd05a266483f3",
+  "ci": {
+    "runId": 41222673160,
+    "status": "completed",
+    "conclusion": "success",
+    "workflowPath": ".github/workflows/verify.yml",
+    "url": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41222673160",
+    "jobs": [
+      {
+        "id": 124600300519,
+        "name": "verify (1)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300257,
+        "name": "verify (2)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300501,
+        "name": "verify (3)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300418,
+        "name": "text",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300311,
+        "name": "compression (PNG)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300326,
+        "name": "compression (WebP)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300337,
+        "name": "compression (AVIF)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300455,
+        "name": "compression (JPEG)",
+        "conclusion": "success"
+      },
+      {
+        "id": 124600300476,
+        "name": "compression (GIF)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "checks": {
+    "unit": 45,
+    "newNativeRecordingCompressionCases": 20,
+    "newResponsiveAndSuiteAccessibilityCases": 8,
+    "nativeCasesInclude": [
+      "WebM and MP4 inputs, each to WebM and MP4 output",
+      "Landscape, portrait, ultrawide and smaller-than-preset geometry",
+      "Decoded corner markers retain every source edge",
+      "Video packet DTS monotonicity and full video/audio decode",
+      "Audio retention, mute, trim, frame-rate cadence",
+      "Exact preview/download bytes, original byte identity",
+      "Cancellation/retry and leaving during active encoding"
+    ],
+    "parallelExtensionScenarios": 363,
+    "isolatedCadenceScenarios": 2,
+    "totalExtensionScenarios": 365,
+    "renderingEngineScenarios": 75,
+    "focusedEditorScenarios": 35,
+    "focusedEditorAlreadyIncluded": true,
+    "productionPackageSmoke": "passed"
+  },
+  "reviews": {
+    "astraUISetup": "approved",
+    "astraMediaLifecycleStoragePrivacy": "approved",
+    "approvedRuntimeCommit": "7d7a9bd9a4ca947c2f87b6ed4adf3d38b28c99b5",
+    "approvedRuntimeSourceTree": "c751b645bbca0f2e9939a646f0efd05a266483f3"
+  },
+  "limits": [
+    "Video bitrates and frame rates are encoder targets. Native MP4, shared audio and sharing depend on the browser/platform.",
+    "Compression plays the selected clip in real time and retains a bounded result up to 512 MB. The original stays in the local library; already compact videos may grow.",
+    "Automated camera/microphone feeds are synthetic. Browser-tab capture, native codecs, IndexedDB, image/PDF rendering and downloads use real browser APIs. Physical devices and every OS chooser are not established by these tests.",
+    "Full/element captures require applying solid redaction afterward in the studio. Visible/region on-page masks require Clean off and preserved page layout.",
+    "OCR is local English/Spanish/Arabic recognition and requires reviewing the result.",
+    "Google Drive account linking is excluded; explicit native/local sharing remains included."
+  ],
+  "longRecordingStress": {
+    "runId": "91dc4318-9900-45ed-9b16-dd4b45831a6a",
+    "startedAtUTC": "2026-10-31T17:08:35.488Z",
+    "sourceCommit": "7d7a9bd9a4ca947c2f87b6ed4adf3d38b28c99b5",
+    "bundleSHA256": {
+      "app.js": "6752bc7d4a28ffc2166cc38c1ef52c6b04699f168edd7ccf48299a880c8fe63f",
+      "recording-worker.js": "3ba079d8edcbd73e4e0ede42ec236220dff91914e5405401413ec54cd57ec39f",
+      "manifest.json": "059b38c5cb66ee0fd696e27dd3056431b0a4ffd76e99660c8bfb441ffabe2095"
+    },
+    "scriptSHA256": "e358271cb4aff968fd3315444c29e00904be33174b8d35ef81f8449b688e51f4",
+    "version": "3.1.0",
+    "releaseManifestUnmodified": true,
+    "status": "passed",
+    "browser": "156.0.8078.4",
+    "hiddenSeconds": 360,
+    "quietElapsedSeconds": 360.002,
+    "visibilityEvents": [],
+    "averageFramesPerSecond": 29.422214326952968,
+    "quietStaticBrowserTab": true,
+    "headedChrome": true,
+    "backgroundThrottlingBypassesRemoved": true,
+    "focusEmulationDisabled": true,
+    "setupOnlyFocusEmulation": true,
+    "playwrightNoDefaults": true,
+    "camera": false,
+    "audio": false,
+    "noExplicitStudioCallsDuringInterval": true,
+    "everyEncodedPacketDecoded": true,
+    "packetCount": 10601,
+    "videoSpanSeconds": 360.272,
+    "maximumPacketGapSeconds": 0.1530000000000058,
+    "dimensions": {
+      "codec_name": "vp9",
+      "width": 1280,
+      "height": 720,
+      "nb_read_frames": "10601",
+      "disposition": {
+        "default": 1,
+        "dub": 0,
+        "original": 0,
+        "comment": 0,
+        "lyrics": 0,
+        "karaoke": 0,
+        "forced": 0,
+        "hearing_impaired": 0,
+        "visual_impaired": 0,
+        "clean_effects": 0,
+        "attached_pic": 0,
+        "timed_thumbnails": 0,
+        "non_diegetic": 0,
+        "captions": 0,
+        "descriptions": 0,
+        "metadata": 0,
+        "dependent": 0,
+        "still_image": 0,
+        "multilayer": 0
+      },
+      "tags": {
+        "language": "eng",
+        "alpha_mode": "1"
+      }
+    },
+    "committedChunksAtCompletion": 354,
+    "bytes": 3406186,
+    "sha256": "3b5262f41e38fadfadff9e177aae44ccbd07c66c6f9ceedda5e089289f6df3b3"
+  },
+  "compression": {
+    "ciRunId": 41222673160,
+    "status": "passed",
+    "configurations": 7835,
+    "sweeps": 20,
+    "inputs": [
+      {
+        "input": "WebP",
+        "sweeps": 4,
+        "configurations": 1567,
+        "artifactId": 13050762477,
+        "reportSHA256": "cfc4f70299eee35028a52f11ddb25a5c6031172e863a6675de0fce9cffa8ed23"
+      },
+      {
+        "input": "GIF",
+        "sweeps": 4,
+        "configurations": 1567,
+        "artifactId": 13050493650,
+        "reportSHA256": "a3d9065a924aac119d3acfaaea625ebd09e833475ccb1e61cf427fd6dd29246b"
+      },
+      {
+        "input": "JPEG",
+        "sweeps": 4,
+        "configurations": 1567,
+        "artifactId": 13050423892,
+        "reportSHA256": "68ff4c71fda380f80a66278041e4356b2175f3d23fa9b8a5babdf2b0ba63474a"
+      },
+      {
+        "input": "PNG",
+        "sweeps": 4,
+        "configurations": 1567,
+        "artifactId": 13050282855,
+        "reportSHA256": "064679450af650608bfac35afd1d3918765397d35db504c4725d65d1f31fd399"
+      },
+      {
+        "input": "AVIF",
+        "sweeps": 4,
+        "configurations": 1567,
+        "artifactId": 13049964533,
+        "reportSHA256": "28e40c437dbc0942e09c024cfb841ea490c16117b47ae2edf6fc44077038a4b8"
+      }
+    ],
+    "scope": "The full sweep validates emitted export payloads across PNG/JPEG/WebP/GIF/AVIF inputs and PNG/JPEG/WebP/PDF outputs, not 7,835 operating-system Save dialogs. Existing scenarios also exercise actual browser downloads and existing-PDF compression."
+  },
+  "browserVersionMatrix": {
+    "runtimeCommit": "7d7a9bd9a4ca947c2f87b6ed4adf3d38b28c99b5",
+    "browsers": [
+      "147.0.7727.117",
+      "155.0.8059.84"
+    ],
+    "stages": [
+      {
+        "stage": "functional",
+        "stats": {
+          "startTime": "2026-10-31T17:08:37.055Z",
+          "duration": 147272.329,
+          "expected": 68,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "rawReportSHA256": "e34bd7bd2dd80bf59b1dcf879956ba0cae1ae6d364d19b1cfba3ce932a80ffa9"
+      },
+      {
+        "stage": "cadence",
+        "stats": {
+          "startTime": "2026-10-31T17:11:05.118Z",
+          "duration": 39364.47,
+          "expected": 4,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "rawReportSHA256": "52295fbcb1e75690df32b5560a640b274e14ac87280d6583163c9c2bb8a2dfa3"
+      }
+    ],
+    "totalPassed": 72,
+    "overlapsMainExtensionSuite": true,
+    "cadenceMethod": "Strict cadence assertions run sequentially without competing encodes. Parallel tests exercise functional integrity under contention."
+  },
+  "additionalNativeGeometryProbe": {
+    "runtimeCommit": "7d7a9bd9a4ca947c2f87b6ed4adf3d38b28c99b5",
+    "runtimeSourceTree": "c751b645bbca0f2e9939a646f0efd05a266483f3",
+    "bundleSHA256": {
+      "app.js": "6752bc7d4a28ffc2166cc38c1ef52c6b04699f168edd7ccf48299a880c8fe63f",
+      "recording-worker.js": "3ba079d8edcbd73e4e0ede42ec236220dff91914e5405401413ec54cd57ec39f",
+      "manifest.json": "059b38c5cb66ee0fd696e27dd3056431b0a4ffd76e99660c8bfb441ffabe2095"
+    },
+    "source": "synthetic native H264 MP4 fixtures",
+    "cases": [
+      {
+        "name": "phone-rotation",
+        "sourceDimensions": {
+          "width": 360,
+          "height": 640
+        },
+        "output": {
+          "width": 270,
+          "height": 480
+        },
+        "frames": 46,
+        "fourCorners": true,
+        "fullDecode": true
+      },
+      {
+        "name": "4K",
+        "sourceDimensions": {
+          "width": 3840,
+          "height": 2160
+        },
+        "output": {
+          "width": 1280,
+          "height": 720
+        },
+        "frames": 70,
+        "fourCorners": true,
+        "fullDecode": true
+      }
+    ],
+    "status": "passed",
+    "browser": "156.0.8078.4"
+  }
+}

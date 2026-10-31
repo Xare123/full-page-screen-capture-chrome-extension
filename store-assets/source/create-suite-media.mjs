@@ -134,6 +134,12 @@ try {
     timeout: 20000,
   });
   await page.locator(".video-compression").scrollIntoViewIfNeeded();
+  await page.locator("#compressed-video").evaluate(async (video) => {
+    video.muted = true;
+    await video.play();
+    await new Promise((resolve) => video.requestVideoFrameCallback(resolve));
+    video.pause();
+  });
   await shot("video-compression");
   if (errors.length) throw Error(errors.join("\n"));
 } finally {
