@@ -1,3 +1,4 @@
+import { videoFrameSlot } from "./media-core.js";
 let canvas,
   ctx,
   options,
@@ -109,7 +110,7 @@ self.onmessage = async ({ data }) => {
       await liveFrames();
       return;
     }
-    let nextExportTimestamp = 0;
+    let lastExportSlot = -1;
     while (!stopped) {
       const { done, value: frame } = await sourceReader.read();
       if (done) break;
@@ -124,11 +125,13 @@ self.onmessage = async ({ data }) => {
           break;
         }
         if (options.fps) {
-          const relative = frame.timestamp - firstTimestamp,
-            period = 1e6 / options.fps;
-          if (relative + 500 < nextExportTimestamp) continue;
-          nextExportTimestamp =
-            (Math.floor((relative + 500) / period) + 1) * period;
+          const slot = videoFrameSlot(
+            frame.timestamp,
+            firstTimestamp,
+            options.fps,
+          );
+          if (slot <= lastExportSlot) continue;
+          lastExportSlot = slot;
         }
         output = compose(frame, frame.timestamp, frame.duration || undefined);
         await writer.write(output);

@@ -336,6 +336,13 @@ export function createRecorder({ toast, fail, importFrame }) {
       try {
         if (file.size > 1024 * 1024 * 1024)
           throw new Error("Import a video below 1 GB.");
+        if (locked || (session && !["idle", "stopped"].includes(session.state)))
+          throw new Error(
+            "Finish the current recording or export before importing a video.",
+          );
+        edit.hidden = true;
+        record = null;
+        clearCompressed();
         const created = await importRecording(file),
           id = created.id;
         await open(id);
@@ -673,6 +680,8 @@ export function createRecorder({ toast, fail, importFrame }) {
     if (!next.nextChunk) throw new Error("No recording chunks were saved.");
     const generation = ++operation;
     clearCompressed();
+    edit.hidden = true;
+    record = null;
     let blob = await recordingBlob(next);
     blob = await seekableWebM(blob, next.duration);
     if (generation !== operation) return;
@@ -718,9 +727,12 @@ export function createRecorder({ toast, fail, importFrame }) {
   }
   async function original() {
     if (!record) return;
+    const target = record,
+      name =
+        record.originalName || `${title.value}.${videoExtension(record.mime)}`;
     downloadBlob(
-      await seekableWebM(await recordingBlob(record), record.duration),
-      record.originalName || `${title.value}.${videoExtension(record.mime)}`,
+      await seekableWebM(await recordingBlob(target), target.duration),
+      name,
     );
   }
   async function render(gif = false, compress = false) {

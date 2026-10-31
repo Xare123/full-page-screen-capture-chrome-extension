@@ -221,3 +221,23 @@ test("canceling metadata and seek waits removes every owned media listener", asy
     video.dispatchEvent(new Event("seeked"));
   }
 });
+
+test("video frame-rate slots retain matching cadence under source timestamp jitter", async () => {
+  const { videoFrameSlot } = await import("../../src/media-core.js");
+  for (const target of [15, 24, 30]) {
+    let last = -1,
+      count = 0;
+    for (let i = 0; i < 300; i++) {
+      const time = (i * 1e6) / 30 + (i === 0 ? 0 : i % 2 ? 2000 : -2000),
+        slot = videoFrameSlot(time, 0, target);
+      if (slot > last) {
+        last = slot;
+        count++;
+      }
+    }
+    assert.ok(
+      Math.abs(count - target * 10) <= 1,
+      `${target}fps: ${count} frames`,
+    );
+  }
+});

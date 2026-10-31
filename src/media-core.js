@@ -45,6 +45,11 @@ export function validateVideoEncoding({
     throw new Error("Choose a supported resolution, frame rate and bitrate.");
   return { height, fps, videoBitsPerSecond, audioBitsPerSecond };
 }
+// Pick the nearest output time slot. Small source-clock jitter must not drop
+// half the frames when input and target rates match.
+export function videoFrameSlot(timestamp, origin, fps) {
+  return Math.floor(((timestamp - origin) * fps) / 1e6 + 0.5);
+}
 export function supportedVideoMime(
   format = "webm",
   supported = (type) => MediaRecorder.isTypeSupported(type),
