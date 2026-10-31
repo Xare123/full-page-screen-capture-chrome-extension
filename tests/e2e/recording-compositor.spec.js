@@ -114,17 +114,19 @@ test("one static source frame survives delayed encoder startup and keeps camera 
       ),
     );
     expect(Number(probe.streams[0].nb_read_frames)).toBeGreaterThan(15);
-    for (const [time, name] of [
+    // Native muxers normalize the start offset differently. Inspect actual
+    // decoded frame indices rather than assuming a particular duration header.
+    for (const [index, name] of [
       [0, "first"],
-      [0.9, "last"],
+      [Number(probe.streams[0].nb_read_frames) - 1, "last"],
     ])
       execFileSync("ffmpeg", [
         "-v",
         "error",
         "-i",
         path,
-        "-ss",
-        String(time),
+        "-vf",
+        `select='eq(n,${index})'`,
         "-frames:v",
         "1",
         join(dir, `${name}.png`),
