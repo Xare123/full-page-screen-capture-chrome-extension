@@ -3,7 +3,7 @@
 - Type and edit text directly on the image, with a native caret, selection, multiline input, paste and typing undo. Remove the text-entry modal.
 - Default new text to locally bundled Inter, dark charcoal, and a transparent background. Change its font, size, foreground or background after placement; clear the background again at any time.
 - Keep typing and style changes in one cancellable transaction. Commit before export, copy, transforms, or navigation; wait for the final input-method composition without losing clipboard activation.
-- Match browser wrapping and Unicode text geometry during editing and export; preserve existing annotation layers and final redactions above active text.
+- Match browser wrapping and full-paragraph Unicode direction during editing and export, including mixed-direction soft wraps and explicit overrides; preserve existing annotation layers and final redactions above active text.
 - Retain movement, resizing, post-capture cropping, legacy project rendering, and the existing local-only permissions.
 
 # Capture Studio 2.3.0

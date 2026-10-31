@@ -7,6 +7,7 @@ import { join, dirname } from "node:path";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 
+await mkdir("artifacts", { recursive: true });
 const version = JSON.parse(await readFile("package.json", "utf8")).version;
 const archive = await readFile(`release/capture-studio-${version}.zip`);
 const entries = unzipSync(archive);

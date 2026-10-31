@@ -4,8 +4,10 @@ import hashlib
 import json
 
 version=json.loads(Path('manifest.json').read_text())['version']
+Path('release').mkdir(exist_ok=True)
+Path('artifacts').mkdir(exist_ok=True)
 root=Path.cwd()
-root_files=['.gitignore','README.md','CHANGES.md','LICENSE','manifest.json','package.json','package-lock.json','playwright.config.js','archiver.sh','icon16.png','icon48.png','icon128.png']
+root_files=['.gitattributes','.gitignore','README.md','CHANGES.md','LICENSE','manifest.json','package.json','package-lock.json','playwright.config.js','archiver.sh','icon16.png','icon48.png','icon128.png']
 paths=[root/name for name in root_files]
 for folder in ['src','tests','scripts','docs','.github','website']:
     paths.extend(p for p in (root/folder).rglob('*') if p.is_file())

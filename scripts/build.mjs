@@ -68,7 +68,9 @@ await writeFile(
   "dist/THIRD_PARTY_LICENSES.txt",
   packages.join("\n\n----------------\n\n") +
     "\n\nInter variable font (https://github.com/rsms/inter)\n" +
-    (await readFile("src/fonts/OFL.txt", "utf8")),
+    (await readFile("src/fonts/OFL.txt", "utf8")) +
+    "\n\nbidi-js 1.1.0 (https://github.com/lojjic/bidi-js, MIT)\n" +
+    (await readFile("src/vendor/bidi-js/LICENSE.txt", "utf8")),
 );
 console.log(
   "Built Capture Studio in dist/ (all runtime code is bundled locally).",

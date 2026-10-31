@@ -148,12 +148,17 @@ export function drawText(ctx, annotation) {
     if (annotation.hideText) return;
     if (annotation.layoutVersion === 2) {
       ctx.textBaseline = "alphabetic";
-      for (const run of layout.runs)
+      for (const run of layout.runs) {
+        ctx.direction = run.rtl ? "rtl" : "ltr";
+        ctx.textAlign = run.rtl ? "right" : "left";
+        // Preserve the resolved run direction during Canvas's second bidi pass,
+        // including explicit overrides, without reversing Arabic shaping text.
         ctx.fillText(
-          run.text,
-          layout.paddingX + run.x,
+          (run.rtl ? "\u202e" : "\u202d") + run.text + "\u202c",
+          layout.paddingX + (run.rtl ? run.right : run.x),
           layout.paddingY + layout.baseline + run.line * layout.lineHeight,
         );
+      }
     } else
       layout.lines.forEach((line, i) =>
         ctx.fillText(

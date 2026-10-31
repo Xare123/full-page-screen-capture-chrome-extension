@@ -51,3 +51,34 @@ jobs:
           path: |
             artifacts/
             test-results/
+
+  text:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm test
+      - run: npm run test:e2e -- tests/e2e/editor-inline.spec.js tests/e2e/editor-text.spec.js tests/e2e/editor-compat.spec.js --workers=3 --fully-parallel
+      - run: python3 scripts/package.py
+      - run: node scripts/release-smoke.mjs
+      - run: python3 scripts/package-source.py
+      - run: python3 scripts/package-store.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: capture-studio-2.3.1
+          path: dist/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capture-studio-release-files
+          path: |
+            release/
+            artifacts/
+            playwright-report/

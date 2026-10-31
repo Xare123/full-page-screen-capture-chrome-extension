@@ -430,3 +430,46 @@ test("Cancel also cancels an export waiting on composition, and Delete undoes on
   expect((await saved(page)).images[0].annotations[0]).toEqual(original);
   expect(errors).toEqual([]);
 });
+
+
+test("paragraph bidi survives wrapping around neutral punctuation, numerals, Arabic joins and isolates", async ({studio}, testInfo) => {
+  test.setTimeout(120000);
+  const {page, errors} = studio;
+  await openImage(page);
+  await start(page, "Hello שלום 123 — مرحبا world");
+  await change(page, "annotation-color", "#ff0000");
+  const cases = [
+    ...[172,188,210,228,248,260,292,320].map(width => ({text:"Hello שלום 123 — مرحبا world",width})),
+    {text:"مرحبا (123) שלום — Hello ٤٥٦ end",width:230},
+    {text:"سلام لا لَا مُرَحَّبًا — 123 abc",width:188},
+    {text:"A \u2067שלום (123) مرحبا\u2069 Z",width:210},
+    {text:"A \u202eabc (123)\u202c Z",width:172},
+    {text:"A \u202dשלום (123) مرحبا\u202c Z",width:210},
+    {text:"A \u2067שלום \u202dمرحبا (123)\u202c\u2069 Z",width:188},
+    {text:"עברית\t123 (test) — مرحبا\nNext שלום!",width:210},
+  ];
+  const evidence=[];
+  for(let i=0;i<cases.length;i++){
+    const c=cases[i];
+    if(i) await page.locator("#text-edit").click();
+    await page.locator("#annotation-text").fill(c.text);
+    await change(page,"text-box-width",c.width);
+    await page.locator("#annotation-text").focus();
+    await page.locator("#annotation-text").evaluate(el=>el.style.caretColor="transparent");
+    const typing=PNG.sync.read(await page.locator("#canvas-stage").screenshot());
+    await page.keyboard.press("Control+Enter"); await ready(page);
+    const exported=PNG.sync.read((await exportFile(page)).bytes), a=ink(typing), b=ink(exported);
+    const forward=nearFraction(a,b), reverse=nearFraction(b,a);
+    evidence.push({...c,forward,reverse,typingPixels:a.length,exportedPixels:b.length});
+    if(forward<=.98||reverse<=.98){
+      await testInfo.attach("native-bidi-"+i+".png",{body:PNG.sync.write(typing),contentType:"image/png"});
+      await testInfo.attach("exported-bidi-"+i+".png",{body:PNG.sync.write(exported),contentType:"image/png"});
+    }
+    expect(a.length,JSON.stringify(c)).toBeGreaterThan(80);
+    expect(b.length,JSON.stringify(c)).toBeGreaterThan(80);
+    expect(forward,JSON.stringify(c)).toBeGreaterThan(.98);
+    expect(reverse,JSON.stringify(c)).toBeGreaterThan(.98);
+  }
+  await testInfo.attach("bidi-wrapping-cases",{body:JSON.stringify(evidence),contentType:"application/json"});
+  expect(errors).toEqual([]);
+});

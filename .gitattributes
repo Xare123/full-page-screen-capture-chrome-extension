@@ -1,6 +1,2 @@
-.gitattributes export-ignore
-.gitignore export-ignore
-archiver.sh export-ignore
-promo-440-280.png export-ignore
-/psds export-ignore
-/screenshots export-ignore
+# Preserve the pinned upstream sources, including their original whitespace.
+src/vendor/bidi-js/** -whitespace

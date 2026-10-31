@@ -1,3 +1,4 @@
+import { getEmbeddingLevels } from "./vendor/bidi-js/embeddingLevels.js";
 // Match the browser's textarea wrapping without changing the user's text.
 // This probe is clipped and hidden; project text is always assigned as textContent.
 const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
@@ -53,34 +54,44 @@ export function nativeTextLayout(text, font, width, lineHeight) {
   const lines = Array.from({ length: count }, () => ""),
     runs = [];
   const range = document.createRange();
-  let run;
-  // Cache the result, not DOM nodes or raw project records. At most 1,000 graphemes.
+  const glyphs = [], levels = getEmbeddingLevels(text, "ltr").levels;
+  // Resolve the complete paragraph before soft wrapping. A standalone line
+  // would give neutral punctuation and numerals a different bidi order.
   for (const { segment, index } of segmenter.segment(text)) {
-    if (segment === "\n" || segment === "\r\n") {
-      run = null;
-      continue;
-    }
+    if (segment === "\n" || segment === "\r\n") continue;
     range.setStart(node, index);
     range.setEnd(node, index + segment.length);
     const rect = range.getClientRects()[0];
     if (!rect) continue;
-    const line = Math.max(
-      0,
-      Math.round((rect.top - origin.top - fontTop) / lineHeight),
-    );
+    const line = Math.max(0, Math.round((rect.top - origin.top - fontTop) / lineHeight));
     while (lines.length <= line) lines.push("");
     lines[line] += segment;
-    if (segment === "\t") {
-      run = null;
-      continue;
-    }
-    if (!run || run.line !== line) {
-      run = { line, x: rect.left - origin.left, text: "" };
+    glyphs.push({ segment, line, level: levels[index],
+      left: rect.left - origin.left, right: rect.right - origin.left });
+  }
+  // UBA L1 resets trailing whitespace on each soft line to the base level.
+  let trailing = true, lastLine = -1;
+  for (let i = glyphs.length - 1; i >= 0; i--) {
+    const g = glyphs[i];
+    if (g.line !== lastLine) { trailing = true; lastLine = g.line; }
+    if (trailing && /^\s+$/u.test(g.segment)) g.level = 0;
+    else trailing = false;
+  }
+  let run;
+  for (const g of glyphs) {
+    if (g.segment === "\t") { run = null; continue; }
+    // Controls already affected the resolved levels. Retain joining controls,
+    // but avoid starting their original bidi embeddings again inside a fragment.
+    const visible = g.segment.replace(/[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/gu, "");
+    if (!visible) continue;
+    if (!run || run.line !== g.line || run.level !== g.level) {
+      run = { line: g.line, level: g.level, rtl: Boolean(g.level % 2),
+        x: g.left, right: g.right, text: "" };
       runs.push(run);
     }
-    // A logical first character may be visually rightmost in RTL text.
-    run.x = Math.min(run.x, rect.left - origin.left);
-    run.text += segment;
+    run.x = Math.min(run.x, g.left);
+    run.right = Math.max(run.right, g.right);
+    run.text += visible;
   }
   const result = { lines, runs, baseline, height: count * lineHeight };
   cache.set(key, result);
