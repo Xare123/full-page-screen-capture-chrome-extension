@@ -1445,30 +1445,67 @@
     const moving = target
       ? target.querySelectorAll("*")
       : document.querySelectorAll("body *");
+    const styles = new Map(),
+      movingTree = new Map();
+    const style = (node) => {
+      if (!styles.has(node)) styles.set(node, getComputedStyle(node));
+      return styles.get(node);
+    };
+    const inMovingTree = (node) => {
+      if (!node || node === target) return false;
+      if (!movingTree.has(node))
+        movingTree.set(
+          node,
+          ["fixed", "sticky"].includes(style(node).position) ||
+            inMovingTree(node.parentElement),
+        );
+      return movingTree.get(node);
+    };
+    const overlaps = (r) =>
+      r.width &&
+      r.height &&
+      rects.some(
+        (m) =>
+          m.x < r.right &&
+          m.x + m.width > r.left &&
+          m.y < r.bottom &&
+          m.y + m.height > r.top,
+      );
+    const refuse = () => {
+      throw new Error(
+        "Full capture cannot keep on-page redactions aligned over moving sticky or fixed content. Use Visible area, select a region, or redact the finished capture in the studio.",
+      );
+    };
     for (const node of moving) {
-      const css = getComputedStyle(node);
+      const css = style(node);
       if (
-        !["fixed", "sticky"].includes(css.position) ||
         css.visibility === "hidden" ||
         css.display === "none" ||
-        Number(css.opacity) === 0
+        Number(css.opacity) === 0 ||
+        !inMovingTree(node)
       )
         continue;
-      const r = node.getBoundingClientRect();
-      if (
-        r.width &&
-        r.height &&
-        rects.some(
-          (m) =>
-            m.x < r.right &&
-            m.x + m.width > r.left &&
-            m.y < r.bottom &&
-            m.y + m.height > r.top,
+      // Overflowing descendants and text can paint beyond a zero-size fixed
+      // ancestor. Check their own paint bounds instead of sampling mask points.
+      if (overlaps(node.getBoundingClientRect())) refuse();
+      for (const text of node.childNodes)
+        if (text.nodeType === Node.TEXT_NODE && text.textContent.trim()) {
+          const range = document.createRange();
+          range.selectNodeContents(text);
+          if ([...range.getClientRects()].some(overlaps)) refuse();
+        }
+      // Generated overflow has no DOM rectangle. Its relocation cannot be
+      // verified reliably, so preserve privacy with the visible-capture fallback.
+      for (const pseudo of ["::before", "::after"]) {
+        const paint = getComputedStyle(node, pseudo);
+        if (
+          !["none", "normal"].includes(paint.content) &&
+          paint.visibility !== "hidden" &&
+          paint.display !== "none" &&
+          Number(paint.opacity) !== 0
         )
-      )
-        throw new Error(
-          "Full capture cannot keep on-page redactions aligned over moving sticky or fixed content. Use Visible area, select a region, or redact the finished capture in the studio.",
-        );
+          refuse();
+      }
     }
     for (const r of rects)
       for (const fx of [0.01, 0.5, 0.99])

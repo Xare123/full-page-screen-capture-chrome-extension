@@ -1,9 +1,220 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Privacy — Capture Studio</title><meta name="description" content="How Capture Studio handles local screenshots, page information, editing, PDF compression and optional donations."><link rel="canonical" href="https://capture-studio-free.xare123.chatgpt.site/privacy/"><link rel="icon" href="/assets/icon48.png"><link rel="stylesheet" href="/styles.css"></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="/"><img src="/assets/icon48.png" width="40" height="40" alt=""><span>capture<span class="brand-light">studio</span></span></a><nav aria-label="Main navigation"><a href="/#workflow">The toolkit</a><a href="/#guide">How it works</a><a href="/support/">Help</a></nav><a class="button button-small" href="/#install">Get it free ↗</a></header><main class="document" id="main"><a class="back-link" href="/">← Back to Capture Studio</a><p class="eyebrow">JUST YOU AND YOUR FILES.</p><h1>Privacy, plainly.</h1><p class="lede">The Capture Studio extension processes your captures, images and PDFs on your device. It does not send them to the developer or an upload service.</p><p class="updated">Effective October 18, 2026 · Applies to Capture Studio 2.2.5</p>
-<h2>What the extension handles</h2><p>When you explicitly start a capture, the extension reads and temporarily scrolls the selected tab or reading pane and captures visible pixels. A saved project can include the screenshot, webpage title and source URL, capture date, image dimensions, and your edits. Imported images and PDFs are processed locally.</p><p>Projects and thumbnails stay in the extension’s IndexedDB storage in your browser profile. Preferences use Chrome’s local extension storage, and temporary capture status uses session storage. The extension does not use Chrome Sync for this data.</p>
-<h2>What leaves your device</h2><p>The extension has no analytics, advertising, telemetry, account service, or cloud-upload endpoint. It does not sell or transmit your capture content, browsing history, page titles, URLs, images, PDFs or edits to the developer.</p><p>When you export, copy or share a file yourself, the destination you choose handles that data. Optional source footers in PDFs can include page information; check the export settings before sharing.</p>
-<h2>Why these permissions exist</h2><table><thead><tr><th>Permission</th><th>Purpose</th></tr></thead><tbody><tr><td>activeTab</td><td>Capture the tab where you explicitly invoke the extension.</td></tr><tr><td>scripting</td><td>Temporarily prepare and scroll that page or select a region, then restore it.</td></tr><tr><td>storage</td><td>Keep local preferences and capture status.</td></tr><tr><td>unlimitedStorage</td><td>Store large local capture projects beyond the normal extension quota. Device capacity still applies.</td></tr><tr><td>clipboardWrite</td><td>Copy a flattened image when you choose Copy image.</td></tr></tbody></table><p>The release requests no persistent host permissions. Capture requires your action. Chrome-protected pages are excluded, and incognito support is disabled.</p>
-<h2>Retention and deletion</h2><p>Projects stay in the local library until you delete them or clear extension data. Uninstalling or deleting the browser profile also removes them. There is no developer-held backup and no server copy to recover. Export files you want to keep.</p><p>Deleting a capture removes the extension’s local project. Files you exported, clipboard contents and backups you made are separate copies and must be removed separately.</p>
-<h2>Editing and redaction</h2><p>Solid redaction is flattened into screenshot/image exports, including PDFs created from those images. These exports do not include editable source layers. Optimizing an existing PDF can preserve its layers and is a separate workflow. The editable original remains in your library until deleted. Pixelation is a visual effect; use solid redaction for sensitive information. Review the final export before sharing it.</p>
-<h2>This website</h2><p>This website provides downloads, help and a locally hosted tutorial. It adds no analytics, ad scripts, third-party fonts, or embedded YouTube player. Viewing the site makes normal web requests to the hosting provider, which may process connection and access information under its own policies. Hosting access controls may require sign-in for a private preview; that is separate from the extension, which requires no account.</p>
-<h2>Optional donations</h2><p>Contributions are voluntary and one-time. The donation button opens Stripe’s hosted checkout, where you choose an amount in USD ($5 suggested, $1 minimum). Contributions are received by Gizelle &amp; Rami Abdi to support Capture Studio development. Stripe processes payment details under <a href="https://stripe.com/privacy" rel="noopener noreferrer" target="_blank">Stripe’s privacy policy</a>. The recipient may receive transaction information such as your name, email, contribution amount and payment status for payment administration. This website and the extension do not receive card numbers. Every extension feature remains free; a contribution creates no subscription or paid feature unlock. No tax-deductibility claim is made.</p>
-<h2>Changes and questions</h2><p>Material changes to the extension’s data handling will be reflected in this policy and the release documentation. For practical questions about captures, storage or deletion, see the <a href="/support/">support guide</a>.</p><div class="notice"><p><strong>Chrome Web Store Limited Use:</strong> Capture Studio’s use of information received from Google APIs adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements. The extension uses the Chrome extension APIs described above only to provide the user-requested capture, editing and local export functionality.</p></div></main><footer class="site-footer"><div class="wrap footer-top"><a class="brand" href="/"><img src="/assets/icon48.png" width="36" height="36" alt=""><span>capture<span class="brand-light">studio</span></span></a><nav aria-label="Footer navigation"><a href="/">Home</a><a href="/support/">Support</a><a href="/#install">Download</a></nav></div></footer></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Privacy — Capture Studio</title>
+    <meta
+      name="description"
+      content="How Capture Studio handles local screenshots, page information, editing, PDF compression and optional donations."
+    />
+    <link
+      rel="canonical"
+      href="https://capture-studio-free.xare123.chatgpt.site/privacy/"
+    />
+    <link rel="icon" href="/assets/icon48.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><img src="/assets/icon48.png" width="40" height="40" alt="" /><span
+          >capture<span class="brand-light">studio</span></span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="/#workflow">The toolkit</a><a href="/#guide">How it works</a
+        ><a href="/support/">Help</a>
+      </nav>
+      <a class="button button-small" href="/#install">Get it free ↗</a>
+    </header>
+    <main class="document" id="main">
+      <a class="back-link" href="/">← Back to Capture Studio</a>
+      <p class="eyebrow">JUST YOU AND YOUR FILES.</p>
+      <h1>Privacy, plainly.</h1>
+      <p class="lede">
+        The Capture Studio extension processes your captures, recordings, OCR,
+        notes, whiteboards, images and PDFs on your device. It does not send
+        them to the developer or an upload service.
+      </p>
+      <p class="updated">Applies to Capture Studio 3.0.0</p>
+      <h2>What the extension handles</h2>
+      <p>
+        When you explicitly start a capture, the extension reads and temporarily
+        scrolls the selected tab or reading pane and captures visible pixels. A
+        saved project can include the screenshot, webpage title and source URL,
+        capture date, image dimensions, and your edits. Imported images, videos
+        and PDFs are processed locally. Screen, camera and microphone recording
+        starts only after your action and native browser consent. Shared audio
+        is optional and depends on the selected source/platform. Recording
+        chunks save locally while you record. OCR models and workers are bundled
+        and receive a flattened image with solid redactions applied. Notes,
+        source links, reminder times and whiteboard pages also stay local.
+      </p>
+      <p>
+        Projects, recordings/chunks, notes, boards, OCR results you save and
+        thumbnails stay in the extension’s IndexedDB storage in your browser
+        profile. Preferences use Chrome’s local extension storage, and temporary
+        capture status uses session storage. The extension does not use Chrome
+        Sync for this data.
+      </p>
+      <h2>What leaves your device</h2>
+      <p>
+        The extension has no analytics, advertising, telemetry, account service,
+        or cloud-upload endpoint. It does not sell or transmit your capture
+        content, browsing history, page titles, URLs, images, videos, audio, OCR
+        results, notes, boards, PDFs or edits to the developer.
+      </p>
+      <p>
+        When you export, copy or share a file yourself, the destination you
+        choose handles that data. Optional source footers in PDFs can include
+        page information; check the export settings before sharing.
+      </p>
+      <h2>Why these permissions exist</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>activeTab</td>
+            <td>Capture the tab where you explicitly invoke the extension.</td>
+          </tr>
+          <tr>
+            <td>scripting</td>
+            <td>
+              Temporarily prepare/scroll that page, select a region/element,
+              show page tools or its scoped editor, then restore capture
+              changes.
+            </td>
+          </tr>
+          <tr>
+            <td>storage</td>
+            <td>
+              Keep local preferences, capture/recording status and scoped editor
+              authorization.
+            </td>
+          </tr>
+          <tr>
+            <td>unlimitedStorage</td>
+            <td>
+              Store large local capture projects, whiteboards and recording
+              chunks beyond the normal extension quota. Device capacity still
+              applies.
+            </td>
+          </tr>
+          <tr>
+            <td>clipboardWrite</td>
+            <td>Copy a flattened image when you choose Copy image.</td>
+          </tr>
+          <tr>
+            <td>Optional alarms / notifications</td>
+            <td>
+              Schedule and display a local reminder only when you choose one.
+              The notification opens its note. No reminder email is sent;
+              browser closure/sleep can delay alerts.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        The release requests no persistent host permissions. Capture requires
+        your action. Chrome-protected pages are excluded, and incognito support
+        is disabled.
+      </p>
+      <h2>Retention and deletion</h2>
+      <p>
+        Captures, recordings, notes and whiteboards stay in their local
+        workspaces until you delete them or clear extension data. Uninstalling
+        or deleting the browser profile also removes them. There is no
+        developer-held backup and no server copy to recover. Export files you
+        want to keep.
+      </p>
+      <p>
+        Deleting a capture removes the extension’s local project. Files you
+        exported, clipboard contents and backups you made are separate copies
+        and must be removed separately.
+      </p>
+      <h2>Editing and redaction</h2>
+      <p>
+        Solid redaction is flattened into screenshot/image exports, including
+        PDFs created from those images. These exports do not include editable
+        source layers. Optimizing an existing PDF can preserve its layers and is
+        a separate workflow. The editable original remains in your library until
+        deleted. Pixelation is a visual effect; use solid redaction for
+        sensitive information. Review the final export before sharing it.
+      </p>
+      <h2>Sharing and editable files</h2>
+      <p>
+        Native file sharing and email/WhatsApp drafts happen only when you
+        choose them. You choose recipients and attach downloaded files; the
+        extension does not automatically send anything. Whiteboard JSON flattens
+        each page containing redactions and omits its editable originals.
+        Ordinary screenshot/image exports are single flattened files. On-page
+        redactions over moving or unverifiable content stop full capture; use
+        visible/region capture or redact in the studio afterward.
+      </p>
+      <h2>This website</h2>
+      <p>
+        This website provides downloads, help and a locally hosted tutorial. It
+        adds no analytics, ad scripts, third-party fonts, or embedded YouTube
+        player. Viewing the site makes normal web requests to the hosting
+        provider, which may process connection and access information under its
+        own policies. Hosting access controls may require sign-in for a private
+        preview; that is separate from the extension, which requires no account.
+      </p>
+      <h2>Optional donations</h2>
+      <p>
+        Contributions are voluntary and one-time. The donation button opens
+        Stripe’s hosted checkout, where you choose an amount in USD ($5
+        suggested, $1 minimum). Contributions are received by Gizelle &amp; Rami
+        Abdi to support Capture Studio development. Stripe processes payment
+        details under
+        <a
+          href="https://stripe.com/privacy"
+          rel="noopener noreferrer"
+          target="_blank"
+          >Stripe’s privacy policy</a
+        >. The recipient may receive transaction information such as your name,
+        email, contribution amount and payment status for payment
+        administration. This website and the extension do not receive card
+        numbers. Every extension feature remains free; a contribution creates no
+        subscription or paid feature unlock. No tax-deductibility claim is made.
+      </p>
+      <h2>Changes and questions</h2>
+      <p>
+        Material changes to the extension’s data handling will be reflected in
+        this policy and the release documentation. For practical questions about
+        captures, storage or deletion, see the
+        <a href="/support/">support guide</a>.
+      </p>
+      <div class="notice">
+        <p>
+          <strong>Chrome Web Store Limited Use:</strong> Capture Studio’s use of
+          information received from Google APIs adheres to the Chrome Web Store
+          User Data Policy, including the Limited Use requirements. The
+          extension uses the Chrome extension APIs described above only to
+          provide the user-requested capture/recording, editing, OCR, supporting
+          notes/boards, reminders and local export functionality.
+        </p>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-top">
+        <a class="brand" href="/"
+          ><img src="/assets/icon48.png" width="36" height="36" alt="" /><span
+            >capture<span class="brand-light">studio</span></span
+          ></a
+        >
+        <nav aria-label="Footer navigation">
+          <a href="/">Home</a><a href="/support/">Support</a
+          ><a href="/#install">Download</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

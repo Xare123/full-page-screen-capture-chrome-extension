@@ -1,6 +1,6 @@
 # Capture Studio
 
-A free, private, full-page capture and editing studio for Chrome and Chromium browsers. Every included feature is available without an account, subscription, trial, watermark, or upload.
+A free, private capture, recording and visual explanation studio for Chrome and Chromium browsers. Every included feature is available without an account, subscription, trial, watermark, or upload.
 
 This is an independent modernization of Peter Coles’s MIT-licensed Full Page Screen Capture repository. The original license and attribution are retained. It does not contain or unlock the proprietary code from the current commercial extension.
 
@@ -8,7 +8,7 @@ This is an independent modernization of Peter Coles’s MIT-licensed Full Page S
 
 Requires **Chrome 147 or newer** (or a compatible Chromium browser). The bundled PDF engine uses modern browser APIs.
 
-1. Get a tested ZIP from the [GitHub Actions builds](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml). Open a run with a successful **text** job and download the **capture-studio-2.3.1** artifact, then extract it. GitHub artifact downloads require sign-in. You can also build from source below.
+1. Get a tested ZIP from the [GitHub Actions builds](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml). Open a run with a successful **text** job and download the **capture-studio-3.0.0** artifact, then extract it. GitHub artifact downloads require sign-in. You can also build from source below.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and select the extracted folder containing `manifest.json` (or this repository’s `dist/` directory).
 4. Pin Capture Studio in the browser toolbar.
@@ -22,6 +22,15 @@ Click the extension icon on a webpage to capture the full page, the visible area
 For long emails and app layouts, leave **Full-page target → Auto** selected. Full page captures an ordinary scrolling document, or detects a dominant reading pane when the main document barely scrolls. If several comparable panes exist, it asks you to choose. To select any pane yourself, set **Full-page target → Choose scrolling area**, press **Full page**, then click the highlighted message area. Tab/arrows switch candidates, Enter captures, and Escape cancels. **Main page only** captures the surrounding document instead.
 
 ## Included features
+
+- Record a screen/window, browser tab, custom tab region or camera, with optional microphone, shared audio and a positioned camera bubble. Pause/resume, draw while recording and stop from the studio or page tools. Worker-based frame composition keeps running when the studio is hidden.
+- Recording chunks save locally during capture. Recover saved portions after interruption; trim video, remove audio, restore original settings, save frames, or create a short GIF. WebM and browser-supported MP4 use native encoders. Original imports keep their file names.
+- Extract text offline with bundled English, Spanish and Arabic OCR. Only a committed, flattened image with final solid redactions reaches recognition. Review/edit, copy, download text or save a note.
+- Separate whiteboards with up to 100 pages per board, blank/grid/lined/planning templates, reusable text cards, page actions, progressive presentation and editable JSON import/export. JSON flattens every page containing redactions so hidden content is excluded.
+- A searchable notebook with pins, Done, source links, plain-text/Markdown exports, conflict recovery and optional browser reminders. Notes and whiteboards remain separate.
+- Page presentation tools: movable/dockable toolbar, horizontal/vertical layouts, three sizes, names/icons, searchable commands, effect toggles, clock/countdown, spotlight, pointer, fading ink, reveal masks and snapshot zoom. Escape restores page interaction. Customize drawing keys in Guide & settings.
+- Element capture, optional clean capture, and Stop & edit for the completed rectangular area. Selected regions can open the scoped editor on the webpage, with a studio-tab fallback. On-page drawings transfer as editable layers; masks remain opaque and are excluded from fading effects.
+- Select, move, resize, duplicate or delete drawing objects and callouts. Reversible backgrounds and browser frames preserve editable annotations. Explicit native file sharing and manual email/WhatsApp drafts supplement downloads; nothing is sent automatically.
 
 - Full-page scrolling capture, horizontal overflow, lazy-content preparation, high-DPI/zoom scaling, bounded memory, and automatic splitting of oversized pages.
 - Automatic nested-scroll detection for long emails and other reading panes, plus a manual scrolling-area picker. Captures stitch the selected pane’s full content, including horizontal/RTL scrolling, without repeating the surrounding application. Original pane, ancestor, and page scroll positions restore afterward. Sticky/fixed handling is scoped to the selected pane.
@@ -65,19 +74,24 @@ See [the implementation review](docs/REVIEW.md) for the legacy audit, architectu
 
 ## Privacy and permissions
 
-All capture, editing, compression, and storage happen in this browser profile. There are no analytics, cloud services, accounts, payment checks, or external runtime requests.
+Capture, recording, OCR, editing, compression, notes and storage happen in this browser profile. There are no analytics, cloud services, accounts, payment checks, or external runtime requests.
 
-| Permission         | Purpose                                                                                                      |
-| ------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `activeTab`        | Capture the tab you explicitly invoke the extension on.                                                      |
-| `scripting`        | Temporarily scroll and prepare that page; restore it afterward.                                              |
-| `storage`          | Capture status and preferences.                                                                              |
-| `unlimitedStorage` | Store large captures locally in IndexedDB without the normal extension quota. Device capacity still applies. |
-| `clipboardWrite`   | Copy a flattened PNG when you press **Copy image**.                                                          |
+| Permission                          | Purpose                                                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `activeTab`                         | Capture the tab you explicitly invoke the extension on.                                                      |
+| `scripting`                         | Temporarily scroll and prepare that page; restore it afterward.                                              |
+| `storage`                           | Capture status and preferences.                                                                              |
+| `unlimitedStorage`                  | Store large captures locally in IndexedDB without the normal extension quota. Device capacity still applies. |
+| Optional `alarms` / `notifications` | Schedule a local browser reminder only when the user chooses one.                                            |
+| `clipboardWrite`                    | Copy a flattened PNG when you press **Copy image**.                                                          |
 
-Your library is not a backup. Export files you want to keep. Clearing extension data, deleting a browser profile, or uninstalling removes locally stored captures. Exported images and PDFs contain flattened pixels, not an editable project backup.
+Your local workspace is not a backup. Export files you want to keep. Clearing extension data, deleting a browser profile, or uninstalling removes locally stored captures. Exported images and PDFs contain flattened pixels, not an editable project backup.
 
 ## Practical limits
+
+- Screen, camera and microphone recording uses the browser's native chooser/consent. Shared audio and MP4 depend on browser/platform support; protected media may be blank. This is not a multitrack video editor. Trims export in real time; edited video output is bounded to 512 MB, and GIFs to 20 seconds/240 frames. Original recording chunks remain available.
+- A closed, sleeping or permission-revoked browser can delay reminders. They are local notifications, not email or synchronized reminders. Clearing browser data removes recordings, notes and boards too.
+- On-page redactions over moving fixed/sticky content, unverifiable generated overflow or changing source geometry stop full/element capture. Use visible/region capture, or redact after full capture in the studio. This safeguard prevents a shifted mask from exposing content. The embedded editor authenticates one source document and capture, and cannot enumerate the library.
 
 - Chrome blocks capture scripting on browser settings, the Web Store, other extensions, and some built-in viewers. For `file://` pages, enable **Allow access to file URLs** in extension settings.
 - Incognito mode is explicitly disabled; captures are supported in regular browser profiles only.

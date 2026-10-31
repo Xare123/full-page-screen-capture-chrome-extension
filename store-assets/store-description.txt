@@ -1,16 +1,19 @@
 The whole page. All yours.
 
-Capture Studio turns webpages and long scrolling emails into useful, shareable files. Capture, annotate, redact, export and compress in a full-screen workspace. Every included feature is free, without an account, subscription, trial or watermark.
+Capture Studio turns webpages and long scrolling emails into useful, shareable files. Capture, record, annotate, extract text, redact, export and compress in a full-screen workspace. Every included feature is free, without an account, subscription, trial or watermark.
 
 CAPTURE THE USEFUL PART
 
-• Full-page, visible-area and selected-region screenshots.
+• Full-page, visible-area, selected-region and page-element screenshots.
+• Stop & edit keeps completed capture sections; optional clean mode hides hover effects and small floating widgets.
+• Edit selected regions on the webpage, with a studio-tab fallback.
 • Automatic reading-pane detection for long emails and app layouts, with a manual scrolling-area picker.
 • Smart placement for sticky and fixed bars, an option to hide fixed bars, capture delay, progress and cancellation.
 • Oversized captures split into editable parts. The complete capture automatically fits into one image, or exports as one combined PDF.
 
 MAKE IT YOURS
 
+• Select, move, resize, duplicate or delete drawings, text, callouts, shapes, highlights and numbered steps. Add reversible backgrounds and browser frames.
 • Arrows, shapes, highlights, numbered steps and freehand drawing. Type text directly on the image, without a popup.
 • New text starts with Inter, dark charcoal and a transparent background. Edit its words on the image, move or resize it, and change font, foreground or background after placement.
 • Adjustable post-capture cropping with Apply/Cancel; text remains editable and annotation layers are retained after crop and rotation.
@@ -25,11 +28,23 @@ EXPORT AND KEEP IT LIGHT
 • Existing-PDF optimization that preserves text and vectors, plus optional raster compression with resolution and quality controls.
 • Actual output sizes before downloading. Already compact files may not shrink.
 
+RECORD, EXPLAIN AND KEEP IDEAS
+
+• Record a screen/window, tab, tab region or camera. Add an optional microphone, shared audio and positioned camera bubble. Pause/resume, draw live and stop from page tools.
+• Chunks save locally during recording. Recover saved portions, trim clips, remove audio, restore original settings and export native WebM or supported MP4. Save a frame or make a short animated GIF.
+• Extract text offline with bundled English, Spanish and Arabic OCR. Review/edit, copy, download or save as a note. Recognition sees your flattened image with final redactions.
+• Separate whiteboards with up to 100 pages, templates, editable JSON, page actions and progressive presentation. Redacted pages flatten safely in JSON exports.
+• Separate notes with search, pins, Done, source links and optional browser reminders.
+• On-page drawing tools, clock/countdown, spotlight, pointer, fading ink, lesson reveal and snapshot zoom. Configure toolbar direction, size, labels and docking; customize drawing keys and search the guide.
+• Download/copy, use supported native file sharing, or open a manual email/WhatsApp draft. You choose recipients and attach files; nothing sends automatically.
+
 JUST YOU AND YOUR FILES
 
-Capture, editing, compression and storage happen in your browser profile. The extension has no analytics or cloud-upload service. It requests access to the tab you explicitly invoke it on, rather than persistent access to every website. Saved projects can contain screenshots, page titles, source URLs and your edits; these remain local until you export or share them yourself.
+Capture, recording, OCR, editing, notes, compression and storage happen in your browser profile. The extension has no analytics or cloud-upload service. It requests access to the tab you explicitly invoke it on, rather than persistent access to every website. Saved projects can contain screenshots, page titles, source URLs and your edits; these remain local until you export or share them yourself.
 
 Requires Chrome 147 or newer. Chrome-protected pages and incognito capture are not supported. Pane detection does not traverse embedded frames or shadow-root scrollers. Very dynamic, transformed or clipped layouts can have capture limits. Export important files as a backup: uninstalling or clearing extension data removes your local library.
+
+Native recording/audio/MP4 and sharing vary by browser and platform. Trims export in real time; GIFs support up to 20 seconds. Reminders need the browser available. Full captures stop if moving content prevents safe alignment of an on-page redaction; use visible/region capture or redact afterward in the studio.
 
 Use solid redaction for sensitive information. Editable originals remain locally until deleted. Raster PDF compression creates image-based copies and removes searchable text, links, forms, annotations and signatures; keep originals when these matter.
 

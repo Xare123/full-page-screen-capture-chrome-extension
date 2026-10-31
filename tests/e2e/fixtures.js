@@ -71,7 +71,7 @@ export const test = base.extend({
       });
       await page.goto(`${origin}/app.html`);
       await expect(page.locator("#home-view")).toBeVisible();
-      await use({ context, worker, origin, page, errors });
+      await use({ context, worker, origin, page, errors, extension });
     } finally {
       await context?.close();
       await rm(dir, { recursive: true, force: true });

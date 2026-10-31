@@ -23,6 +23,7 @@ export const button = (label, action, style = "secondary") =>
     label,
   );
 export function field(label, node) {
+  if (!node.hasAttribute("aria-label")) node.setAttribute("aria-label", label);
   return el("label", { className: "suite-field" }, el("span", {}, label), node);
 }
 export function downloadBlob(blob, name) {

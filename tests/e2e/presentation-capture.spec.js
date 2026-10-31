@@ -133,7 +133,7 @@ test("page annotation text stays inside the closed shadow and remains editable a
   await expect(editor.locator("#text-edit")).toBeEnabled();
 });
 
-for (const kind of ["fixed", "sticky"])
+for (const kind of ["fixed", "sticky", "overflow"])
   test(`full capture refuses a displaced on-page mask over ${kind} content`, async ({
     studio,
   }) => {
@@ -144,10 +144,22 @@ for (const kind of ["fixed", "sticky"])
         ? "http://127.0.0.1:4173/email"
         : "http://127.0.0.1:4173",
     );
-    if (kind === "fixed") {
+    if (kind === "fixed" || kind === "overflow") {
       await source.setContent(
         "<style>body{height:4000px;margin:0}header{position:fixed;left:700px;top:200px;width:500px;height:80px;background:#fff}</style><header>PRIVATE FIXED LABEL</header><p>Long source fixture</p>",
       );
+      if (kind === "overflow")
+        await source.evaluate(() => {
+          const header = document.querySelector("header");
+          header.style.cssText =
+            "position:fixed;left:700px;top:200px;width:0;height:0";
+          header.textContent = "";
+          const child = document.createElement("div");
+          child.textContent = "SECRET";
+          child.style.cssText =
+            "position:absolute;left:50px;top:40px;width:30px;height:20px";
+          header.append(child);
+        });
       await source.evaluate(() => scrollTo(0, 500));
     } else
       await source
@@ -158,10 +170,13 @@ for (const kind of ["fixed", "sticky"])
       chrome.runtime.sendMessage({ type: "CS_PRESENT" }),
     );
     await clickAX(context, source, "Redact");
-    const y = kind === "sticky" ? 130 : 205;
-    await source.mouse.move(800, y);
+    const y = kind === "sticky" ? 130 : kind === "overflow" ? 200 : 205;
+    await source.mouse.move(kind === "overflow" ? 700 : 800, y);
     await source.mouse.down();
-    await source.mouse.move(1100, y + 30);
+    await source.mouse.move(
+      kind === "overflow" ? 900 : 1100,
+      y + (kind === "overflow" ? 100 : 30),
+    );
     await source.mouse.up();
     await page.evaluate(() =>
       chrome.runtime.sendMessage({

@@ -1,20 +1,353 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Support — Capture Studio</title><meta name="description" content="Install Capture Studio and get help with long-email capture, fixed bars, local exports and PDF compression."><link rel="canonical" href="https://capture-studio-free.xare123.chatgpt.site/support/"><link rel="icon" href="/assets/icon48.png"><link rel="stylesheet" href="/styles.css"><script src="/site.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="/"><img src="/assets/icon48.png" width="40" height="40" alt=""><span>capture<span class="brand-light">studio</span></span></a><nav aria-label="Main navigation"><a href="/#workflow">The toolkit</a><a href="/#guide">How it works</a><a href="/support/" aria-current="page">Help</a></nav><a class="button button-small" href="/#install">Get it free ↗</a></header><main class="document" id="main"><a class="back-link" href="/">← Back to Capture Studio</a><p class="eyebrow">A LITTLE HELP GOES A LONG WAY.</p><h1>Your studio,<br>working smoothly.</h1><p class="lede">Setup, practical tips, and answers for Capture Studio 2.3.1.</p><div class="notice"><p><strong>Start here:</strong> use Chrome 147 or newer, keep the webpage active during capture, and export files you want to keep. Your library is stored in this browser profile.</p></div>
-<h2 id="installation">Install or update</h2><ol><li><a href="/downloads/capture-studio-2.3.1.zip" download>Download the release ZIP</a> and extract it into a folder you will keep.</li><li>Type <code>chrome://extensions</code> in Chrome’s address bar and enable <strong>Developer mode</strong>.</li><li>Click <strong>Load unpacked</strong> and choose the extracted folder containing <code>manifest.json</code>. Pin the extension in the toolbar.</li></ol><p>To update, replace files in the <strong>same installed folder</strong>, then click <strong>Reload</strong> on the extensions page. Close old studio tabs, reopen the studio, and refresh webpages you want to capture. Keeping the same folder preserves the extension identity and local library.</p><p>Keyboard shortcuts: <strong>Alt+Shift+P</strong> captures a full page; <strong>Alt+Shift+O</strong> opens the studio. Use Option in place of Alt on Mac. Edit conflicting shortcuts at <code>chrome://extensions/shortcuts</code>.</p>
-<h2 id="scrolling-email">Capture a long email or scrolling pane</h2><ol><li>Open the message and expand any collapsed content you want included.</li><li>Click the extension and leave <strong>Full-page target → Auto · page or pane</strong> selected.</li><li>Choose <strong>Full page</strong>. On app layouts where the main page barely scrolls, Auto looks for a large reading pane rather than the folder list.</li></ol><p>If Auto chooses the wrong area, select <strong>Choose scrolling area</strong>, click <strong>Full page</strong>, then click the highlighted message pane. Tab or arrow keys switch candidates, Enter captures, and Escape cancels. <strong>Main page only</strong> captures the surrounding document instead.</p><p>The pane must fit within the visible viewport and its clipping ancestors. Resize the window, close obstructing panels, or reset zoom if it reports clipping or unsupported transforms. Detection examines the top-level page DOM; embedded frames and shadow-root scrollers are not traversed. Open embedded content in its own tab or use a visible-area or region capture.</p><p>Infinite feeds or content that changes dimensions while stitching may stop a capture. This prevents saving incomplete results. A bounded preparation pass loads some lazy content, but cannot turn an infinite feed into a finite page.</p>
-<h2 id="fixed-bars">Repeated or misplaced sticky bars</h2><p><strong>Smart placement</strong> keeps top bars at the top, bottom toolbars at the end, and sticky content in its normal flow. For an unusual layout, select <strong>Full-page bars → Hide fixed bars</strong> before capture. Use visible-area or region capture when a page’s overlays cannot be rearranged cleanly.</p><p>If an older email capture has faint horizontal lines across the message, update the extension, refresh the webpage, and capture it again. Version 2.3.1 fixes artifacts from toolbar shadows, replaced navigation bars and overlays. Capture uses the page’s current layout and styles. The source page and pane scroll positions restore after success, cancellation or failure. Avoid scrolling, resizing, zooming or changing the active source tab during capture. If you cancel after a complete capture has already finished saving, it stays in your library without opening an editor.</p>
-<h2 id="crop">Crop after capturing</h2><p>Open a capture from your library and choose <strong>Crop</strong> (C). Drag an area, then move or resize it with the handles, or enter X, Y, Width and Height. Choose <strong>Apply crop</strong> to save it or <strong>Cancel crop</strong>/Escape to leave the pixels unchanged. Copy and export wait until a pending crop is applied or cancelled.</p><p>Cropping changes the current capture part. Text remains editable and annotation layers are retained after crop or rotation; Undo restores the previous pixels during the current editing session. Export a backup of important originals before transforming them.</p>
-<h2 id="text-boxes">Edit text after placing it</h2><p>Choose <strong>Text</strong> (T), click the image, and type directly on it. Enter starts a new line; Done, Ctrl/⌘+Enter or clicking outside finishes the edit, and Escape cancels. New text starts with Inter, dark charcoal, and a transparent background. Choose <strong>Select text</strong> (S), or use the text-box selector, to select it later. Drag the box to move it, drag its handles to resize and wrap it, or double-click/<strong>Edit text</strong> to change the words. Font, Color and Text size change the selected text; Background adds a color, and Transparent clears its backdrop again. Width wraps text and height grows to fit. <strong>Center</strong> brings a clipped box back into view.</p><p>With the canvas focused, arrow keys move selected text; Shift moves it 10 pixels. Enter edits it and Delete removes it. These edits autosave locally and remain editable after reopening the capture.</p>
-<h2 id="preview">Right-click or copy an image</h2><p>Select <strong>Pan</strong> in the editor to use the browser’s native image context menu. Right-click an editing canvas or library thumbnail for Capture Studio’s <strong>Copy image</strong> and <strong>Save image as PNG</strong> actions. These save the current capture part with flattened edits and solid redactions; library thumbnail actions use the first part. Multi-part actions are labeled current part in the editor and first part in the library. To save the full page, use <strong>Capture parts → Complete capture</strong> in the editor’s export panel. Clipboard access may require a direct click and browser permission.</p>
-<h2 id="complete-export">Save a complete long capture as one file</h2><p>Image exports download one PNG, JPG or WebP file. Choose <strong>Capture parts → Complete capture</strong> to include every original part. The part selector changes the editing preview. <strong>Current part only</strong> deliberately exports just the selected part.</p><p>The complete image automatically fits the safe browser image size using a shared uniform scale. The panel shows the actual output dimensions and, when needed, the effective scale beside the requested size. The requested range is 1–100%; automatic fitting can go below 1% for extreme long or wide captures. Whole-pixel rounding and very small sizes reduce detail. JPG/WebP quality changes the encoded size without changing dimensions.</p><p>Cropped, rotated or legacy parts with changed or unavailable original placement form one clearly labeled vertical layout in saved order, with the same scale applied to every part and padding for different widths. Undo geometry edits to restore the original placement. PDF always downloads one file containing all selected parts, with standard-paper pagination or one continuous page per part using Image-sized.</p>
-<h2 id="pdf">Choose a PDF layout</h2><p>In Export, choose PDF. Auto recommends a paper size and orientation from the image dimensions and page estimate. You can override it with Letter, Legal, Tabloid/Ledger, A3, A4, A5, A6, B4, B5, Executive, Half Letter, 4×6 or 5×7 photo paper. Choose <strong>Image-sized</strong> for one continuous page per capture part. Check the live page estimate before saving. Standard-paper exports stop at 500 pages; choose Image-sized pages or crop a smaller area for unusually narrow images.</p>
-<h2 id="compression">Compress images and PDFs</h2><p>For images, export JPEG or WebP and adjust quality or resize dimensions. <strong>Check export size</strong> measures the actual encoded output. PNG is lossless and may not shrink much for photographs.</p><p>For an existing PDF, open the studio and click <strong>Compress a PDF</strong>. Start with optimization to preserve text and vector content. If you want more control, raster compression converts pages to images with resolution and quality settings.</p><div class="notice"><p>Raster compression removes searchable text, links, form fields, annotations and digital signatures. Structural optimization may also invalidate signatures. Keep your original when these matter. Already optimized PDFs may not shrink; Capture Studio keeps the original if the result would be larger.</p></div><p>Password-protected PDFs must be unlocked first. Input files are limited to 100 MB; raster compression supports up to 300 pages.</p>
-<h2 id="privacy">Redaction and local storage</h2><p>Use <strong>solid Redact</strong> for sensitive details. Pixelation is a visual effect. Screenshot/image exports, including PDFs created from captures, contain flattened pixels without editable annotation layers or hidden source images. Optimization of an existing PDF is a separate workflow and can preserve its layers. Editable originals stay in your browser library until you delete the capture.</p><p>Exports are your backup. Clearing extension data, deleting your browser profile, or uninstalling removes local projects. Image and PDF exports are flattened files, not editable project backups. Undo history lasts for the current editing session; cropping and rotation flatten current edits.</p>
-<h2 id="protected-pages">A page refuses to capture</h2><p>Chrome blocks capture scripting on browser settings, the Web Store, other extensions and some built-in viewers. Incognito capture is disabled. For local <code>file://</code> pages, enable <strong>Allow access to file URLs</strong> in the extension’s settings.</p><p>Captures are bounded at 120 megapixels and 160 viewports. Very large captures split into editable parts; each part is at most 24 megapixels and 16,000 pixels per side. Device memory and storage still apply.</p>
-<h2 id="report">Prepare a useful issue report</h2><p>If a problem persists, include the following details when requesting help. Use a fictional or public example where possible, and avoid sharing private emails, receipts, screenshots or credentials.</p><pre class="report-box">Capture Studio version: 2.3.1
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Support — Capture Studio</title>
+    <meta
+      name="description"
+      content="Install Capture Studio and get help with long-email capture, fixed bars, local exports and PDF compression."
+    />
+    <link
+      rel="canonical"
+      href="https://capture-studio-free.xare123.chatgpt.site/support/"
+    />
+    <link rel="icon" href="/assets/icon48.png" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="/"
+        ><img src="/assets/icon48.png" width="40" height="40" alt="" /><span
+          >capture<span class="brand-light">studio</span></span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="/#workflow">The toolkit</a><a href="/#guide">How it works</a
+        ><a href="/support/" aria-current="page">Help</a>
+      </nav>
+      <a class="button button-small" href="/#install">Get it free ↗</a>
+    </header>
+    <main class="document" id="main">
+      <a class="back-link" href="/">← Back to Capture Studio</a>
+      <p class="eyebrow">A LITTLE HELP GOES A LONG WAY.</p>
+      <h1>Your studio,<br />working smoothly.</h1>
+      <p class="lede">
+        Setup, practical tips, and answers for Capture Studio 3.0.0.
+      </p>
+      <div class="notice">
+        <p>
+          <strong>Start here:</strong> use Chrome 147 or newer, keep the webpage
+          active during capture, and export files you want to keep. Your library
+          is stored in this browser profile.
+        </p>
+      </div>
+      <h2 id="installation">Install or update</h2>
+      <ol>
+        <li>
+          <a href="/downloads/capture-studio-3.0.0.zip" download
+            >Download the release ZIP</a
+          >
+          and extract it into a folder you will keep.
+        </li>
+        <li>
+          Type <code>chrome://extensions</code> in Chrome’s address bar and
+          enable <strong>Developer mode</strong>.
+        </li>
+        <li>
+          Click <strong>Load unpacked</strong> and choose the extracted folder
+          containing <code>manifest.json</code>. Pin the extension in the
+          toolbar.
+        </li>
+      </ol>
+      <p>
+        To update, replace files in the <strong>same installed folder</strong>,
+        then click <strong>Reload</strong> on the extensions page. Close old
+        studio tabs, reopen the studio, and refresh webpages you want to
+        capture. Keeping the same folder preserves the extension identity and
+        local library.
+      </p>
+      <p>
+        Keyboard shortcuts: <strong>Alt+Shift+P</strong> captures a full page;
+        <strong>Alt+Shift+O</strong> opens the studio. Use Option in place of
+        Alt on Mac. Edit conflicting shortcuts at
+        <code>chrome://extensions/shortcuts</code>.
+      </p>
+      <h2 id="scrolling-email">Capture a long email or scrolling pane</h2>
+      <ol>
+        <li>
+          Open the message and expand any collapsed content you want included.
+        </li>
+        <li>
+          Click the extension and leave
+          <strong>Full-page target → Auto · page or pane</strong> selected.
+        </li>
+        <li>
+          Choose <strong>Full page</strong>. On app layouts where the main page
+          barely scrolls, Auto looks for a large reading pane rather than the
+          folder list.
+        </li>
+      </ol>
+      <p>
+        If Auto chooses the wrong area, select
+        <strong>Choose scrolling area</strong>, click
+        <strong>Full page</strong>, then click the highlighted message pane. Tab
+        or arrow keys switch candidates, Enter captures, and Escape cancels.
+        <strong>Main page only</strong> captures the surrounding document
+        instead.
+      </p>
+      <p>
+        The pane must fit within the visible viewport and its clipping
+        ancestors. Resize the window, close obstructing panels, or reset zoom if
+        it reports clipping or unsupported transforms. Detection examines the
+        top-level page DOM; embedded frames and shadow-root scrollers are not
+        traversed. Open embedded content in its own tab or use a visible-area or
+        region capture.
+      </p>
+      <p>
+        Infinite feeds or content that changes dimensions while stitching may
+        stop a capture. This prevents saving incomplete results. A bounded
+        preparation pass loads some lazy content, but cannot turn an infinite
+        feed into a finite page.
+      </p>
+      <h2 id="fixed-bars">Repeated or misplaced sticky bars</h2>
+      <p>
+        <strong>Smart placement</strong> keeps top bars at the top, bottom
+        toolbars at the end, and sticky content in its normal flow. For an
+        unusual layout, select
+        <strong>Full-page bars → Hide fixed bars</strong> before capture. Use
+        visible-area or region capture when a page’s overlays cannot be
+        rearranged cleanly.
+      </p>
+      <p>
+        If an older email capture has faint horizontal lines across the message,
+        update the extension, refresh the webpage, and capture it again. Version
+        3.0.0 fixes artifacts from toolbar shadows, replaced navigation bars and
+        overlays. Capture uses the page’s current layout and styles. The source
+        page and pane scroll positions restore after success, cancellation or
+        failure. Avoid scrolling, resizing, zooming or changing the active
+        source tab during capture. If you cancel after a complete capture has
+        already finished saving, it stays in your library without opening an
+        editor.
+      </p>
+      <h2 id="crop">Crop after capturing</h2>
+      <p>
+        Open a capture from your library and choose <strong>Crop</strong> (C).
+        Drag an area, then move or resize it with the handles, or enter X, Y,
+        Width and Height. Choose <strong>Apply crop</strong> to save it or
+        <strong>Cancel crop</strong>/Escape to leave the pixels unchanged. Copy
+        and export wait until a pending crop is applied or cancelled.
+      </p>
+      <p>
+        Cropping changes the current capture part. Text remains editable and
+        annotation layers are retained after crop or rotation; Undo restores the
+        previous pixels during the current editing session. Export a backup of
+        important originals before transforming them.
+      </p>
+      <h2 id="text-boxes">Edit text after placing it</h2>
+      <p>
+        Choose <strong>Text</strong> (T), click the image, and type directly on
+        it. Enter starts a new line; Done, Ctrl/⌘+Enter or clicking outside
+        finishes the edit, and Escape cancels. New text starts with Inter, dark
+        charcoal, and a transparent background. Choose
+        <strong>Select text</strong> (S), or use the text-box selector, to
+        select it later. Drag the box to move it, drag its handles to resize and
+        wrap it, or double-click/<strong>Edit text</strong> to change the words.
+        Font, Color and Text size change the selected text; Background adds a
+        color, and Transparent clears its backdrop again. Width wraps text and
+        height grows to fit. <strong>Center</strong> brings a clipped box back
+        into view.
+      </p>
+      <p>
+        With the canvas focused, arrow keys move selected text; Shift moves it
+        10 pixels. Enter edits it and Delete removes it. These edits autosave
+        locally and remain editable after reopening the capture.
+      </p>
+      <h2 id="preview">Right-click or copy an image</h2>
+      <p>
+        Select <strong>Pan</strong> in the editor to use the browser’s native
+        image context menu. Right-click an editing canvas or library thumbnail
+        for Capture Studio’s <strong>Copy image</strong> and
+        <strong>Save image as PNG</strong> actions. These save the current
+        capture part with flattened edits and solid redactions; library
+        thumbnail actions use the first part. Multi-part actions are labeled
+        current part in the editor and first part in the library. To save the
+        full page, use <strong>Capture parts → Complete capture</strong> in the
+        editor’s export panel. Clipboard access may require a direct click and
+        browser permission.
+      </p>
+      <h2 id="complete-export">Save a complete long capture as one file</h2>
+      <p>
+        Image exports download one PNG, JPG or WebP file. Choose
+        <strong>Capture parts → Complete capture</strong> to include every
+        original part. The part selector changes the editing preview.
+        <strong>Current part only</strong> deliberately exports just the
+        selected part.
+      </p>
+      <p>
+        The complete image automatically fits the safe browser image size using
+        a shared uniform scale. The panel shows the actual output dimensions
+        and, when needed, the effective scale beside the requested size. The
+        requested range is 1–100%; automatic fitting can go below 1% for extreme
+        long or wide captures. Whole-pixel rounding and very small sizes reduce
+        detail. JPG/WebP quality changes the encoded size without changing
+        dimensions.
+      </p>
+      <p>
+        Cropped, rotated or legacy parts with changed or unavailable original
+        placement form one clearly labeled vertical layout in saved order, with
+        the same scale applied to every part and padding for different widths.
+        Undo geometry edits to restore the original placement. PDF always
+        downloads one file containing all selected parts, with standard-paper
+        pagination or one continuous page per part using Image-sized.
+      </p>
+      <h2 id="pdf">Choose a PDF layout</h2>
+      <p>
+        In Export, choose PDF. Auto recommends a paper size and orientation from
+        the image dimensions and page estimate. You can override it with Letter,
+        Legal, Tabloid/Ledger, A3, A4, A5, A6, B4, B5, Executive, Half Letter,
+        4×6 or 5×7 photo paper. Choose <strong>Image-sized</strong> for one
+        continuous page per capture part. Check the live page estimate before
+        saving. Standard-paper exports stop at 500 pages; choose Image-sized
+        pages or crop a smaller area for unusually narrow images.
+      </p>
+      <h2 id="compression">Compress images and PDFs</h2>
+      <p>
+        For images, export JPEG or WebP and adjust quality or resize dimensions.
+        <strong>Check export size</strong> measures the actual encoded output.
+        PNG is lossless and may not shrink much for photographs.
+      </p>
+      <p>
+        For an existing PDF, open the studio and click
+        <strong>Compress a PDF</strong>. Start with optimization to preserve
+        text and vector content. If you want more control, raster compression
+        converts pages to images with resolution and quality settings.
+      </p>
+      <div class="notice">
+        <p>
+          Raster compression removes searchable text, links, form fields,
+          annotations and digital signatures. Structural optimization may also
+          invalidate signatures. Keep your original when these matter. Already
+          optimized PDFs may not shrink; Capture Studio keeps the original if
+          the result would be larger.
+        </p>
+      </div>
+      <p>
+        Password-protected PDFs must be unlocked first. Input files are limited
+        to 100 MB; raster compression supports up to 300 pages.
+      </p>
+      <h2 id="privacy">Redaction and local storage</h2>
+      <p>
+        Use <strong>solid Redact</strong> for sensitive details. Pixelation is a
+        visual effect. Screenshot/image exports, including PDFs created from
+        captures, contain flattened pixels without editable annotation layers or
+        hidden source images. Optimization of an existing PDF is a separate
+        workflow and can preserve its layers. Editable originals stay in your
+        browser library until you delete the capture.
+      </p>
+      <p>
+        Exports are your backup. Clearing extension data, deleting your browser
+        profile, or uninstalling removes local projects. Image and PDF exports
+        are flattened files, not editable project backups. Undo history lasts
+        for the current editing session; cropping and rotation flatten current
+        edits.
+      </p>
+      <h2 id="protected-pages">A page refuses to capture</h2>
+      <p>
+        Chrome blocks capture scripting on browser settings, the Web Store,
+        other extensions and some built-in viewers. Incognito capture is
+        disabled. For local <code>file://</code> pages, enable
+        <strong>Allow access to file URLs</strong> in the extension’s settings.
+      </p>
+      <p>
+        Captures are bounded at 120 megapixels and 160 viewports. Very large
+        captures split into editable parts; each part is at most 24 megapixels
+        and 16,000 pixels per side. Device memory and storage still apply.
+      </p>
+      <h2 id="report">Prepare a useful issue report</h2>
+      <p>
+        If a problem persists, include the following details when requesting
+        help. Use a fictional or public example where possible, and avoid
+        sharing private emails, receipts, screenshots or credentials.
+      </p>
+      <pre class="report-box">
+Capture Studio version: 3.0.0
 Chrome version:
 Operating system:
 Capture mode / target / fixed-bar setting:
 Steps to reproduce:
 Expected result:
 Actual result / exact error:
-Public or fictional example (optional):</pre><p>The Chrome Web Store support channel will be available once the listing is published. This site currently provides self-service support and a downloadable guide.</p><p><a href="/assets/capture-studio-tutorial.mp4?v=neural-1" download>Download the tutorial</a> · <a href="/assets/tutorial-transcript.txt?v=neural-1">Read its transcript</a> · <a href="/privacy/">Privacy policy</a></p></main><footer class="site-footer"><div class="wrap footer-top"><a class="brand" href="/"><img src="/assets/icon48.png" width="36" height="36" alt=""><span>capture<span class="brand-light">studio</span></span></a><nav aria-label="Footer navigation"><a href="/">Home</a><a href="/privacy/">Privacy</a><a href="/#install">Download</a></nav></div></footer></body></html>
+Public or fictional example (optional):</pre>
+      <p>
+        The Chrome Web Store support channel will be available once the listing
+        is published. This site currently provides self-service support and a
+        downloadable guide.
+      </p>
+      <p>
+        <a href="/assets/capture-studio-tutorial.mp4?v=neural-1" download
+          >Download the tutorial</a
+        >
+        ·
+        <a href="/assets/tutorial-transcript.txt?v=neural-1"
+          >Read its transcript</a
+        >
+        · <a href="/privacy/">Privacy policy</a>
+      </p>
+      <h2 id="suite">Recording, OCR, boards and page tools</h2>
+      <p>
+        Open Record &amp; explain for screen/window/tab/region/camera recording.
+        The native chooser controls access. Microphone, shared audio and camera
+        bubble are optional. Stop recording to trim, mute, restore settings,
+        save frames or export a short GIF. WebM and supported MP4 use native
+        encoders. Trim export runs in real time and supports up to 512 MB
+        output; GIFs support up to 20 seconds/240 frames. Interrupted recordings
+        retain committed chunks; verify playback and use Save original file if a
+        partial cannot be decoded.
+      </p>
+      <p>
+        Extract text runs bundled English, Spanish or Arabic OCR locally. Apply
+        or cancel a pending crop first. Review the result for recognition
+        mistakes. OCR sees the committed, flattened image with final redactions.
+      </p>
+      <p>
+        Whiteboards support up to 100 pages, templates, editable JSON and
+        progressive presentations. Redacted pages flatten in JSON exports. Notes
+        are separate and support search, pins, Done, source links and optional
+        browser reminders. Export important work before uninstalling or clearing
+        browser data.
+      </p>
+      <p>
+        Page tools are available from the extension popup on regular websites.
+        Use More to search commands or adjust orientation, size, names/icons and
+        docking. Escape or a double-click on blank drawing space restores
+        webpage interaction. Reset effects keeps drawings. Redactions remain
+        solid even with fading ink. Guide &amp; settings documents every tool
+        and lets you change drawing keys or replay tips.
+      </p>
+      <p>
+        Selected regions can open the editor on the webpage. If the site
+        prevents the embedded editor, the same capture opens once in a studio
+        tab. Full capture stops if fixed/sticky content, generated overflow or
+        changed geometry prevents safe placement of an on-page redaction.
+        Capture a visible region or redact the full screenshot afterward in the
+        studio.
+      </p>
+    </main>
+    <footer class="site-footer">
+      <div class="wrap footer-top">
+        <a class="brand" href="/"
+          ><img src="/assets/icon48.png" width="36" height="36" alt="" /><span
+            >capture<span class="brand-light">studio</span></span
+          ></a
+        >
+        <nav aria-label="Footer navigation">
+          <a href="/">Home</a><a href="/privacy/">Privacy</a
+          ><a href="/#install">Download</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

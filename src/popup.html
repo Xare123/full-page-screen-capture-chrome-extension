@@ -44,43 +44,46 @@
         >
       </button>
     </div>
-    <div class="delay-field">
-      <label for="capture-delay"
-        ><span data-icon="clock" data-size="15"></span>Start after</label
-      ><select id="capture-delay">
-        <option value="0">No delay</option>
-        <option value="3">3 seconds</option>
-        <option value="5">5 seconds</option>
-        <option value="10">10 seconds</option>
-      </select>
-    </div>
-    <div class="delay-field">
-      <label for="capture-target">Full-page target</label
-      ><select id="capture-target">
-        <option value="auto">Auto · page or pane</option>
-        <option value="page">Main page only</option>
-        <option value="pick">Choose scrolling area</option>
-      </select>
-    </div>
-    <div class="delay-field">
-      <label for="capture-bars">Full-page bars</label
-      ><select id="capture-bars">
-        <option value="smart">Smart placement</option>
-        <option value="hide">Hide fixed bars</option>
-      </select>
-    </div>
-    <div class="delay-field">
-      <label for="capture-clean">Clean capture</label
-      ><input
-        type="checkbox"
-        id="capture-clean"
-        title="Hide hover effects and small floating widgets"
-      />
-    </div>
-    <div class="delay-field">
-      <label for="capture-inline">Edit region on page</label
-      ><input type="checkbox" id="capture-inline" checked />
-    </div>
+    <details class="capture-settings">
+      <summary>Capture options</summary>
+      <div class="delay-field">
+        <label for="capture-delay"
+          ><span data-icon="clock" data-size="15"></span>Start after</label
+        ><select id="capture-delay">
+          <option value="0">No delay</option>
+          <option value="3">3 seconds</option>
+          <option value="5">5 seconds</option>
+          <option value="10">10 seconds</option>
+        </select>
+      </div>
+      <div class="delay-field">
+        <label for="capture-target">Full-page target</label
+        ><select id="capture-target">
+          <option value="auto">Auto · page or pane</option>
+          <option value="page">Main page only</option>
+          <option value="pick">Choose scrolling area</option>
+        </select>
+      </div>
+      <div class="delay-field">
+        <label for="capture-bars">Full-page bars</label
+        ><select id="capture-bars">
+          <option value="smart">Smart placement</option>
+          <option value="hide">Hide fixed bars</option>
+        </select>
+      </div>
+      <div class="delay-field">
+        <label for="capture-clean">Clean capture</label
+        ><input
+          type="checkbox"
+          id="capture-clean"
+          title="Hide hover effects and small floating widgets"
+        />
+      </div>
+      <div class="delay-field">
+        <label for="capture-inline">Edit region on page</label
+        ><input type="checkbox" id="capture-inline" checked />
+      </div>
+    </details>
     <div id="capture-status" role="status" hidden>
       <progress id="capture-progress" max="1" value="0"></progress>
       <p id="status-message"></p>
@@ -93,13 +96,15 @@
         data-size="16"
       ></span>
     </button>
-    <button class="open-studio" id="open-recordings">
-      Record screen / camera
-    </button>
-    <button class="open-studio" id="open-page-tools">
-      Page tools & presentation
-    </button>
-    <button class="open-studio" id="open-guide">Guide & settings</button>
+    <div class="workspace-shortcuts">
+      <button class="open-studio" id="open-recordings">
+        Record screen / camera
+      </button>
+      <button class="open-studio" id="open-page-tools">
+        Page tools & presentation
+      </button>
+      <button class="open-studio" id="open-guide">Guide & settings</button>
+    </div>
     <footer>
       <span data-icon="shield" data-size="13"></span>On your device. No uploads.
       No limits on features.

@@ -3,7 +3,7 @@
 }
 body {
   margin: 0;
-  padding: 23px;
+  padding: 20px;
   width: 354px;
   color: #242633;
   background: #fbfaf8;
@@ -214,4 +214,72 @@ footer {
 }
 .open-studio {
   font-size: 13px;
+}
+
+/* Keep every primary action within Chrome's popup height. */
+.intro {
+  margin: 18px 0 14px;
+}
+.intro h1 {
+  font-size: 22px;
+}
+.intro p {
+  margin: 5px 0 0;
+}
+.capture-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.capture-action {
+  min-width: 0;
+  min-height: 94px;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 9px;
+}
+.capture-action strong {
+  font-size: 12px;
+}
+.capture-action small {
+  font-size: 10px;
+  line-height: 1.4;
+  white-space: normal;
+}
+.capture-action > svg:last-child {
+  display: none;
+}
+.capture-action > span:last-child:not(:nth-child(2)) {
+  display: none;
+}
+.capture-settings {
+  margin: 14px 0;
+  color: #655e72;
+  font-size: 12px;
+}
+.capture-settings summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-weight: 600;
+}
+.capture-settings .delay-field {
+  margin: 10px 0;
+}
+.workspace-shortcuts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 7px;
+}
+.workspace-shortcuts .open-studio {
+  font-size: 11px;
+  padding: 9px;
+  justify-content: center;
+}
+.workspace-shortcuts #open-guide {
+  grid-column: 1/-1;
+  padding: 6px;
+}
+footer {
+  margin-top: 12px;
 }
