@@ -401,7 +401,7 @@ import { setTextMeasurementRoot } from "./native-text-layout.js";
     typing.style.color = color;
     typing.addEventListener("blur", () => commitText(), { once: true });
     shadow.append(typing);
-    typing.focus();
+    typing.focus({ preventScroll: true });
   }
   function commitText() {
     if (!typing) return;
@@ -781,7 +781,9 @@ import { setTextMeasurementRoot } from "./native-text-layout.js";
     if (zoomImage) drawZoom();
   };
   window.addEventListener("pointermove", move, { passive: true });
-  const scroll = () => {
+  const scroll = (event) => {
+    // Editing or scrolling our own UI must not commit text or end a page effect.
+    if (event.composedPath().includes(host)) return;
     commitText();
     draw();
     endZoom();
@@ -901,6 +903,10 @@ import { setTextMeasurementRoot } from "./native-text-layout.js";
       }
     },
   };
+  // Initialize interaction synchronously. Restoring preferences can finish after
+  // the first click; it must not reset the user's chosen tool or active text.
+  fit();
+  select("interact");
   const loaded = await chrome.storage.local.get(["pageToolbar", "drawingKeys"]);
   if (loaded.pageToolbar) {
     const next = loaded.pageToolbar;
@@ -914,8 +920,6 @@ import { setTextMeasurementRoot } from "./native-text-layout.js";
   }
   keys = loaded.drawingKeys || {};
   applySettings();
-  fit();
-  select("interact");
   window.addEventListener(
     "pagehide",
     (event) => {

@@ -19,6 +19,9 @@ for (const name of [
   await cp(`store-assets/branding/${name}`, `${target}/assets/${name}`);
 for (const name of await readdir("store-assets/screenshots"))
   await cp(`store-assets/screenshots/${name}`, `${target}/assets/${name}`);
+await cp("store-assets/suite-screenshots", `${target}/assets/suite`, {
+  recursive: true,
+});
 for (const name of [
   "capture-studio-tutorial.mp4",
   "tutorial-poster.jpg",

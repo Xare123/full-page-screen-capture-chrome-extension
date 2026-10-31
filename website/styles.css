@@ -1258,3 +1258,4 @@ details a {
     grid-template-columns: 1fr;
   }
 }
+.suite-shot { display: block; width: 100%; height: auto; margin: 16px 0; border: 1px solid #e7e3ec; border-radius: 10px; }

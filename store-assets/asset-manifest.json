@@ -1,5 +1,5 @@
 {
-  "version": "2.3.1",
+  "version": "3.0.0",
   "assets": [
     {
       "path": "branding/README.md",
@@ -152,6 +152,42 @@
       "path": "video/youtube-metadata.md",
       "bytes": 2334,
       "sha256": "ada2434f83a0e41ff044d331f01126ff2c06bd5402471fcee890902cf8dfa75f"
+    },
+    {
+      "path": "suite-screenshots/notes.jpg",
+      "bytes": 86604,
+      "sha256": "19d047d3ca16b20b6c57be904fa99888584b80293bb3dda190f667482cfe4c87",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "suite-screenshots/offline-ocr.jpg",
+      "bytes": 87725,
+      "sha256": "f71503d0bcf88fcd3598179562a661a0f3bafd6fa0fa0eea35ba094d5d19f291",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "suite-screenshots/recording.jpg",
+      "bytes": 96452,
+      "sha256": "74c1014186cdf8bcb74ca894de2bc010027d338d8e739460d5a679377b84a108",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
+    },
+    {
+      "path": "suite-screenshots/whiteboard.jpg",
+      "bytes": 136490,
+      "sha256": "d9b708be2a7454aabd3bf3bf1c60aa9d4f71ffc055a74fbdd5c167ab0dbcb9b4",
+      "width": 1280,
+      "height": 800,
+      "mode": "RGB",
+      "format": "JPEG"
     }
   ],
   "narration": {

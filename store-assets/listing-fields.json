@@ -1,6 +1,6 @@
 {
   "name": "Capture Studio \u2014 Full Page & PDF",
-  "short_description": "Capture full pages, edit, redact, and compress images or PDFs. Free, private, and entirely on your device.",
+  "short_description": "Capture full pages, record, annotate, extract text, and compress images or PDFs. Free, private, and on your device.",
   "language": "en",
   "suggested_category": "Productivity / Tools",
   "mature_content": false,
@@ -51,7 +51,13 @@
   "website_deployment_evidence": "verification/website-public-deployment-2026-10-26.json",
   "search_console_verification_file_url": "https://capture-studio-free.xare123.chatgpt.site/google1eca9ffddc7b177b.html",
   "search_console_verification_status": "file_live_waiting_for_google_verify_result",
-  "store_assets_bundle_url": "https://capture-studio-free.xare123.chatgpt.site/downloads/capture-studio-store-assets-2.3.1.zip",
+  "store_assets_bundle_url": "https://capture-studio-free.xare123.chatgpt.site/downloads/capture-studio-store-assets-3.0.0.zip",
   "store_description_url": "https://capture-studio-free.xare123.chatgpt.site/downloads/chrome-web-store-description.txt",
-  "extension_version": "2.3.1"
+  "extension_version": "3.0.0",
+  "extra_workspace_screenshots": [
+    "suite-screenshots/notes.jpg",
+    "suite-screenshots/offline-ocr.jpg",
+    "suite-screenshots/recording.jpg",
+    "suite-screenshots/whiteboard.jpg"
+  ]
 }

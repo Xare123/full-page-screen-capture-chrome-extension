@@ -133,6 +133,58 @@ test("page annotation text stays inside the closed shadow and remains editable a
   await expect(editor.locator("#text-edit")).toBeEnabled();
 });
 
+test("late page-toolbar preferences do not reset an active text gesture", async ({
+  studio,
+}) => {
+  const { context, page, worker } = studio,
+    source = await context.newPage();
+  await source.goto("http://127.0.0.1:4173");
+  await source.bringToFront();
+  const tabId = await worker.evaluate(
+    async () =>
+      (await chrome.tabs.query({ active: true, currentWindow: true }))[0].id,
+  );
+  await worker.evaluate(
+    async (tabId) =>
+      chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => {
+          const read = chrome.storage.local.get.bind(chrome.storage.local);
+          chrome.storage.local.get = async (...args) => {
+            if (Array.isArray(args[0]) && args[0].includes("pageToolbar"))
+              await new Promise((resolve) => {
+                globalThis.releaseToolbarPreferences = resolve;
+              });
+            return read(...args);
+          };
+        },
+      }),
+    tabId,
+  );
+  await page.evaluate(() => chrome.runtime.sendMessage({ type: "CS_PRESENT" }));
+  await clickAX(context, source, "Text");
+  await source.mouse.click(700, 300);
+  await source.keyboard.type("Before ");
+  await worker.evaluate(
+    async (tabId) =>
+      chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => globalThis.releaseToolbarPreferences(),
+      }),
+    tabId,
+  );
+  await source.keyboard.type("and after");
+  await source.keyboard.press("Control+Enter");
+  const editor = await captureEditor(studio, { mode: "visible" });
+  await expect(editor.locator("#canvas-viewport")).toHaveAttribute(
+    "aria-busy",
+    "false",
+  );
+  expect(
+    (await saved(editor)).images[0].annotations.find((a) => a.type === "text"),
+  ).toMatchObject({ text: "Before and after" });
+});
+
 for (const kind of ["fixed", "sticky", "overflow", "closed-shadow"])
   test(`full capture refuses a displaced on-page mask over ${kind} content`, async ({
     studio,

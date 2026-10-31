@@ -56,3 +56,7 @@ The existing website audience changed to public through Sites; no source or exte
 ## Extension 2.3.1 update
 
 Direct on-image text entry replaces the annotation modal. New text defaults to locally bundled Inter, dark charcoal and a transparent background; font, foreground/background, movement, resizing and content remain editable. Existing screenshots and the neural tutorial remain historical demonstrations; no new recording is claimed. Current source, tests, build/CI scripts, website source and public media are maintained in the GitHub repository. Final verification is recorded in the versioned release report.
+
+## Extension 3.0.0 update
+
+New native 1280×800 RGB screenshots in `suite-screenshots/` show whiteboards, offline OCR, notes and recording. Reproduce them with `node store-assets/source/create-suite-media.mjs` after building. Examples are fictional; the recording image uses Chromium’s synthetic camera. The original five `screenshots/` remain a core capture/PDF set; the store accepts at most five images, so choose the mix you want. New listing and privacy copy cover optional local reminders and native media consent. The 95-second tutorial continues to demonstrate the core capture workflow. Final validation and limitations are in `docs/RELEASE-3.0.0.json` and the public versioned validation report.
