@@ -8,7 +8,7 @@ This is an independent modernization of Peter Coles’s MIT-licensed Full Page S
 
 Requires **Chrome 147 or newer** (or a compatible Chromium browser). The bundled PDF engine uses modern browser APIs.
 
-1. Download the [v3.0.0 installation ZIP](https://capture-studio-free.xare123.chatgpt.site/downloads/capture-studio-3.0.0.zip) from the public website, or use the [GitHub releases](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases). Extract it. Development artifacts also remain in [GitHub Actions](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml); those downloads require sign-in. You can build from source below.
+1. Download the [v3.0.0 installation ZIP](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases/download/v3.0.0/capture-studio-3.0.0.zip) from [GitHub releases](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases). Extract it. Development artifacts also remain in [GitHub Actions](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml); those downloads require sign-in. You can build from source below.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and select the extracted folder containing `manifest.json` (or this repository’s `dist/` directory).
 4. Pin Capture Studio in the browser toolbar.
@@ -56,7 +56,7 @@ Choose **Text** (T), click the image, and type directly on it. New text uses loc
 
 ## Build and test
 
-Node.js 22+ and Python 3 are required. Dependencies and browser binaries are downloaded during development; the installed extension works offline.
+Node.js 22+ and Python 3 are required to build. Native recording tests also require FFmpeg and ffprobe. Dependencies and browser binaries are downloaded during development; the installed extension works offline.
 
 ```sh
 npm ci
@@ -65,6 +65,8 @@ npx playwright install chromium
 npm run verify
 npm run package
 ```
+
+For an optional six-minute recording check, build first and run `node scripts/stress-recording.mjs` in a desktop session (or `xvfb-run -a node scripts/stress-recording.mjs` on Linux). It uses a fictional static tab, the unmodified release manifest, real hidden-page state and decoded-frame checks.
 
 `npm run package` creates a ready-to-extract ZIP under `release/`. All runtime dependencies, PDF workers, fonts, character maps, decoders, and third-party licenses are bundled in `dist/`. No CDN is required.
 

@@ -1,0 +1,45 @@
+name: Publish verified Capture Studio 3
+on: create
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.event.ref_type == 'branch' && github.event.ref == 'release/v3.0.0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Require successful checks on the unchanged runtime
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          record=json.loads(Path('docs/RELEASE-3.0.0.json').read_text())
+          assert record['status']=='verified'
+          run=json.loads(subprocess.check_output(['gh','api',f"repos/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{record['ci']['runId']}"],text=True))
+          assert run['head_sha']==record['runtimeCommit'] and run['status']=='completed' and run['conclusion']=='success' and run['path']=='.github/workflows/verify.yml',run
+          subprocess.run(['git','diff','--exit-code',record['runtimeCommit'],'HEAD','--','src','tests','manifest.json','package.json','package-lock.json','playwright.config.js','scripts/build.mjs','scripts/package.py','scripts/package-source.py','scripts/release-smoke.mjs','.github/workflows/verify.yml'],check=True)
+          PY
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run package
+      - run: node scripts/release-smoke.mjs
+      - run: python3 scripts/package-source.py
+      - run: python3 scripts/package-store.py
+      - run: python3 scripts/release-report.py
+      - name: Publish installation, source, media and verification files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v3.0.0 release/capture-studio-3.0.0.zip release/capture-studio-source-3.0.0.zip release/capture-studio-store-assets-3.0.0.zip release/capture-studio-test-results-3.0.0.json release/SHA256SUMS.txt --target "$GITHUB_SHA" --title "Capture Studio 3.0.0" --notes-file docs/RELEASE-3.0.0.md

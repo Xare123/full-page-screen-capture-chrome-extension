@@ -1,0 +1,159 @@
+{
+  "version": "3.0.0",
+  "status": "verified",
+  "observedAtUTC": "2026-10-31T07:17:27.956977+00:00",
+  "runtimeCommit": "c799efdac06a136673d49e6841feebadb8cf9689",
+  "runtimeSourceTree": "1b9362d97ca75bc7bbb543e1d7ee02b15e63783e",
+  "ci": {
+    "runId": 41177310317,
+    "status": "completed",
+    "conclusion": "success",
+    "workflowPath": ".github/workflows/verify.yml",
+    "url": "https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41177310317",
+    "jobs": {
+      "verify": 124467584293,
+      "compression": 124467584377,
+      "text": 124467584437
+    }
+  },
+  "checks": {
+    "unit": 42,
+    "chromiumExtensionScenarios": 335,
+    "renderingEngineScenarios": 75,
+    "focusedEditorScenarios": 35,
+    "focusedEditorAlreadyIncludedInExtensionScenarios": true,
+    "productionPackageSmoke": "passed"
+  },
+  "compression": {
+    "sweepsPassed": 20,
+    "exportPayloadConfigurationsPassed": 7835,
+    "inputs": [
+      "PNG",
+      "JPEG",
+      "WebP",
+      "GIF",
+      "AVIF"
+    ],
+    "outputs": [
+      "PNG",
+      "JPEG",
+      "WebP",
+      "PDF"
+    ],
+    "requestedSizesPercent": "1 through 100",
+    "lossyQualityPercent": "35 through 100 with size/quality boundaries",
+    "checks": [
+      "single actual output file",
+      "dimensions and proportional fitting",
+      "final edges and complete composition",
+      "signatures and MIME types",
+      "PNG/WebP transparency",
+      "JPEG white background",
+      "PDF media boxes, rasters and page coverage"
+    ],
+    "scope": "Full sweep observes emitted browser export payloads. It is not 7,835 operating-system Save dialogs. Other extension scenarios exercise actual browser downloads and existing-PDF optimization/raster modes."
+  },
+  "browserVersionMatrix": {
+    "sourceTree": "1d6809ad54a10a4dbe8dd70981a8fd293deb30e3",
+    "runtimeCommit": "227fdfc0dc83efdd40712c2163634c6744151ea4",
+    "localCheckout": "ff4dcb49497c7941a407a4ce7c94228e055eda1a",
+    "stats": {
+      "startTime": "2026-10-31T06:20:28.362Z",
+      "duration": 270315.331,
+      "expected": 152,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "browsers": [
+      "147.0.7727.117",
+      "155.0.8059.84"
+    ],
+    "rawReportSHA256": "d1e0612a97f0b42923823c2c88c99d5b744bd0d378deb208cfee27b628f808c0"
+  },
+  "additionalFocusedChecks": {
+    "nativeMediaAndPresentationAcrossThreeChromes": 51,
+    "startupCancellationTimeoutAndEmptyEncoderAcrossThreeChromes": 9,
+    "correctedCompositorVerificationRepetitionsAcrossThreeChromes": 9,
+    "overlapWithOtherScenarios": true
+  },
+  "reviews": {
+    "astraMediaStoragePrivacy": "approved",
+    "astraCapturePrivacyLifecycle": "approved",
+    "approvedRuntimeCommit": "c799efdac06a136673d49e6841feebadb8cf9689",
+    "publicationWorkflowAndArchiveReport": "approved after Actions permissions, workflow-path binding and exact ZIP file-set checks"
+  },
+  "longRecordingStress": {
+    "runId": "877cc30d-bb87-4716-b028-b3ae7e430114",
+    "startedAtUTC": "2026-10-31T07:10:33.086Z",
+    "sourceCommit": "c799efdac06a136673d49e6841feebadb8cf9689",
+    "bundleSHA256": {
+      "app.js": "f19085c4951ba4eda89ac572062dd3ff071c8260426a4665893e8a86f636554e",
+      "recording-worker.js": "c4b7db7cfca21cafa26dad9eefe29f1e4765de2ac99e61551b7cb58d81e3f0f9",
+      "manifest.json": "c87d2e3dacebe44ee7f60fe5908fbd89e4d3f9b88ec77bba9b2c42c822b4e8ca"
+    },
+    "scriptSHA256": "e87b8f392f9d390c1e5627596573c8713b1b37af8727fe7ccfa7e0465b780280",
+    "version": "3.0.0",
+    "releaseManifestUnmodified": true,
+    "status": "passed",
+    "browser": "156.0.8078.4",
+    "hiddenSeconds": 360,
+    "quietElapsedSeconds": 360.002,
+    "visibilityEvents": [],
+    "averageFramesPerSecond": 29.563624250499664,
+    "quietStaticBrowserTab": true,
+    "headedChrome": true,
+    "backgroundThrottlingBypassesRemoved": true,
+    "focusEmulationDisabled": true,
+    "setupOnlyFocusEmulation": true,
+    "playwrightNoDefaults": true,
+    "camera": false,
+    "audio": false,
+    "noExplicitStudioCallsDuringInterval": true,
+    "everyEncodedPacketDecoded": true,
+    "packetCount": 10651,
+    "videoSpanSeconds": 360.24,
+    "maximumPacketGapSeconds": 0.28199999999998226,
+    "dimensions": {
+      "codec_name": "vp9",
+      "width": 1280,
+      "height": 720,
+      "nb_read_frames": "10651",
+      "disposition": {
+        "default": 1,
+        "dub": 0,
+        "original": 0,
+        "comment": 0,
+        "lyrics": 0,
+        "karaoke": 0,
+        "forced": 0,
+        "hearing_impaired": 0,
+        "visual_impaired": 0,
+        "clean_effects": 0,
+        "attached_pic": 0,
+        "timed_thumbnails": 0,
+        "non_diegetic": 0,
+        "captions": 0,
+        "descriptions": 0,
+        "metadata": 0,
+        "dependent": 0,
+        "still_image": 0,
+        "multilayer": 0
+      },
+      "tags": {
+        "language": "eng",
+        "alpha_mode": "1"
+      }
+    },
+    "committedChunksAtCompletion": 353,
+    "bytes": 3434584,
+    "sha256": "eae8d0171a02ce987e8557a38b3989e1f34ce6789e960269521a6094e4207afc"
+  },
+  "limits": [
+    "Automated camera/microphone feeds are synthetic; tab captures, codecs, IndexedDB, alarms, image and PDF APIs are real. Physical devices and every OS capture chooser are not established by these tests.",
+    "MP4, shared audio and native file sharing depend on browser/platform support.",
+    "For full-page/element capture, apply solid redaction in the finished studio image. Visible/region on-page masks require Clean off and preserved layout.",
+    "OCR is local English/Spanish/Arabic recognition and requires reviewing its output.",
+    "The reference extension lists Google Drive OAuth as unavailable; this independent extension provides explicit native/local sharing without that OAuth integration."
+  ]
+}

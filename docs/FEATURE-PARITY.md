@@ -35,7 +35,7 @@ implementation, relevant checks and review are recorded below.
 - Existing-PDF compression, 13 common PDF sizes, auto paper/orientation and image-sized pages.
 - Complete long-image export with safe uniform fitting and one actual image file.
 - Recording chunks saved locally rather than relying on a 256 MB in-memory recording.
-- More than 12 whiteboard pages across reusable boards and optional templates.
+- Up to 100 whiteboard pages per reusable board, with optional templates.
 - Extra local OCR languages and video-frame/GIF exports.
 - Existing editable-text, annotation/redaction geometry, recovery and accessibility regressions.
 
@@ -53,4 +53,17 @@ implementation, relevant checks and review are recorded below.
 
 ## Verification and review
 
-Implementation is present in the release candidate. Final regression, compression and browser-version results are being collected before publication. Previous 2.3.1 CI is fully green, including its complete compression repeat.
+The verified 3.0.0 runtime passed 42 unit tests, 335 extension scenarios and 75 rendering scenarios in [CI](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/runs/41177310317). All 20 compression sweeps passed, covering 7,835 export-payload configurations across five image inputs and four image/PDF outputs. A focused Chrome 147/155 matrix passed all 152 scenarios with no skips or flaky results. These checks overlap; the counts are not combined into a unique-test total. Two independent Astra reviewers approved the final runtime and publication checks.
+
+An additional headed-Chrome test kept the editor hidden for 360 seconds while recording a static browser tab with the unmodified release manifest. The complete 360.24-second video decoded all 10,651 frames, averaged 29.56 fps and had a maximum packet gap of 0.282 seconds. It retained multiple committed chunks at completion. This verifies a static tab under that configuration, without claiming physical-device coverage or measuring intermediate storage commits during the hidden interval. See `RELEASE-3.0.0.json` for source hashes, exact coverage and limits.
+
+
+## Failure behavior reviewed for version 3
+
+- Live recording retains bounded source/camera frames and updates ink over a static page. The UI waits for first output; failed startup, cancellation and empty payloads cannot become successful complete recordings. Final storage writes have one owner.
+- Cancellation and failed recording storage release owned tracks and retain committed chunks for recovery. Playback and video export use isolated sessions.
+- OCR uses a flattened committed image and owns its initializing worker. Cancel, model errors and retry do not leave a worker behind.
+- Redacted board JSON excludes annotations, hidden originals and image-finish backups. On-page masks require preserved visible/region layout; full/element capture directs masking to the finished studio image.
+- Same-URL navigation changes document identity and stops capture. An interrupted screenshot preserves only fully covered rectangular pixels.
+
+Native test camera and microphone feeds are synthetic. Browser-tab captures, encoding, IndexedDB, alarms, GIF decoding and image/PDF outputs are exercised by real browser APIs. Physical devices and every operating-system capture chooser are outside the automated coverage.
