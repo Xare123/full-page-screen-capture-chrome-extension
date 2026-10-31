@@ -1,5 +1,7 @@
 # Capture Studio 3.0.0
 
+- Keep live video advancing over static pages, including camera/ink changes. Wait for the first compositor frame, bound startup, permit cancellation and retain only valid recoverable chunks on failure.
+
 - Add local screen/window/tab/region/camera recording with native consent, optional microphone/shared audio/camera bubble, pause/resume, live ink and source-page controls.
 - Save recording chunks transactionally, recover committed portions, and clean up devices on cancellation, permission loss, failure or tab closure. Use worker frame composition when the studio is hidden.
 - Add local video trim/mute/original restore, frame export, supported native WebM/MP4, and bounded animated GIF export.

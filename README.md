@@ -8,7 +8,7 @@ This is an independent modernization of Peter Coles’s MIT-licensed Full Page S
 
 Requires **Chrome 147 or newer** (or a compatible Chromium browser). The bundled PDF engine uses modern browser APIs.
 
-1. Get a tested ZIP from the [GitHub Actions builds](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml). Open a run with a successful **text** job and download the **capture-studio-3.0.0** artifact, then extract it. GitHub artifact downloads require sign-in. You can also build from source below.
+1. Download the [v3.0.0 installation ZIP](https://capture-studio-free.xare123.chatgpt.site/downloads/capture-studio-3.0.0.zip) from the public website, or use the [GitHub releases](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases). Extract it. Development artifacts also remain in [GitHub Actions](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml); those downloads require sign-in. You can build from source below.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and select the extracted folder containing `manifest.json` (or this repository’s `dist/` directory).
 4. Pin Capture Studio in the browser toolbar.

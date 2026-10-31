@@ -245,7 +245,7 @@ export function createRecorder({ toast, fail, importFrame }) {
     ])
       input.disabled = active || locked;
     start.hidden = session?.state !== "ready";
-    cancel.hidden = !["ready", "choosing"].includes(session?.state);
+    cancel.hidden = !["ready", "choosing", "starting"].includes(session?.state);
     pause.hidden = !["recording", "paused"].includes(session?.state);
     pause.textContent = session?.state === "paused" ? "Resume" : "Pause";
     stop.hidden = !["recording", "paused", "stopping"].includes(session?.state);
@@ -334,9 +334,17 @@ export function createRecorder({ toast, fail, importFrame }) {
     if (session?.state !== "ready") return;
     if (source.value === "region" && !region)
       throw new Error("Drag a region on the preview first.");
+    const target = session,
+      generation = acquisition;
     try {
-      session.options.bubble = bubble.value;
-      await session.start(region);
+      target.options.bubble = bubble.value;
+      await target.start(region);
+      if (
+        target !== session ||
+        generation !== acquisition ||
+        target.state !== "recording"
+      )
+        return;
       preview.srcObject = session.output;
       await preview.play();
       previewBox.style.aspectRatio = `${session.size.width}/${session.size.height}`;
@@ -345,7 +353,8 @@ export function createRecorder({ toast, fail, importFrame }) {
       annotations = [];
       drawInk();
     } catch (error) {
-      await session.cleanup();
+      await target.cleanup();
+      if (target !== session || generation !== acquisition) return;
       sync();
       throw error;
     }

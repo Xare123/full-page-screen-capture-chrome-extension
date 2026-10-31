@@ -105,7 +105,7 @@ test("page annotation text stays inside the closed shadow and remains editable a
   const { context, page } = studio,
     source = await context.newPage();
   await source.goto("http://127.0.0.1:4173");
-  await source.evaluate(() => scrollTo(0, 300));
+  await source.evaluate(() => scrollTo({ top: 300, behavior: "instant" }));
   await source.bringToFront();
   await page.evaluate(() => chrome.runtime.sendMessage({ type: "CS_PRESENT" }));
   await clickAX(context, source, "Text");

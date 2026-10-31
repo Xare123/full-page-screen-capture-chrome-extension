@@ -170,32 +170,25 @@ export class RecordingSession {
         camera = new MediaStreamTrackProcessor({
           track: this.camera.getVideoTracks()[0],
         }).readable;
+      const compositorError = (error) =>
+        this.settleFrame ? this.settleFrame(error) : this.abort(error);
       worker.onerror = (event) =>
-        this.abort(
+        compositorError(
           new Error(event.message || "The recording compositor stopped."),
         );
       worker.onmessage = ({ data }) => {
-        if (data.type === "error") this.abort(new Error(data.error));
+        if (data.type === "error") compositorError(new Error(data.error));
+        if (data.type === "frame") this.settleFrame?.();
+        if (data.type === "ended" && this.state === "starting")
+          this.settleFrame?.(
+            new Error("The recording source ended before producing a frame."),
+          );
         if (
           data.type === "ended" &&
           ["recording", "paused"].includes(this.state)
         )
           void this.stop();
       };
-      worker.postMessage(
-        {
-          type: "start",
-          readable: processor.readable,
-          writable: generator.writable,
-          camera,
-          options: {
-            ...size,
-            region: region || null,
-            bubble: options.bubble || "bottom-right",
-          },
-        },
-        [processor.readable, generator.writable, ...(camera ? [camera] : [])],
-      );
       const audio = [
         ...(options.systemAudio ? this.source.getAudioTracks() : []),
         ...(this.microphone?.getAudioTracks() || []),
@@ -246,24 +239,74 @@ export class RecordingSession {
       this.assertLive();
       this.recorder.ondataavailable = (event) => this.enqueue(event.data);
       this.recorder.onerror = (event) =>
-        this.abort(event.error || new Error("The video encoder stopped."));
+        compositorError(event.error || new Error("The video encoder stopped."));
       this.finished = new Promise((resolve) => {
         this.resolveFinished = resolve;
       });
-      this.recorder.onstop = () => void this.finalize();
+      this.recorder.onstop = () => {
+        this.settleFrame?.(
+          new DOMException("Recording stopped during startup.", "AbortError"),
+        );
+        void this.finalize();
+      };
+      const firstFrame = new Promise((resolve, reject) => {
+        const timer = setTimeout(
+          () =>
+            this.settleFrame?.(
+              new Error(
+                "The source did not provide a video frame. Choose the source again.",
+              ),
+            ),
+          10000,
+        );
+        this.settleFrame = (error) => {
+          clearTimeout(timer);
+          this.settleFrame = null;
+          error ? reject(error) : resolve();
+        };
+      });
+      // Cleanup can reject readiness if a synchronous startup operation fails.
+      firstFrame.catch(() => {});
+      this.size = size;
+      this.recorder.start(1000);
+      this.encoderStarted = true;
+      worker.postMessage(
+        {
+          type: "start",
+          readable: processor.readable,
+          writable: generator.writable,
+          camera,
+          options: {
+            ...size,
+            live: true,
+            region: region || null,
+            bubble: options.bubble || "bottom-right",
+          },
+        },
+        [processor.readable, generator.writable, ...(camera ? [camera] : [])],
+      );
+      await firstFrame;
+      this.assertLive();
+      if (this.recorder.state !== "recording")
+        throw new DOMException("Recording cancelled.", "AbortError");
       this.startedAt = performance.now();
       this.setState("recording");
-      this.recorder.start(1000);
-      this.size = size;
       return this.record;
     } catch (error) {
-      if (this.record)
+      this.storageError ??= error;
+      // Once started, onstop/finalize owns the terminal write, including an
+      // already-inactive encoder whose final chunk events are still queued.
+      if (this.encoderStarted) {
+        if (this.recorder.state !== "inactive") await this.stop();
+        else await this.finished;
+      }
+      if (this.record && !this.encoderStarted)
         await transitionRecording(this.record.id, this.record.session, {
           status: "interrupted",
           error: error.message,
         }).catch(() => {});
       await this.cleanup();
-      this.setState("idle");
+      if (this.state !== "stopped") this.setState("idle");
       throw error;
     }
   }
@@ -341,6 +384,16 @@ export class RecordingSession {
   async finalize() {
     try {
       await this.writes;
+      if (
+        this.record &&
+        (!this.record.bytes || !this.record.nextChunk) &&
+        !this.storageError
+      ) {
+        this.storageError = new Error(
+          "No video frames were saved. Choose the source again.",
+        );
+        this.onError(this.storageError);
+      }
       if (this.record) {
         this.record = await transitionRecording(
           this.record.id,
@@ -368,6 +421,7 @@ export class RecordingSession {
         } catch {}
   }
   async cleanup() {
+    this.settleFrame?.(new DOMException("Recording cancelled.", "AbortError"));
     this.cancelled = true;
     this.stopTracks();
     this.worker?.postMessage({ type: "stop" });
