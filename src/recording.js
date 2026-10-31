@@ -170,8 +170,16 @@ export class RecordingSession {
         camera = new MediaStreamTrackProcessor({
           track: this.camera.getVideoTracks()[0],
         }).readable;
-      const compositorError = (error) =>
+      const encoderError = (error) => {
+        this.storageError ||= error;
         this.settleFrame ? this.settleFrame(error) : this.abort(error);
+      };
+      const compositorError = (error) => {
+        // Stopping our generated track can reject an in-flight worker write.
+        // Encoder/storage failures still use their own fatal path while flushing.
+        if (["stopping", "stopped"].includes(this.state)) return;
+        encoderError(error);
+      };
       worker.onerror = (event) =>
         compositorError(
           new Error(event.message || "The recording compositor stopped."),
@@ -239,7 +247,7 @@ export class RecordingSession {
       this.assertLive();
       this.recorder.ondataavailable = (event) => this.enqueue(event.data);
       this.recorder.onerror = (event) =>
-        compositorError(event.error || new Error("The video encoder stopped."));
+        encoderError(event.error || new Error("The video encoder stopped."));
       this.finished = new Promise((resolve) => {
         this.resolveFinished = resolve;
       });
@@ -369,6 +377,7 @@ export class RecordingSession {
     this.setState("stopping");
     if (this.recorder && this.recorder.state !== "inactive") {
       this.recorder.stop();
+      this.worker?.postMessage({ type: "stop" });
       this.stopTracks();
       return this.finished;
     }

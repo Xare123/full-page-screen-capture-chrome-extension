@@ -272,7 +272,22 @@ try {
         };
       }),
   );
-  expect(records[0].status).toBe("complete");
+  const observationsPath = "artifacts/long-recording-stress-observations.json";
+  const observations = JSON.parse(await readFile(observationsPath, "utf8"));
+  observations.recording = Object.fromEntries(
+    ["status", "bytes", "nextChunk", "duration", "error"].map((key) => [
+      key,
+      records[0]?.[key],
+    ]),
+  );
+  await writeFile(
+    observationsPath,
+    JSON.stringify(observations, null, 2) + "\n",
+  );
+  expect(
+    records[0].status,
+    records[0].error || "Native recording must finish successfully",
+  ).toBe("complete");
   // timeslice is a delivery target, not an exact clock. Continuity is verified
   // from decoded packets above; this confirms storage used multiple chunks.
   expect(records[0].nextChunk).toBeGreaterThan(1);
