@@ -8,7 +8,7 @@ This is an independent modernization of Peter Coles’s MIT-licensed Full Page S
 
 Requires **Chrome 147 or newer** (or a compatible Chromium browser). The bundled PDF engine uses modern browser APIs.
 
-1. Download the [v3.0.0 installation ZIP](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases/download/v3.0.0/capture-studio-3.0.0.zip) from [GitHub releases](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases). Extract it. Development artifacts also remain in [GitHub Actions](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml); those downloads require sign-in. You can build from source below.
+1. Download the [v3.1.0 installation ZIP](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases/download/v3.1.0/capture-studio-3.1.0.zip) from [GitHub releases](https://github.com/Xare123/full-page-screen-capture-chrome-extension/releases). Extract it. Development artifacts also remain in [GitHub Actions](https://github.com/Xare123/full-page-screen-capture-chrome-extension/actions/workflows/verify.yml); those downloads require sign-in. You can build from source below.
 2. Open `chrome://extensions` and enable **Developer mode**.
 3. Click **Load unpacked** and select the extracted folder containing `manifest.json` (or this repository’s `dist/` directory).
 4. Pin Capture Studio in the browser toolbar.
@@ -24,6 +24,7 @@ For long emails and app layouts, leave **Full-page target → Auto** selected. F
 ## Included features
 
 - Record a screen/window, browser tab, custom tab region or camera, with optional microphone, shared audio and a positioned camera bubble. Pause/resume, draw while recording and stop from the studio or page tools. Worker-based frame composition keeps running when the studio is hidden.
+- Compress saved/imported recordings locally with Small, Balanced, Clear or custom resolution/frame-rate/bitrate controls. Play the measured result, compare actual bytes and download one WebM or supported MP4. Originals remain unchanged; already compact files can grow.
 - Recording chunks save locally during capture. Recover saved portions after interruption; trim video, remove audio, restore original settings, save frames, or create a short GIF. WebM and browser-supported MP4 use native encoders. Original imports keep their file names.
 - Extract text offline with bundled English, Spanish and Arabic OCR. Only a committed, flattened image with final solid redactions reaches recognition. Review/edit, copy, download text or save a note.
 - Separate whiteboards with up to 100 pages per board, blank/grid/lined/planning templates, reusable text cards, page actions, progressive presentation and editable JSON import/export. JSON flattens every page containing redactions so hidden content is excluded.

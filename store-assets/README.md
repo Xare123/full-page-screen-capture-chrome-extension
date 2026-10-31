@@ -60,3 +60,8 @@ Direct on-image text entry replaces the annotation modal. New text defaults to l
 ## Extension 3.0.0 update
 
 New native 1280×800 RGB screenshots in `suite-screenshots/` show whiteboards, offline OCR, notes and recording. Reproduce them with `node store-assets/source/create-suite-media.mjs` after building. Examples are fictional; the recording image uses Chromium’s synthetic camera. The original five `screenshots/` remain a core capture/PDF set; the store accepts at most five images, so choose the mix you want. New listing and privacy copy cover optional local reminders and native media consent. The 95-second tutorial continues to demonstrate the core capture workflow. Final validation and limitations are in `docs/RELEASE-3.0.0.json` and the public versioned validation report.
+
+
+## Extension 3.1.0 update
+
+Navigation/editor button layouts, mobile targets and recording setup were revised after native UI inspection. In-app recording compression adds presets, custom output settings, actual encoded previews and individual video downloads. Suite screenshots are refreshed from the actual unpacked UI; examples/devices remain synthetic. The tutorial remains the existing core-workflow video. Verification is recorded in the versioned release report.

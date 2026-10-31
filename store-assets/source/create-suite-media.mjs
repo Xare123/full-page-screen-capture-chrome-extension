@@ -125,6 +125,16 @@ try {
   await shot("recording");
   await page.getByRole("button", { name: "Stop", exact: true }).click();
   await expect(page.locator("#video-player")).toBeVisible();
+  await page.locator("#record-title").fill("A smaller explanation");
+  await page.locator("#video-preset").selectOption("small");
+  await page
+    .getByRole("button", { name: "Compress video", exact: true })
+    .click();
+  await expect(page.locator("#compression-result")).toBeVisible({
+    timeout: 20000,
+  });
+  await page.locator(".video-compression").scrollIntoViewIfNeeded();
+  await shot("video-compression");
   if (errors.length) throw Error(errors.join("\n"));
 } finally {
   await context.close();

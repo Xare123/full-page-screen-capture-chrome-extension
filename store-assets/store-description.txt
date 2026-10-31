@@ -32,6 +32,7 @@ RECORD, EXPLAIN AND KEEP IDEAS
 
 • Record a screen/window, tab, tab region or camera. Add an optional microphone, shared audio and positioned camera bubble. Pause/resume, draw live and stop from page tools.
 • Chunks save locally during recording. Recover saved portions, trim clips, remove audio, restore original settings and export native WebM or supported MP4. Save a frame or make a short animated GIF.
+• Compress recordings locally with Small, Balanced, Clear or custom resolution, frame-rate and bitrate controls. Preview actual sizes and playback, then download one WebM or supported MP4. Your original stays unchanged; already small videos can grow.
 • Extract text offline with bundled English, Spanish and Arabic OCR. Review/edit, copy, download or save as a note. Recognition sees your flattened image with final redactions.
 • Separate whiteboards with up to 100 pages, templates, editable JSON, page actions and progressive presentation. Redacted pages flatten safely in JSON exports.
 • Separate notes with search, pins, Done, source links and optional browser reminders.

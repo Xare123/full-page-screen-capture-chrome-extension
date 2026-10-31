@@ -169,3 +169,55 @@ test("rounded video/GIF output dimensions contain the complete source without st
     assert.ok(Math.abs(r.width / r.height - w / h) < 1e-8);
   }
 });
+
+test("compression presets reject invalid encoding requests before acquiring media", async () => {
+  const { VIDEO_PRESETS, validateVideoEncoding } =
+    await import("../../src/media-core.js");
+  for (const options of Object.values(VIDEO_PRESETS))
+    assert.deepEqual(validateVideoEncoding(options), options);
+  for (const patch of [
+    { height: 0 },
+    { height: Infinity },
+    { fps: 0 },
+    { fps: NaN },
+    { videoBitsPerSecond: -1 },
+    { videoBitsPerSecond: Infinity },
+    { audioBitsPerSecond: 1 },
+  ])
+    assert.throws(() =>
+      validateVideoEncoding({ ...VIDEO_PRESETS.balanced, ...patch }),
+    );
+});
+test("canceling metadata and seek waits removes every owned media listener", async () => {
+  const { waitForMedia, seekVideo } = await import("../../src/suite-ui.js");
+  class Video extends EventTarget {
+    listeners = new Map();
+    addEventListener(type, fn, options) {
+      if (!this.listeners.has(type)) this.listeners.set(type, new Set());
+      this.listeners.get(type).add(fn);
+      super.addEventListener(type, fn, options);
+    }
+    removeEventListener(type, fn, options) {
+      this.listeners.get(type)?.delete(fn);
+      super.removeEventListener(type, fn, options);
+    }
+    readyState = 0;
+    duration = 10;
+    currentTime = 0;
+  }
+  for (const seek of [false, true]) {
+    const video = new Video(),
+      abort = new AbortController();
+    const task = seek
+      ? seekVideo(video, 2, abort.signal)
+      : waitForMedia(video, "loadedmetadata", 15000, abort.signal);
+    abort.abort();
+    await assert.rejects(task, { name: "AbortError" });
+    assert.equal(
+      [...video.listeners.values()].reduce((sum, set) => sum + set.size, 0),
+      0,
+    );
+    video.dispatchEvent(new Event("loadedmetadata"));
+    video.dispatchEvent(new Event("seeked"));
+  }
+});

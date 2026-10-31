@@ -24,17 +24,32 @@
         >
       </button>
       <div class="nav-label">WORKSPACE</div>
-      <button class="nav-item active" id="home-button">
+      <button
+        class="nav-item active"
+        id="home-button"
+        aria-label="My captures"
+        title="My captures"
+      >
         <span data-icon="library"></span>My captures<span
           id="nav-count"
           class="nav-count"
           >0</span
         >
       </button>
-      <button class="nav-item" id="import-button">
+      <button
+        class="nav-item"
+        id="import-button"
+        aria-label="Import images"
+        title="Import images"
+      >
         <span data-icon="upload"></span>Import images
       </button>
-      <button class="nav-item" id="compress-button">
+      <button
+        class="nav-item"
+        id="compress-button"
+        aria-label="Compress a PDF"
+        title="Compress a PDF"
+      >
         <span data-icon="compress"></span>Compress a PDF<span class="tiny-tag"
           >FREE</span
         >
@@ -56,7 +71,7 @@
           <span data-icon="help"></span>Help & keyboard shortcuts
         </button>
         <div class="sidebar-version">
-          CAPTURE STUDIO <span>3.0 · OPEN SOURCE</span>
+          CAPTURE STUDIO <span>3.1 · OPEN SOURCE</span>
         </div>
       </div>
     </aside>
@@ -479,10 +494,11 @@
             </p>
             <label class="field-label">FILE FORMAT</label>
             <div class="format-options" role="group" aria-label="Export format">
-              <button data-format="png" class="selected">PNG</button
-              ><button data-format="jpeg">JPG</button
-              ><button data-format="webp">WebP</button
-              ><button data-format="pdf">PDF</button>
+              <button data-format="png" aria-pressed="true" class="selected">
+                PNG</button
+              ><button data-format="jpeg" aria-pressed="false">JPG</button
+              ><button data-format="webp" aria-pressed="false">WebP</button
+              ><button data-format="pdf" aria-pressed="false">PDF</button>
             </div>
             <p id="format-description" class="field-note">
               Crisp details. Lossless quality.
@@ -604,7 +620,7 @@
       multiple
       hidden
     /><input id="pdf-input" type="file" accept="application/pdf,.pdf" hidden />
-    <dialog id="capture-dialog">
+    <dialog aria-label="New capture" id="capture-dialog">
       <div class="dialog-heading">
         <div class="dialog-icon" data-icon="capture" data-size="25"></div>
         <button
@@ -638,7 +654,7 @@
         Got it<span data-icon="check" data-size="18"></span>
       </button>
     </dialog>
-    <dialog id="pdf-dialog" class="pdf-dialog">
+    <dialog aria-label="Compress a PDF" id="pdf-dialog" class="pdf-dialog">
       <div class="dialog-heading">
         <div
           class="dialog-icon green"
@@ -705,7 +721,7 @@
         </button>
       </div>
     </dialog>
-    <dialog id="delete-dialog">
+    <dialog aria-label="Delete capture" id="delete-dialog">
       <h2>Delete this capture?</h2>
       <p>
         This removes the original and its edits from this browser’s library.
@@ -719,7 +735,7 @@
         </button>
       </div>
     </dialog>
-    <dialog id="help-dialog">
+    <dialog aria-label="Help and keyboard shortcuts" id="help-dialog">
       <div class="dialog-heading">
         <h2>A few useful shortcuts.</h2>
         <button

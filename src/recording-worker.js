@@ -109,6 +109,7 @@ self.onmessage = async ({ data }) => {
       await liveFrames();
       return;
     }
+    let nextExportTimestamp = 0;
     while (!stopped) {
       const { done, value: frame } = await sourceReader.read();
       if (done) break;
@@ -121,6 +122,13 @@ self.onmessage = async ({ data }) => {
         ) {
           self.postMessage({ type: "limit" });
           break;
+        }
+        if (options.fps) {
+          const relative = frame.timestamp - firstTimestamp,
+            period = 1e6 / options.fps;
+          if (relative + 500 < nextExportTimestamp) continue;
+          nextExportTimestamp =
+            (Math.floor((relative + 500) / period) + 1) * period;
         }
         output = compose(frame, frame.timestamp, frame.duration || undefined);
         await writer.write(output);

@@ -334,6 +334,7 @@ export function createNotebook({ toast, fail }) {
       select = el(
         "select",
         {
+          ariaLabel: "Filter notes",
           onchange: (e) => {
             filter = e.target.value;
             void renderList().catch(fail);

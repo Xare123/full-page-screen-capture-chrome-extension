@@ -1,3 +1,9 @@
+# Capture Studio 3.1.0
+
+- Align capture actions with the editor header. Give navigation and drawing tools consistent icons, readable desktop labels, mobile touch targets and visible selected/disabled states. Fix narrow guide reflow, short-window sidebar scrolling and accessible dialog/filter names.
+- Organize recording setup and add in-app compression presets/custom sizing, video/audio bitrate and frame-rate targets. Preview actual encoded results before downloading one native video file. Preserve originals, trim/audio choices and complete frame geometry.
+- Cancel abandoned encoding work, clear stale results/preview URLs and validate output settings before acquiring media resources. Frame-rate conversion uses source-anchored deadlines to preserve motion.
+
 # Capture Studio 3.0.0
 
 - Keep live video advancing over static pages, including camera/ink changes. Wait for the first compositor frame, bound startup, permit cancellation and retain only valid recoverable chunks on failure.

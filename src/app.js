@@ -144,15 +144,15 @@ const editorId = crypto.randomUUID(),
   failedSaves = new Set(),
   saveStates = new WeakMap();
 const tools = [
-  ["select", "cursor", "Pan", "V"],
-  ["text-select", "cursor", "Select text", "S"],
-  ["object-select", "cursor", "Select objects", "Q"],
+  ["select", "hand", "Pan", "V"],
+  ["text-select", "textSelect", "Select text", "S"],
+  ["object-select", "selection", "Select objects", "Q"],
   ["arrow", "arrow", "Arrow", "A"],
   ["rectangle", "rectangle", "Rectangle", "R"],
   ["ellipse", "ellipse", "Ellipse", "O"],
   ["pen", "pen", "Draw", "P"],
   ["text", "text", "Text", "T"],
-  ["callout", "text", "Callout", "L"],
+  ["callout", "callout", "Callout", "L"],
   ["highlight", "highlight", "Highlight", "H"],
   ["blur", "blur", "Pixelate", "B"],
   ["redact", "redact", "Redact", "X"],
@@ -180,7 +180,7 @@ const hints = {
 $("drawing-tools").innerHTML = tools
   .map(
     ([id, glyph, label, key]) =>
-      `<button class="tool-button${id === "select" ? " selected" : ""}" data-tool="${id}" title="${label} (${key})" aria-label="${label}" aria-pressed="${id === "select"}">${icon(glyph, 18)}${["crop", "text-select"].includes(id) ? `<span class="tool-label">${id === "crop" ? "Crop" : "Select text"}</span>` : ""}</button>`,
+      `<button class="tool-button${id === "select" ? " selected" : ""}" data-tool="${id}" title="${label} (${key})" aria-label="${label}" aria-pressed="${id === "select"}">${icon(glyph, 18)}<span class="tool-label">${label}</span></button>`,
   )
   .join("");
 
@@ -1821,11 +1821,10 @@ document.addEventListener("click", (event) => {
   if (nextTool) selectTool(nextTool.dataset.tool);
   const format = event.target.closest("[data-format]");
   if (format) {
-    document
-      .querySelectorAll("[data-format]")
-      .forEach((button) =>
-        button.classList.toggle("selected", button === format),
-      );
+    document.querySelectorAll("[data-format]").forEach((button) => {
+      button.classList.toggle("selected", button === format);
+      button.setAttribute("aria-pressed", String(button === format));
+    });
     updateExportPanel();
   }
 });
@@ -2597,6 +2596,10 @@ function syncObjectControls() {
     );
   }
   objectList.value = selectedObjectIndex ?? "";
+  const selected = image().annotations[selectedObjectIndex];
+  const actions = objectPanel.querySelectorAll("button");
+  actions[0].disabled = actions[1].disabled = !selected || working;
+  actions[2].disabled = selected?.type !== "text" || working;
 }
 async function duplicateSelectedObject() {
   if ((await finishText()) === false) return;

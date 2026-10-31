@@ -8,6 +8,43 @@ export const VIDEO_MIMES = {
   // A fixed low H.264 level can advertise support but fail at larger resolutions.
   mp4: ["video/mp4"],
 };
+export const VIDEO_PRESETS = {
+  small: {
+    height: 480,
+    fps: 15,
+    videoBitsPerSecond: 800000,
+    audioBitsPerSecond: 64000,
+  },
+  balanced: {
+    height: 720,
+    fps: 24,
+    videoBitsPerSecond: 1800000,
+    audioBitsPerSecond: 96000,
+  },
+  clear: {
+    height: 1080,
+    fps: 30,
+    videoBitsPerSecond: 3500000,
+    audioBitsPerSecond: 128000,
+  },
+};
+export function validateVideoEncoding({
+  height,
+  fps,
+  videoBitsPerSecond,
+  audioBitsPerSecond,
+}) {
+  if (
+    ![240, 360, 480, 720, 1080, 1440, 2160].includes(height) ||
+    ![15, 24, 30, 60].includes(fps) ||
+    !Number.isFinite(videoBitsPerSecond) ||
+    videoBitsPerSecond < 200000 ||
+    videoBitsPerSecond > 20000000 ||
+    ![64000, 96000, 128000].includes(audioBitsPerSecond)
+  )
+    throw new Error("Choose a supported resolution, frame rate and bitrate.");
+  return { height, fps, videoBitsPerSecond, audioBitsPerSecond };
+}
 export function supportedVideoMime(
   format = "webm",
   supported = (type) => MediaRecorder.isTypeSupported(type),

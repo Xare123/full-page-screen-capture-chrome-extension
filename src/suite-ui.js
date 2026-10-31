@@ -61,7 +61,10 @@ export async function waitForMedia(
   video,
   event = "loadedmetadata",
   timeout = 15000,
+  signal,
 ) {
+  if (signal?.aborted)
+    throw new DOMException("Export cancelled.", "AbortError");
   if (event === "loadedmetadata" && video.readyState >= 1) return;
   return new Promise((resolve, reject) => {
     const timer = setTimeout(
@@ -69,6 +72,8 @@ export async function waitForMedia(
       timeout,
     );
     const ready = () => finish(),
+      cancel = () =>
+        finish(new DOMException("Export cancelled.", "AbortError")),
       error = () =>
         finish(
           new Error("This video format could not be played by the browser."),
@@ -77,13 +82,18 @@ export async function waitForMedia(
       clearTimeout(timer);
       video.removeEventListener(event, ready);
       video.removeEventListener("error", error);
+      signal?.removeEventListener("abort", cancel);
       err ? reject(err) : resolve();
     }
     video.addEventListener(event, ready, { once: true });
     video.addEventListener("error", error, { once: true });
+    signal?.addEventListener("abort", cancel, { once: true });
+    if (signal?.aborted) cancel();
   });
 }
-export async function seekVideo(video, time) {
+export async function seekVideo(video, time, signal) {
+  if (signal?.aborted)
+    throw new DOMException("Export cancelled.", "AbortError");
   time = Math.max(
     0,
     Math.min(Number.isFinite(video.duration) ? video.duration : time, time),
@@ -94,7 +104,7 @@ export async function seekVideo(video, time) {
     video.readyState >= 2
   )
     return;
-  const ready = waitForMedia(video, "seeked");
+  const ready = waitForMedia(video, "seeked", 15000, signal);
   video.currentTime = time;
   await ready;
 }

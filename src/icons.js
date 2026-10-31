@@ -1,4 +1,16 @@
 const paths = {
+  hand: '<path d="M8 13V6a2 2 0 0 1 4 0v6-8a2 2 0 0 1 4 0v8-6a2 2 0 0 1 4 0v9c0 5-3 8-7 8h-1c-3 0-5-2-6-4l-3-5a2 2 0 0 1 3-2l2 2Z"/>',
+  selection:
+    '<rect x="3" y="3" width="18" height="18" rx="1" stroke-dasharray="3 3"/><path d="m9 8 7 6-4 1-2 4-1-11Z"/>',
+  textSelect: '<path d="M8 3h8M12 3v18m-4 0h8M5 8v8m14-8v8"/>',
+  callout: '<path d="M4 3h16v13H9l-5 5V3Z"/><path d="M8 7h8m-8 4h5"/>',
+  video:
+    '<rect x="3" y="5" width="12" height="14" rx="3"/><path d="m15 10 6-4v12l-6-4"/>',
+  board:
+    '<rect x="3" y="3" width="18" height="14" rx="2"/><path d="m8 22 4-5 4 5M7 8h5m-5 4h9"/>',
+  note: '<path d="M5 3h14v13l-5 5H5V3Z"/><path d="M14 21v-5h5M8 7h8m-8 4h6"/>',
+  share:
+    '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4M9 14l6 4"/>',
   capture:
     '<path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/><rect x="7" y="7" width="10" height="10" rx="2"/>',
   full: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 7h8M8 12h8M8 17h5"/>',

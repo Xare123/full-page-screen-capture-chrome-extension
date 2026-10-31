@@ -22,6 +22,9 @@ import {
   videoExtension,
   supportedVideoMime,
   seekableWebM,
+  VIDEO_PRESETS,
+  fitVideo,
+  validateVideoEncoding,
 } from "./media-core.js";
 import { exportVideo, exportGIF, videoFrame } from "./video-export.js";
 import { drawAnnotations } from "./graphics.js";
@@ -40,7 +43,10 @@ export function createRecorder({ toast, fail, importFrame }) {
     selectedTool = "pen",
     drawing,
     timer,
-    locked = false;
+    locked = false,
+    compressed,
+    compressedURL,
+    originalBytes = 0;
   const source = el(
       "select",
       { id: "record-source" },
@@ -146,7 +152,7 @@ export function createRecorder({ toast, fail, importFrame }) {
     mute = el("input", { id: "video-mute", type: "checkbox" }),
     exportFormat = el(
       "select",
-      {},
+      { id: "video-format" },
       ...["webm", "mp4"].map((value) =>
         el(
           "option",
@@ -171,6 +177,141 @@ export function createRecorder({ toast, fail, importFrame }) {
     ),
     exportProgress = el("p", { role: "status" }),
     edit = el("div", { className: "record-editor", hidden: true });
+  const preset = el(
+      "select",
+      { id: "video-preset" },
+      ...[
+        ["small", "Small · easier to send"],
+        ["balanced", "Balanced · recommended"],
+        ["clear", "Clear · finer details"],
+        ["custom", "Custom"],
+      ].map(([value, text]) =>
+        el("option", { value, selected: value === "balanced" }, text),
+      ),
+    ),
+    outputHeight = el(
+      "select",
+      { id: "video-height" },
+      ...[240, 360, 480, 720, 1080, 1440, 2160].map((value) =>
+        el(
+          "option",
+          { value, selected: value === 720 },
+          `${value}px maximum height`,
+        ),
+      ),
+    ),
+    outputFps = el(
+      "select",
+      { id: "video-fps" },
+      ...[15, 24, 30, 60].map((value) =>
+        el("option", { value, selected: value === 24 }, `${value} fps maximum`),
+      ),
+    ),
+    outputBitrate = el("input", {
+      id: "video-bitrate",
+      type: "number",
+      min: 0.2,
+      max: 20,
+      step: 0.1,
+      value: 1.8,
+    }),
+    outputAudio = el(
+      "select",
+      { id: "video-audio-bitrate" },
+      ...[64000, 96000, 128000].map((value) =>
+        el(
+          "option",
+          { value, selected: value === 96000 },
+          `${value / 1000} kbps`,
+        ),
+      ),
+    ),
+    outputDescription = el("p", { id: "video-output-description" }),
+    compressedPlayer = el("video", {
+      id: "compressed-video",
+      controls: true,
+      playsInline: true,
+      preload: "metadata",
+    }),
+    compressedSummary = el("p", { id: "compression-summary", role: "status" }),
+    downloadCompressed = button(
+      "Download compressed video",
+      () => {
+        if (compressed && !locked)
+          downloadBlob(compressed.blob, compressed.name);
+      },
+      "primary",
+    ),
+    compressedResult = el(
+      "div",
+      {
+        className: "compression-result",
+        id: "compression-result",
+        hidden: true,
+      },
+      compressedSummary,
+      compressedPlayer,
+      downloadCompressed,
+    ),
+    compressVideo = button(
+      "Compress video",
+      () => void render(false, true).catch(fail),
+      "primary",
+    ),
+    cancelExport = button("Cancel export", () => abort?.abort()),
+    importVideoButton = button("Import video", () => fileInput.click());
+  function clearCompressed() {
+    compressed = null;
+    compressedPlayer.pause();
+    compressedPlayer.removeAttribute("src");
+    compressedPlayer.load();
+    if (compressedURL) URL.revokeObjectURL(compressedURL);
+    compressedURL = null;
+    compressedResult.hidden = true;
+    downloadCompressed.disabled = true;
+  }
+  function encodingOptions() {
+    return validateVideoEncoding({
+      height: Number(outputHeight.value),
+      fps: Number(outputFps.value),
+      videoBitsPerSecond: Math.round(Number(outputBitrate.value) * 1000000),
+      audioBitsPerSecond: Number(outputAudio.value),
+    });
+  }
+  function describeOutput() {
+    if (!record) return;
+    try {
+      const size = fitVideo(
+        player.videoWidth,
+        player.videoHeight,
+        Number(outputHeight.value),
+      );
+      outputDescription.textContent = `${size.width} × ${size.height} px · up to ${outputFps.value} fps · ${outputBitrate.value} Mbps video target. Complete frame, original proportions, no upscaling. Actual size is measured after encoding.`;
+    } catch {
+      outputDescription.textContent = "Choose valid compression settings.";
+    }
+  }
+  function changedOutput() {
+    clearCompressed();
+    describeOutput();
+  }
+  preset.addEventListener("change", () => {
+    const selected = VIDEO_PRESETS[preset.value];
+    if (selected) {
+      outputHeight.value = selected.height;
+      outputFps.value = selected.fps;
+      outputBitrate.value = selected.videoBitsPerSecond / 1000000;
+      outputAudio.value = selected.audioBitsPerSecond;
+    }
+    changedOutput();
+  });
+  for (const input of [outputHeight, outputFps, outputBitrate, outputAudio])
+    input.addEventListener("input", () => {
+      preset.value = "custom";
+      changedOutput();
+    });
+  for (const input of [title, trimStart, trimEnd, mute, exportFormat])
+    input.addEventListener("input", changedOutput);
   const saveSettings = async () => {
     if (record)
       record = await patchSuiteItem("recordings", record.id, {
@@ -256,6 +397,19 @@ export function createRecorder({ toast, fail, importFrame }) {
       ["recording", "paused"].includes(session?.state)
         ? "auto"
         : "none";
+    for (const input of edit.querySelectorAll("input,select,button"))
+      input.disabled = locked || active;
+    importVideoButton.disabled = locked || active;
+    list.inert = locked || active;
+    cancelExport.hidden = !locked;
+    cancelExport.disabled = !locked;
+    downloadCompressed.disabled = locked || active || !compressed;
+    tools.hidden = !["recording", "paused"].includes(session?.state);
+    for (const node of tools.querySelectorAll("[data-ink]")) {
+      const selected = node.dataset.ink === selectedTool;
+      node.setAttribute("aria-pressed", String(selected));
+    }
+    undoInk.disabled = clearInk.disabled = !annotations.length;
   }
   async function acquire() {
     if (locked || (session && !["idle", "stopped"].includes(session.state)))
@@ -425,6 +579,7 @@ export function createRecorder({ toast, fail, importFrame }) {
     if (ink.hasPointerCapture(event.pointerId))
       ink.releasePointerCapture(event.pointerId);
     drawInk();
+    sync();
   });
   ink.addEventListener("pointercancel", () => {
     drag = null;
@@ -500,7 +655,14 @@ export function createRecorder({ toast, fail, importFrame }) {
         ),
       ),
     );
-    if (!items.length) list.append(el("p", {}, "No recordings yet."));
+    if (!items.length)
+      list.append(
+        el(
+          "p",
+          { className: "suite-empty" },
+          "No recordings yet. Choose a source above, or import an existing video to edit and compress.",
+        ),
+      );
   }
   async function open(id) {
     if (locked) throw new Error("Finish or cancel the current export first.");
@@ -510,6 +672,7 @@ export function createRecorder({ toast, fail, importFrame }) {
       throw new Error("Stop this recording before editing it.");
     if (!next.nextChunk) throw new Error("No recording chunks were saved.");
     const generation = ++operation;
+    clearCompressed();
     let blob = await recordingBlob(next);
     blob = await seekableWebM(blob, next.duration);
     if (generation !== operation) return;
@@ -541,14 +704,17 @@ export function createRecorder({ toast, fail, importFrame }) {
           })
         : next;
     record = { ...metadata, duration };
+    originalBytes = blob.size;
     title.value = record.title;
     trimStart.value = record.edit?.start || 0;
     trimEnd.value = record.edit?.end || duration;
     trimStart.max = trimEnd.max = duration;
     mute.checked = !!record.edit?.mute;
     edit.hidden = false;
+    describeOutput();
     exportProgress.textContent = `${record.width || player.videoWidth} × ${record.height || player.videoHeight} · ${readableDuration(duration)}${next.status === "interrupted" ? " · recovered saved portion; verify playback" : ""}`;
     await refresh();
+    sync();
   }
   async function original() {
     if (!record) return;
@@ -557,8 +723,12 @@ export function createRecorder({ toast, fail, importFrame }) {
       record.originalName || `${title.value}.${videoExtension(record.mime)}`,
     );
   }
-  async function render(gif = false) {
+  async function render(gif = false, compress = false) {
     if (!record || locked) return;
+    const jobRecord = record,
+      jobTitle = title.value;
+    player.pause();
+    if (compress) clearCompressed();
     locked = true;
     abort = new AbortController();
     sync();
@@ -572,21 +742,42 @@ export function createRecorder({ toast, fail, importFrame }) {
         duration: record.duration,
         mute: mute.checked,
         format: exportFormat.value,
-        width: Number(gifWidth.value),
-        fps: Number(gifFps.value),
+        ...(gif
+          ? { width: Number(gifWidth.value), fps: Number(gifFps.value) }
+          : encodingOptions()),
         signal: abort.signal,
         progress: (value) => {
-          exportProgress.textContent = `${gif ? "GIF" : "Video"} export ${Math.round(value * 100)}%`;
+          exportProgress.textContent = `${compress ? "Compressing" : gif ? "GIF export" : "Video export"} ${Math.round(value * 100)}% · keep this studio open`;
         },
       };
       const blob = await (gif
         ? exportGIF(player, options)
         : exportVideo(player, options));
-      downloadBlob(
-        blob,
-        `${title.value}-edited.${gif ? "gif" : videoExtension(blob.type)}`,
-      );
-      exportProgress.textContent = "Export ready.";
+      if (abort.signal.aborted || record.id !== jobRecord.id)
+        throw new DOMException("Export cancelled.", "AbortError");
+      if (compress) {
+        compressed = {
+          blob,
+          name: `${jobTitle}-compressed.${videoExtension(blob.type)}`,
+        };
+        compressedURL = URL.createObjectURL(blob);
+        compressedPlayer.src = compressedURL;
+        compressedResult.hidden = false;
+        const percent = Math.round(
+            Math.abs(1 - blob.size / originalBytes) * 100,
+          ),
+          trimmed =
+            options.start > 0.01 || options.end < jobRecord.duration - 0.05;
+        compressedSummary.textContent = `${formatBytes(originalBytes)} original → ${formatBytes(blob.size)} result · ${blob.size < originalBytes ? `${percent}% smaller` : blob.size > originalBytes ? `${percent}% larger; the original is available below` : "same size"}. ${trimmed ? "Size comparison is with the full original file; this result contains only the selected clip. " : ""}Play the result to review its quality before downloading.`;
+        exportProgress.textContent =
+          "Compression ready. Your original recording is unchanged.";
+      } else {
+        downloadBlob(
+          blob,
+          `${jobTitle}-edited.${gif ? "gif" : videoExtension(blob.type)}`,
+        );
+        exportProgress.textContent = "Export ready.";
+      }
     } catch (error) {
       exportProgress.textContent =
         error.name === "AbortError" ? "Export cancelled." : error.message;
@@ -600,6 +791,7 @@ export function createRecorder({ toast, fail, importFrame }) {
   async function remove() {
     if (!record || locked) return;
     const id = record.id;
+    clearCompressed();
     player.pause();
     player.removeAttribute("src");
     player.load();
@@ -610,24 +802,32 @@ export function createRecorder({ toast, fail, importFrame }) {
     edit.hidden = true;
     await refresh();
   }
+  const undoInk = button("Undo ink", () => {
+      annotations.pop();
+      drawInk();
+      sync();
+    }),
+    clearInk = button("Clear ink", () => {
+      annotations = [];
+      drawInk();
+      sync();
+    });
   const tools = el(
     "div",
     { className: "suite-row" },
-    ...["pen", "arrow", "highlight", "redact"].map((value) =>
-      button(value, () => {
+    ...["pen", "arrow", "highlight", "redact"].map((value) => {
+      const node = button(value, () => {
         selectedTool = value;
-      }),
-    ),
-    button("Undo ink", () => {
-      annotations.pop();
-      drawInk();
+        sync();
+      });
+      node.dataset.ink = value;
+      return node;
     }),
-    button("Clear ink", () => {
-      annotations = [];
-      drawInk();
-    }),
+    undoInk,
+    clearInk,
   );
   edit.append(
+    el("h2", { className: "record-section-title" }, "Edit, compress & export"),
     field("Title", title),
     player,
     el(
@@ -639,6 +839,32 @@ export function createRecorder({ toast, fail, importFrame }) {
       field("Video format", exportFormat),
     ),
     el(
+      "section",
+      { className: "video-compression", ariaLabel: "Video compression" },
+      el("h3", {}, "Make your recording smaller"),
+      el(
+        "p",
+        {},
+        "Encode locally, compare the actual size, then download. Your original stays in the library. Encoding takes about the length of the selected clip.",
+      ),
+      el(
+        "div",
+        { className: "suite-row" },
+        field("Compression preset", preset),
+        field("Maximum output height", outputHeight),
+        field("Frame-rate cap", outputFps),
+      ),
+      el(
+        "div",
+        { className: "suite-row" },
+        field("Video bitrate (Mbps)", outputBitrate),
+        field("Audio bitrate", outputAudio),
+      ),
+      outputDescription,
+      el("div", { className: "suite-row" }, compressVideo, cancelExport),
+      compressedResult,
+    ),
+    el(
       "div",
       { className: "suite-row" },
       button("Export edited video", () => void render().catch(fail), "primary"),
@@ -647,9 +873,10 @@ export function createRecorder({ toast, fail, importFrame }) {
         trimStart.value = 0;
         trimEnd.value = record.duration;
         mute.checked = false;
+        clearCompressed();
+        describeOutput();
         void saveSettings().catch(fail);
       }),
-      button("Cancel export", () => abort?.abort()),
     ),
     el(
       "div",
@@ -699,7 +926,12 @@ export function createRecorder({ toast, fail, importFrame }) {
             "Screen, tab, region or camera. Saved in chunks on this device.",
           ),
         ),
-        button("Import video", () => fileInput.click()),
+        importVideoButton,
+      ),
+      el(
+        "h2",
+        { className: "record-section-title" },
+        "1. Choose what to record",
       ),
       el(
         "div",
@@ -710,11 +942,33 @@ export function createRecorder({ toast, fail, importFrame }) {
         field("Shared source audio", audio),
         field("Quality", height),
         field("Format", format),
-        field("Bubble position", bubble),
-        field("Microphone device", micDevice),
-        field("Camera device", camDevice),
       ),
-      el("div", { className: "suite-row" }, choose, start, pause, stop, cancel),
+      el(
+        "details",
+        { className: "record-options" },
+        el("summary", {}, "Device & camera bubble settings"),
+        el(
+          "div",
+          { className: "suite-row" },
+          field("Bubble position", bubble),
+          field("Microphone device", micDevice),
+          field("Camera device", camDevice),
+        ),
+      ),
+      el(
+        "h2",
+        { className: "record-section-title" },
+        "2. Choose source, then start",
+      ),
+      el(
+        "div",
+        { className: "suite-row record-control-bar" },
+        choose,
+        start,
+        pause,
+        stop,
+        cancel,
+      ),
       state,
       previewBox,
       tools,
@@ -733,6 +987,7 @@ export function createRecorder({ toast, fail, importFrame }) {
   }
   window.addEventListener("pagehide", () => {
     abort?.abort();
+    clearCompressed();
     session?.stopTracks();
     void session?.stop();
     clearInterval(timer);
@@ -760,6 +1015,11 @@ export function createRecorder({ toast, fail, importFrame }) {
   });
   return {
     mount,
+    releasePreview: () => {
+      abort?.abort();
+      player.pause();
+      clearCompressed();
+    },
     hasPending: () =>
       locked || (!!session && !["idle", "stopped"].includes(session.state)),
     flush: async () => {},

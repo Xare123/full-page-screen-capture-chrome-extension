@@ -4,6 +4,7 @@ import {
   containedVideoRect,
   validateTrim,
   seekableWebM,
+  validateVideoEncoding,
 } from "./media-core.js";
 import { seekVideo, waitForMedia } from "./suite-ui.js";
 import { makeCanvas, canvasBlob } from "./graphics.js";
@@ -19,21 +20,30 @@ export async function exportVideo(
     mute,
     format,
     height = 1080,
+    fps = 30,
+    videoBitsPerSecond = 6000000,
+    audioBitsPerSecond = 128000,
     signal,
     progress = () => {},
   },
 ) {
   validateTrim(start, end, duration);
+  validateVideoEncoding({
+    height,
+    fps,
+    videoBitsPerSecond,
+    audioBitsPerSecond,
+  });
   if (signal?.aborted) throw aborted();
   const mime = supportedVideoMime(format);
   if (!mime) throw new Error("This browser cannot encode this format.");
-  const video = await isolatedVideo(sourceVideo);
+  const video = await isolatedVideo(sourceVideo, signal);
   let source, output, worker, recorder, timer;
   const chunks = [];
   let bytes = 0;
   try {
     video.pause();
-    await seekVideo(video, start);
+    await seekVideo(video, start, signal);
     if (signal?.aborted) throw aborted();
     source = video.captureStream();
     const sourceTrack = source.getVideoTracks()[0];
@@ -53,7 +63,8 @@ export async function exportVideo(
     });
     recorder = new MediaRecorder(output, {
       mimeType: mime,
-      videoBitsPerSecond: 6000000,
+      videoBitsPerSecond,
+      audioBitsPerSecond,
     });
     const result = new Promise((resolve, reject) => {
       let settled = false,
@@ -100,20 +111,28 @@ export async function exportVideo(
         settled = true;
         signal?.removeEventListener("abort", cancel);
         video.removeEventListener("ended", ended);
+        if (!bytes)
+          error ||= new Error(
+            "The browser produced an empty video. Retry the export.",
+          );
         error
           ? reject(error)
           : resolve(new Blob(chunks, { type: recorder.mimeType }));
       };
+      if (signal?.aborted) {
+        reject(aborted());
+        return;
+      }
+      recorder.start(1000);
       worker.postMessage(
         {
           type: "start",
           readable: processor.readable,
           writable: generator.writable,
-          options: { ...size, duration: end - start },
+          options: { ...size, fps, duration: end - start },
         },
         [processor.readable, generator.writable],
       );
-      recorder.start(1000);
       timer = setInterval(() => {
         progress(Math.min(1, (video.currentTime - start) / (end - start)));
         if (video.currentTime >= end) stop();
@@ -162,7 +181,7 @@ export async function exportGIF(
   if (![4, 8, 12].includes(fps) || ![320, 480, 640, 960].includes(width))
     throw new Error("Invalid GIF size or frame rate.");
   if (signal?.aborted) throw aborted();
-  const video = await isolatedVideo(sourceVideo);
+  const video = await isolatedVideo(sourceVideo, signal);
   let canvas, worker, pendingFailure, workerError;
   try {
     const size = fitVideo(
@@ -209,7 +228,7 @@ export async function exportGIF(
     const count = Math.ceil((end - start) * fps);
     for (let i = 0; i < count; i++) {
       if (signal?.aborted) throw aborted();
-      await seekVideo(video, Math.min(end - 0.001, start + i / fps));
+      await seekVideo(video, Math.min(end - 0.001, start + i / fps), signal);
       ctx.fillStyle = "#fff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const fitted = containedVideoRect(
@@ -254,7 +273,7 @@ export async function exportGIF(
   }
 }
 
-async function isolatedVideo(source) {
+async function isolatedVideo(source, signal) {
   const video = document.createElement("video");
   video.muted = true;
   video.playsInline = true;
@@ -264,7 +283,7 @@ async function isolatedVideo(source) {
   video.src = source.currentSrc || source.src;
   document.body.append(video);
   try {
-    await waitForMedia(video);
+    await waitForMedia(video, "loadedmetadata", 15000, signal);
     return video;
   } catch (error) {
     video.removeAttribute("src");

@@ -36,7 +36,11 @@ export function createOCR({ snapshot, toast, fail, saveNote }) {
       );
     });
   }
-  const dialog = el("dialog", { className: "suite-dialog", id: "ocr-dialog" }),
+  const dialog = el("dialog", {
+      className: "suite-dialog",
+      id: "ocr-dialog",
+      ariaLabel: "Extract text offline",
+    }),
     language = el(
       "select",
       { id: "ocr-language" },

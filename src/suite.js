@@ -10,6 +10,7 @@ import {
 import { mountGuide } from "./guide.js";
 import { createOCR } from "./ocr.js";
 import { presentBoard } from "./board-presenter.js";
+import { icon } from "./icons.js";
 
 export function createSuite(context) {
   const { toast, fail } = context,
@@ -33,12 +34,23 @@ export function createSuite(context) {
       guide: "Guide & settings",
     },
     nav = {};
-  const anchor = document.getElementById("compress-button");
+  let anchor = document.getElementById("compress-button");
+  const navIcons = {
+    recordings: "video",
+    whiteboards: "board",
+    notes: "note",
+    guide: "help",
+  };
   for (const [key, label] of Object.entries(views)) {
     const node = button(label, () => void open(key).catch(fail), "nav-item");
     node.id = `nav-${key}`;
     node.className = "nav-item";
+    node.setAttribute("aria-label", label);
+    node.title = label;
+    node.innerHTML =
+      icon(navIcons[key]) + `<span class="nav-label-text">${label}</span>`;
     anchor.parentNode.insertBefore(node, anchor.nextSibling);
+    anchor = node;
     nav[key] = node;
   }
   async function flush() {
@@ -49,6 +61,8 @@ export function createSuite(context) {
     if (!views[name]) return false;
     await flush();
     if (!(await context.leave())) return true;
+    if (active === "recordings" && name !== "recordings")
+      recorder.releasePreview();
     active = name;
     root.hidden = false;
     document.getElementById("home-view").hidden = true;
@@ -80,6 +94,7 @@ export function createSuite(context) {
     return true;
   }
   function hide() {
+    if (active === "recordings") recorder.releasePreview();
     active = null;
     root.hidden = true;
     for (const node of Object.values(nav)) node.classList.remove("active");
@@ -105,6 +120,13 @@ export function createSuite(context) {
         .catch(fail);
     }),
   );
+  editorActions.setAttribute("role", "group");
+  editorActions.setAttribute("aria-label", "Capture actions");
+  const actionIcons = ["textSelect", "image", "share", "note"];
+  [...editorActions.children].forEach((node, index) => {
+    const label = node.textContent;
+    node.innerHTML = icon(actionIcons[index], 17) + `<span>${label}</span>`;
+  });
   document.querySelector(".editor-heading").after(editorActions);
   const pageBar = el("div", {
       className: "suite-row",
@@ -170,7 +192,11 @@ export function createSuite(context) {
     radius = el("input", { type: "number", min: 0, max: 32, value: 12 });
   const finishes = el(
     "dialog",
-    { id: "finish-dialog", className: "suite-dialog" },
+    {
+      id: "finish-dialog",
+      className: "suite-dialog",
+      ariaLabel: "Background and browser frame",
+    },
     el("h2", {}, "Background & browser frame"),
     el(
       "p",
@@ -230,7 +256,7 @@ export function createSuite(context) {
       file = new File([blob], name, { type: "image/png" }),
       dialog = el(
         "dialog",
-        { className: "suite-dialog" },
+        { className: "suite-dialog", ariaLabel: "Share capture" },
         el("h2", {}, `Share ${target.title}`),
         el(
           "p",

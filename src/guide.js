@@ -22,7 +22,7 @@ export const GUIDE = [
   ],
   [
     "Video editing",
-    "Select a saved or imported recording. Set trim start/end, remove audio, restore the original, or save a current frame. Trim export plays the selected clip in real time. WebM and MP4 availability depends on the browser encoder. GIF exports use an explicit shorter clip and smaller size.",
+    "Select a saved or imported recording. Choose Small, Balanced or Clear compression, or set maximum height, frame-rate cap and bitrate. Compress video creates a playable result and reports its actual size. Download compressed video saves that exact result as one WebM or supported MP4 file, without changing the original. Encoding takes about the selected clip length. Compare quality; already compact videos may grow. Trim, remove audio, restore original settings, save frames or export a short GIF.",
   ],
   [
     "Extract text",

@@ -179,7 +179,7 @@
 }
 .guide-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
   gap: 20px;
   margin: 24px 0;
 }
@@ -226,7 +226,12 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: -10px 0 18px;
+  align-items: center;
+  margin: 0;
+  padding: 10px 30px;
+  border-bottom: 1px solid var(--line);
+  background: #fefdfb;
+  flex-shrink: 0;
 }
 .suite-editor-actions button {
   padding: 8px 14px;
@@ -305,5 +310,194 @@
   .note-editor,
   .record-editor {
     padding: 16px;
+  }
+}
+
+/* Shared controls use one rhythm across the capture and recording workspaces. */
+.sidebar {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.sidebar .nav-item {
+  min-height: 44px;
+  flex-shrink: 0;
+}
+.sidebar .new-button,
+.sidebar-bottom {
+  flex-shrink: 0;
+}
+.editor-main > .toolbar {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  overflow: visible;
+}
+#drawing-tools {
+  flex: 1 1 540px;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.editor-main .tool-button {
+  min-height: 38px;
+  min-width: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  color: #685c78;
+}
+.editor-main .tool-button .tool-label {
+  font-size: 11px;
+  line-height: 1.3;
+}
+.editor-main .tool-button.selected {
+  color: #6441c8;
+  background: #eee7fc;
+  border-color: #c9b7f4;
+}
+.editor-main .tool-button:disabled {
+  color: #685c78;
+}
+.editor-main > .toolbar > .toolbar-divider {
+  display: none;
+}
+.suite-view .button,
+.suite-dialog .button,
+.suite-editor-actions .button {
+  min-height: 40px;
+  line-height: 1.4;
+}
+.suite-view .button[aria-pressed="true"] {
+  background: #eee7fc;
+  border-color: #af96ec;
+  color: #5535ac;
+}
+.suite-view .suite-row {
+  row-gap: 12px;
+}
+.record-control-bar {
+  padding: 16px 20px;
+  border: 1px solid #e8e0ef;
+  border-radius: 12px;
+  background: #fff;
+}
+.record-control-bar .button.primary {
+  min-width: 154px;
+}
+.record-section-title {
+  margin: 26px 0 14px;
+  font-size: 18px;
+  letter-spacing: -0.4px;
+}
+.record-editor > .suite-field > input {
+  width: 100%;
+}
+.record-options {
+  margin: 16px 0;
+  padding: 14px 18px;
+  border: 1px solid #e8e0ef;
+  border-radius: 12px;
+  background: #fff;
+}
+.record-options summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #574b65;
+}
+.video-compression {
+  padding: 20px;
+  margin: 22px 0;
+  border: 1px solid #ded3f2;
+  border-radius: 14px;
+  background: #faf8fe;
+}
+.video-compression h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+.video-compression > p {
+  color: #655d73;
+  line-height: 1.65;
+  margin: 8px 0;
+}
+.video-compression .suite-row {
+  align-items: flex-end;
+}
+.video-compression .suite-field {
+  flex: 1 1 130px;
+}
+.video-compression input,
+.video-compression select {
+  width: 100%;
+}
+.compression-result {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e1d7ef;
+}
+.compression-result video {
+  max-height: 360px;
+}
+.compression-result p {
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.suite-empty {
+  border: 1px dashed #d9cfe5;
+  border-radius: 14px;
+  padding: 24px;
+  color: #655d73;
+}
+@media (max-width: 1180px) {
+  .suite-editor-actions {
+    padding-inline: 20px;
+  }
+}
+@media (max-width: 740px) {
+  .suite-editor-actions {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .suite-editor-actions .button {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .editor-main > .toolbar {
+    padding: 8px;
+  }
+  #drawing-tools {
+    flex-basis: 100%;
+  }
+  .editor-main .tool-button {
+    min-height: 40px;
+  }
+  .sidebar .nav-item .nav-label-text {
+    display: none;
+  }
+  #drawing-tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+    gap: 4px;
+  }
+  .editor-main .tool-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .editor-main .tool-button .tool-label {
+    display: none;
+  }
+  .record-control-bar,
+  .video-compression {
+    padding: 14px;
+  }
+  .record-settings {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .suite-dialog {
+    padding: 20px;
   }
 }

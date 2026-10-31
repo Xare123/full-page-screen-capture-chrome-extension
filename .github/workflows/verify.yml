@@ -76,7 +76,7 @@ jobs:
       - run: python3 scripts/package-store.py
       - uses: actions/upload-artifact@v4
         with:
-          name: capture-studio-3.0.0
+          name: capture-studio-3.1.0
           path: dist/
       - uses: actions/upload-artifact@v4
         if: always()
