@@ -20,6 +20,7 @@ function showStatus(state) {
   if (["done", "error"].includes(state.phase)) closeOnSelection = false;
   const busy = ["capturing", "selecting"].includes(state.phase);
   $("cancel-capture").hidden = !busy;
+  $("stop-capture").hidden = state.phase !== "capturing";
   document.querySelectorAll("[data-mode]").forEach((button) => {
     button.disabled = busy;
   });
@@ -27,13 +28,17 @@ function showStatus(state) {
 document.querySelectorAll("[data-mode]").forEach((button) =>
   button.addEventListener("click", async () => {
     startedAt = Date.now();
-    closeOnSelection = ["full", "region"].includes(button.dataset.mode);
+    closeOnSelection = ["full", "region", "element"].includes(
+      button.dataset.mode,
+    );
     const response = await chrome.runtime.sendMessage({
       type: "CS_START",
       mode: button.dataset.mode,
       delay: Number($("capture-delay").value),
       bars: $("capture-bars").value,
       scope: $("capture-target").value,
+      clean: $("capture-clean").checked,
+      inline: $("capture-inline").checked,
     });
     if (!response?.ok) {
       closeOnSelection = false;
@@ -77,3 +82,35 @@ chrome.storage.onChanged.addListener((changes, area) => {
     showStatus(changes.captureStatus.newValue);
 });
 chrome.runtime.sendMessage({ type: "CS_STATUS" }).then(showStatus);
+
+$("stop-capture").addEventListener("click", () =>
+  chrome.runtime.sendMessage({ type: "CS_STOP" }),
+);
+for (const [id, hash] of [
+  ["open-recordings", "recordings"],
+  ["open-guide", "guide"],
+])
+  $(id).addEventListener("click", async () => {
+    await chrome.tabs.create({
+      url: chrome.runtime.getURL(`app.html#${hash}`),
+    });
+    window.close();
+  });
+$("open-page-tools").addEventListener("click", async () => {
+  const response = await chrome.runtime.sendMessage({ type: "CS_PRESENT" });
+  if (response?.ok) window.close();
+  else
+    showStatus({
+      phase: "error",
+      updated: Date.now(),
+      message: response?.error || "Could not open page tools.",
+    });
+});
+for (const id of ["capture-clean", "capture-inline"]) {
+  $(id).addEventListener("change", () =>
+    chrome.storage.local.set({ [id]: $(id).checked }),
+  );
+  chrome.storage.local.get(id).then((result) => {
+    if (typeof result[id] === "boolean") $(id).checked = result[id];
+  });
+}

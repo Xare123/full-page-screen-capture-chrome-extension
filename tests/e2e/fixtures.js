@@ -5,8 +5,16 @@ import { tmpdir } from "node:os";
 
 export const test = base.extend({
   extensionExecutablePath: [undefined, { option: true }],
+  extensionArgs: [[], { option: true }],
+  grantedOptionalPermissions: [[], { option: true }],
   studio: async (
-    { deviceScaleFactor, extensionExecutablePath, viewport },
+    {
+      deviceScaleFactor,
+      extensionExecutablePath,
+      viewport,
+      extensionArgs,
+      grantedOptionalPermissions,
+    },
     use,
   ) => {
     const dir = await mkdtemp(join(tmpdir(), "capture-studio-test-"));
@@ -21,6 +29,11 @@ export const test = base.extend({
         await readFile(join(extension, "manifest.json"), "utf8"),
       );
       manifest.host_permissions = ["<all_urls>"];
+      manifest.permissions.push(...grantedOptionalPermissions);
+      if (manifest.optional_permissions)
+        manifest.optional_permissions = manifest.optional_permissions.filter(
+          (p) => !grantedOptionalPermissions.includes(p),
+        );
       await writeFile(
         join(extension, "manifest.json"),
         JSON.stringify(manifest),
@@ -36,6 +49,7 @@ export const test = base.extend({
         acceptDownloads: true,
         args: [
           "--no-sandbox",
+          ...extensionArgs,
           `--disable-extensions-except=${extension}`,
           `--load-extension=${extension}`,
         ],

@@ -2,9 +2,9 @@
   "manifest_version": 3,
   "incognito": "not_allowed",
   "name": "Capture Studio \u2014 Full Page & PDF",
-  "version": "2.3.1",
+  "version": "3.0.0",
   "minimum_chrome_version": "147",
-  "description": "Capture full pages, edit, redact, and compress images or PDFs. Free, private, and entirely on your device.",
+  "description": "Capture full pages, record, annotate, extract text, and compress images or PDFs. Free, private, and on your device.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Capture Studio",
@@ -24,6 +24,13 @@
     "storage",
     "unlimitedStorage",
     "clipboardWrite"
+  ],
+  "optional_permissions": ["alarms", "notifications"],
+  "web_accessible_resources": [
+    {
+      "resources": ["app.html"],
+      "matches": ["<all_urls>"]
+    }
   ],
   "commands": {
     "capture-full-page": {

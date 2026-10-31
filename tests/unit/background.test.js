@@ -3,6 +3,14 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import * as core from "../../src/core.js";
+import {
+  affineAnnotations,
+  redactionBounds,
+} from "../../src/annotation-geometry.js";
+import {
+  completedRectangle,
+  planElementPositions,
+} from "../../src/capture-coverage.js";
 
 async function harness({
   scrollFrame,
@@ -48,6 +56,13 @@ async function harness({
   });
   const sandbox = {
     ...core,
+    completedRectangle,
+    planElementPositions,
+    affineAnnotations,
+    redactionBounds,
+    setupSuiteBackground() {},
+    setupPageBackground() {},
+    openCapturedEditor: async () => false,
     Blob,
     Uint8Array,
     atob,
@@ -67,7 +82,16 @@ async function harness({
         canvases.push(this);
       }
       getContext() {
-        return { drawImage() {} };
+        return {
+          drawImage() {},
+          save() {},
+          restore() {},
+          scale() {},
+          fillRect() {},
+          beginPath() {},
+          rect() {},
+          clip() {},
+        };
       }
       async convertToBlob() {
         return new Blob(["pixels"], { type: "image/png" });
@@ -149,7 +173,7 @@ async function harness({
     await readFile(new URL("../../src/background.js", import.meta.url), "utf8")
   )
     .replace(/^import[\s\S]*?from "\.\/core.js";\n/, "")
-    .replace('import { putProject } from "./db.js";', "");
+    .replace(/^import[\s\S]*?from ["'][^"']+["'];\n/gm, "");
   vm.runInNewContext(source, sandbox);
   const send = (message) =>
     new Promise((resolve) =>

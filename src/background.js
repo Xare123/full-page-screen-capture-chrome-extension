@@ -5,6 +5,15 @@ import {
   rasterRect,
 } from "./core.js";
 import { putProject } from "./db.js";
+import {
+  completedRectangle,
+  planElementPositions,
+} from "./capture-coverage.js";
+import { setupSuiteBackground } from "./suite-background.js";
+import { setupPageBackground, openCapturedEditor } from "./page-background.js";
+import { affineAnnotations, redactionBounds } from "./annotation-geometry.js";
+setupSuiteBackground();
+setupPageBackground();
 
 let activeJob = null;
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,10 +23,16 @@ async function status(value) {
   });
 }
 async function pageMessage(tabId, type, data = {}) {
-  const response = await chrome.tabs.sendMessage(tabId, {
-    type: `CS_PAGE_${type}`,
-    ...data,
-  });
+  const response = await chrome.tabs.sendMessage(
+    tabId,
+    {
+      type: `CS_PAGE_${type}`,
+      ...data,
+    },
+    activeJob?.tab?.id === tabId && activeJob.documentId
+      ? { documentId: activeJob.documentId }
+      : undefined,
+  );
   if (!response?.ok)
     throw new Error(
       response?.error ||
@@ -38,6 +53,8 @@ async function assertActive(job) {
 async function runCapture(job) {
   let injected = false,
     tiles;
+  const coverage = [];
+  let stopped = false;
   const keepAlive = setInterval(
     () => chrome.storage.session.get("captureStatus").catch(() => {}),
     20000,
@@ -55,13 +72,30 @@ async function runCapture(job) {
       await assertActive(job);
     }
     await assertActive(job);
-    await chrome.scripting.executeScript({
+    const injection = await chrome.scripting.executeScript({
       target: { tabId: job.tab.id },
       files: ["content.js"],
     });
+    job.documentId = injection?.[0]?.documentId;
     injected = true;
+    job.presentation = await chrome.tabs
+      .sendMessage(
+        job.tab.id,
+        { type: "CS_PRESENT_CAPTURE", action: "hide" },
+        { documentId: job.documentId },
+      )
+      .catch(() => null);
     await assertActive(job);
     let region;
+    if (job.mode === "element") {
+      await status({
+        phase: "selecting",
+        progress: 0,
+        message:
+          "Choose an element. Up/down arrows select parent or child; Esc cancels.",
+      });
+      await pageMessage(job.tab.id, "SELECT_ELEMENT");
+    }
     if (job.mode === "full") {
       const target = await pageMessage(job.tab.id, "TARGET", {
         scope: job.scope,
@@ -95,22 +129,85 @@ async function runCapture(job) {
     });
     await assertActive(job);
     const dimensions = await pageMessage(job.tab.id, "PREPARE", {
-      mode: job.mode,
+      mode: job.mode === "element" ? "full" : job.mode,
+      clean: job.clean,
+      presentationRedactions: (job.presentation?.annotations || [])
+        .filter((a) => a.type === "redact")
+        .map(redactionBounds),
       bars: job.bars,
     });
-    const full = job.mode === "full";
+    const full = ["full", "element"].includes(job.mode);
+    const element = dimensions.element;
+    let origin = full
+      ? { x: element?.x || 0, y: element?.y || 0 }
+      : {
+          x: (dimensions.rootPosition?.x || 0) + (region?.x || 0),
+          y: (dimensions.rootPosition?.y || 0) + (region?.y || 0),
+        };
+    if (full && dimensions.rootRTL) origin.x -= dimensions.rootMaxX;
+    let pageAnnotations = job.presentation?.annotations || [];
+    if (dimensions.originalPane) {
+      const p = dimensions.originalPane;
+      origin = {
+        x: p.box.x + p.rootX - p.scroll.x,
+        y: p.box.y + p.rootY - p.scroll.y,
+      };
+      const clip = {
+        x: Math.max(0, p.box.x) + p.rootX,
+        y: Math.max(0, p.box.y) + p.rootY,
+        width: Math.max(
+          0,
+          Math.min(dimensions.viewportWidth, p.box.x + p.box.width) -
+            Math.max(0, p.box.x),
+        ),
+        height: Math.max(
+          0,
+          Math.min(dimensions.viewportHeight, p.box.y + p.box.height) -
+            Math.max(0, p.box.y),
+        ),
+      };
+      pageAnnotations = pageAnnotations.map((a) => ({ ...a, clip }));
+    }
+    const tileAnnotations = (tile) =>
+      affineAnnotations(pageAnnotations, [
+        scaleX,
+        0,
+        0,
+        scaleY,
+        -origin.x * scaleX - tile.x,
+        -origin.y * scaleY - tile.y,
+      ]);
     const positions = full
-      ? planPositions(
-          dimensions.width,
-          dimensions.height,
-          dimensions.captureViewportWidth || dimensions.viewportWidth,
-          dimensions.captureViewportHeight || dimensions.viewportHeight,
-        )
+      ? element
+        ? planElementPositions(
+            dimensions.width,
+            dimensions.height,
+            dimensions.viewportWidth,
+            dimensions.viewportHeight,
+            element,
+          )
+        : planPositions(
+            dimensions.width,
+            dimensions.height,
+            dimensions.captureViewportWidth || dimensions.viewportWidth,
+            dimensions.captureViewportHeight || dimensions.viewportHeight,
+          ).filter(
+            (p) =>
+              !element ||
+              (p.x < element.x + element.width &&
+                p.x + dimensions.viewportWidth > element.x &&
+                p.y < element.y + element.height &&
+                p.y + dimensions.viewportHeight > element.y),
+          )
       : [null];
     const cssWidth =
-      region?.width || (full ? dimensions.width : dimensions.viewportWidth);
+      region?.width ||
+      element?.width ||
+      (full ? dimensions.width : dimensions.viewportWidth);
     const cssHeight =
-      region?.height || (full ? dimensions.height : dimensions.viewportHeight);
+      region?.height ||
+      element?.height ||
+      (full ? dimensions.height : dimensions.viewportHeight);
     let scaleX,
       scaleY,
       lastCapture = 0;
@@ -137,6 +234,16 @@ async function runCapture(job) {
         throw new Error(
           "The page or scrolling area moved during capture. Keep it still and try again.",
         );
+      if (
+        element &&
+        (!frame.element ||
+          ["x", "y", "width", "height"].some(
+            (key) => Math.abs(frame.element[key] - element[key]) > 0.5,
+          ))
+      )
+        throw new Error(
+          "The selected element moved or changed size during capture. Try again after the page settles.",
+        );
       if (dimensions.kind === "pane") {
         if (
           !frame.source ||
@@ -150,6 +257,14 @@ async function runCapture(job) {
       }
     }
     for (let index = 0; index < positions.length; index++) {
+      if (job.stop) {
+        if (!coverage.length)
+          throw new Error(
+            "Capture stopped before the first section was ready.",
+          );
+        stopped = true;
+        break;
+      }
       await assertActive(job);
       let position = { x: 0, y: 0 };
       if (full) {
@@ -196,18 +311,41 @@ async function runCapture(job) {
             }),
           );
         }
-        const source = position.source ||
+        let source = position.source ||
           region || {
             x: 0,
             y: 0,
             width: dimensions.viewportWidth,
             height: dimensions.viewportHeight,
           };
+        let destinationX = full ? position.x : 0,
+          destinationY = full ? position.y : 0;
+        if (element) {
+          const left = Math.max(position.x, element.x),
+            top = Math.max(position.y, element.y),
+            right = Math.min(
+              position.x + dimensions.viewportWidth,
+              element.x + element.width,
+            ),
+            bottom = Math.min(
+              position.y + dimensions.viewportHeight,
+              element.y + element.height,
+            );
+          source = {
+            x: left - position.x,
+            y: top - position.y,
+            width: Math.max(0, right - left),
+            height: Math.max(0, bottom - top),
+          };
+          destinationX = left - element.x;
+          destinationY = top - element.y;
+        }
+        if (source.width <= 0 || source.height <= 0) continue;
         const sample = rasterRect(source, scaleX, scaleY);
         const destination = rasterRect(
           {
-            x: full ? position.x : 0,
-            y: full ? position.y : 0,
+            x: destinationX,
+            y: destinationY,
             width: source.width,
             height: source.height,
           },
@@ -226,6 +364,12 @@ async function runCapture(job) {
           width: destWidth,
           height: destHeight,
         } = destination;
+        coverage.push({
+          x: destX,
+          y: destY,
+          width: destWidth,
+          height: destHeight,
+        });
         for (const tile of tiles) {
           if (
             destX < tile.x + tile.width &&
@@ -263,6 +407,34 @@ async function runCapture(job) {
       progress: 1,
       message: "Saving to your local library…",
     });
+    if (!tiles?.length || !coverage.length)
+      throw new Error("No visible pixels were captured.");
+    if (stopped || job.stop) {
+      const complete = completedRectangle(
+        coverage,
+        Math.round(cssWidth * scaleX),
+        Math.round(cssHeight * scaleY),
+      );
+      if (!complete)
+        throw new Error("No completed capture section was available.");
+      const cropped = [];
+      for (const tile of tiles) {
+        const width = Math.min(tile.width, complete.width - tile.x),
+          height = Math.min(tile.height, complete.height - tile.y);
+        if (width <= 0 || height <= 0) {
+          tile.canvas.width = tile.canvas.height = 1;
+          continue;
+        }
+        if (width !== tile.width || height !== tile.height) {
+          const canvas = new OffscreenCanvas(width, height);
+          canvas.getContext("2d").drawImage(tile.canvas, 0, 0);
+          tile.canvas.width = tile.canvas.height = 1;
+          cropped.push({ ...tile, width, height, canvas });
+        } else cropped.push(tile);
+      }
+      tiles = cropped;
+      stopped = true;
+    }
     const images = [];
     const preview = new OffscreenCanvas(
       320,
@@ -281,6 +453,24 @@ async function runCapture(job) {
         preview.width,
         preview.height,
       );
+    const previewContext = preview.getContext("2d");
+    previewContext.save();
+    previewContext.scale(320 / tiles[0].width, 320 / tiles[0].width);
+    for (const a of tileAnnotations(tiles[0]).filter(
+      (a) => a.type === "redact",
+    )) {
+      const r = redactionBounds(a);
+      previewContext.save();
+      if (a.clip) {
+        previewContext.beginPath();
+        previewContext.rect(a.clip.x, a.clip.y, a.clip.width, a.clip.height);
+        previewContext.clip();
+      }
+      previewContext.fillStyle = "#111111";
+      previewContext.fillRect(r.x, r.y, r.width, r.height);
+      previewContext.restore();
+    }
+    previewContext.restore();
     const thumbnail = await preview.convertToBlob({
       type: "image/jpeg",
       quality: 0.7,
@@ -294,7 +484,7 @@ async function runCapture(job) {
         height: tile.height,
         x: tile.x,
         y: tile.y,
-        annotations: [],
+        annotations: tileAnnotations(tile),
       });
       tile.canvas.width = 1;
       tile.canvas.height = 1;
@@ -309,6 +499,7 @@ async function runCapture(job) {
       created: Date.now(),
       updated: Date.now(),
       mode: dimensions.kind === "pane" ? "pane" : job.mode,
+      partial: stopped,
       images,
     });
     // A fully committed capture remains in the library; cancellation/navigation must
@@ -317,10 +508,24 @@ async function runCapture(job) {
     await status({
       phase: "done",
       progress: 1,
-      message: "Your capture is ready.",
+      message: stopped
+        ? "Your completed capture area is ready."
+        : "Your capture is ready.",
       projectId: id,
     });
     await assertActive(job);
+    if (injected) {
+      await pageMessage(job.tab.id, "RESTORE");
+      injected = false;
+    }
+    await chrome.tabs
+      .sendMessage(
+        job.tab.id,
+        { type: "CS_PRESENT_CAPTURE", action: "restore" },
+        job.documentId ? { documentId: job.documentId } : undefined,
+      )
+      .catch(() => {});
+    if (await openCapturedEditor(job, id)) return;
     await chrome.tabs.create({
       url: chrome.runtime.getURL(`app.html#${id}`),
       windowId: job.tab.windowId,
@@ -337,6 +542,13 @@ async function runCapture(job) {
     clearInterval(keepAlive);
     for (const tile of tiles || []) tile.canvas.width = tile.canvas.height = 1;
     if (injected) await pageMessage(job.tab.id, "RESTORE").catch(() => {});
+    await chrome.tabs
+      .sendMessage(
+        job.tab.id,
+        { type: "CS_PRESENT_CAPTURE", action: "restore" },
+        job.documentId ? { documentId: job.documentId } : undefined,
+      )
+      .catch(() => {});
     if (activeJob === job) activeJob = null;
   }
 }
@@ -356,12 +568,14 @@ async function startCapture(message) {
       );
     Object.assign(job, {
       tab,
-      mode: ["full", "visible", "region"].includes(message.mode)
+      mode: ["full", "visible", "region", "element"].includes(message.mode)
         ? message.mode
         : "full",
       delay: [0, 3, 5, 10].includes(Number(message.delay))
         ? Number(message.delay)
         : 0,
+      clean: message.clean === true,
+      inline: message.inline === true,
       bars: message.bars === "hide" ? "hide" : "smart",
       scope: ["page", "pick"].includes(message.scope) ? message.scope : "auto",
     });
@@ -378,12 +592,17 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   );
   if (
     sender.id !== chrome.runtime.id ||
+    (sender.frameId ?? 0) !== 0 ||
     !trustedPage ||
-    !["CS_START", "CS_CANCEL", "CS_STATUS"].includes(message.type)
+    !["CS_START", "CS_CANCEL", "CS_STATUS", "CS_STOP"].includes(message.type)
   )
     return;
   const handle = async () => {
     if (message.type === "CS_START") return startCapture(message);
+    if (message.type === "CS_STOP") {
+      if (activeJob) activeJob.stop = true;
+      return { ok: true };
+    }
     if (message.type === "CS_CANCEL") {
       if (activeJob) {
         activeJob.cancelled = true;

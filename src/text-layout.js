@@ -89,7 +89,12 @@ export function textLayout(ctx, annotation) {
       baseline,
       nativeBaseline: native.baseline,
       // Height must include padding even when native metrics are spread above.
-      height: Math.max(annotation.boxHeight || 0, native.height + paddingY * 2),
+      height: Math.max(
+        annotation.boxHeight || 0,
+        native.height +
+          paddingY * 2 +
+          (annotation.boxShape === "callout" ? 16 : 0),
+      ),
     };
   }
   if (!Number.isFinite(annotation.boxWidth)) {
@@ -142,7 +147,17 @@ export function drawText(ctx, annotation) {
   if (!layout.legacy) {
     if (annotation.background !== "transparent") {
       ctx.fillStyle = annotation.background || "#ffffff";
-      ctx.fillRect(0, 0, layout.width, layout.height);
+      if (annotation.boxShape === "callout") {
+        ctx.beginPath();
+        ctx.roundRect(0, 0, layout.width, layout.height - 16, 10);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(20, layout.height - 17);
+        ctx.lineTo(38, layout.height - 17);
+        ctx.lineTo(20, layout.height);
+        ctx.closePath();
+        ctx.fill();
+      } else ctx.fillRect(0, 0, layout.width, layout.height);
     }
     ctx.fillStyle = annotation.color || "#7856ff";
     if (annotation.hideText) return;
@@ -212,6 +227,14 @@ export function textHandles(ctx, annotation) {
   });
 }
 export function hitText(ctx, annotation, point, tolerance = 0) {
+  if (
+    annotation.clip &&
+    (point.x < annotation.clip.x ||
+      point.y < annotation.clip.y ||
+      point.x > annotation.clip.x + annotation.clip.width ||
+      point.y > annotation.clip.y + annotation.clip.height)
+  )
+    return false;
   const p = imageToText(annotation, point),
     r = textLayout(ctx, annotation);
   return (
@@ -265,6 +288,7 @@ export function resizeText(ctx, annotation, handle, start, point) {
     s = Math.sin(angle);
   return {
     ...box,
+    clip: undefined,
     x: box.x + dxOrigin * c - dyOrigin * s,
     y: box.y + dxOrigin * s + dyOrigin * c,
   };
@@ -274,6 +298,15 @@ export function moveText(annotation, dx, dy) {
   const delta = inversePoint(annotation.transform, { x: dx, y: dy });
   return {
     ...annotation,
+    ...(annotation.clip
+      ? {
+          clip: {
+            ...annotation.clip,
+            x: annotation.clip.x + dx,
+            y: annotation.clip.y + dy,
+          },
+        }
+      : {}),
     x: annotation.x + delta.x - zero.x,
     y: annotation.y + delta.y - zero.y,
   };

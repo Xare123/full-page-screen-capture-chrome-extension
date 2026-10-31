@@ -4,6 +4,13 @@ import { getEmbeddingLevels } from "./vendor/bidi-js/embeddingLevels.js";
 const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 const cache = new Map();
 let probe, baselineProbe, baselineMarker;
+let measurementRoot;
+export function setTextMeasurementRoot(root) {
+  measurementRoot = root;
+  probe?.parentNode?.remove();
+  probe = baselineProbe = baselineMarker = undefined;
+  cache.clear();
+}
 
 export const TEXT_FONTS = {
   inter: '"Capture Inter", sans-serif',
@@ -33,7 +40,7 @@ export function nativeTextLayout(text, font, width, lineHeight) {
       "display:inline-block;width:0;height:0;vertical-align:baseline";
     baselineProbe.append("Mg", baselineMarker);
     clip.append(probe, baselineProbe);
-    document.body.append(clip);
+    (measurementRoot || document.body).append(clip);
   }
   probe.style.font = baselineProbe.style.font = font;
   probe.style.lineHeight = baselineProbe.style.lineHeight = `${lineHeight}px`;
@@ -54,7 +61,8 @@ export function nativeTextLayout(text, font, width, lineHeight) {
   const lines = Array.from({ length: count }, () => ""),
     runs = [];
   const range = document.createRange();
-  const glyphs = [], levels = getEmbeddingLevels(text, "ltr").levels;
+  const glyphs = [],
+    levels = getEmbeddingLevels(text, "ltr").levels;
   // Resolve the complete paragraph before soft wrapping. A standalone line
   // would give neutral punctuation and numerals a different bidi order.
   for (const { segment, index } of segmenter.segment(text)) {
@@ -63,30 +71,54 @@ export function nativeTextLayout(text, font, width, lineHeight) {
     range.setEnd(node, index + segment.length);
     const rect = range.getClientRects()[0];
     if (!rect) continue;
-    const line = Math.max(0, Math.round((rect.top - origin.top - fontTop) / lineHeight));
+    const line = Math.max(
+      0,
+      Math.round((rect.top - origin.top - fontTop) / lineHeight),
+    );
     while (lines.length <= line) lines.push("");
     lines[line] += segment;
-    glyphs.push({ segment, line, level: levels[index],
-      left: rect.left - origin.left, right: rect.right - origin.left });
+    glyphs.push({
+      segment,
+      line,
+      level: levels[index],
+      left: rect.left - origin.left,
+      right: rect.right - origin.left,
+    });
   }
   // UBA L1 resets trailing whitespace on each soft line to the base level.
-  let trailing = true, lastLine = -1;
+  let trailing = true,
+    lastLine = -1;
   for (let i = glyphs.length - 1; i >= 0; i--) {
     const g = glyphs[i];
-    if (g.line !== lastLine) { trailing = true; lastLine = g.line; }
+    if (g.line !== lastLine) {
+      trailing = true;
+      lastLine = g.line;
+    }
     if (trailing && /^\s+$/u.test(g.segment)) g.level = 0;
     else trailing = false;
   }
   let run;
   for (const g of glyphs) {
-    if (g.segment === "\t") { run = null; continue; }
+    if (g.segment === "\t") {
+      run = null;
+      continue;
+    }
     // Controls already affected the resolved levels. Retain joining controls,
     // but avoid starting their original bidi embeddings again inside a fragment.
-    const visible = g.segment.replace(/[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/gu, "");
+    const visible = g.segment.replace(
+      /[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/gu,
+      "",
+    );
     if (!visible) continue;
     if (!run || run.line !== g.line || run.level !== g.level) {
-      run = { line: g.line, level: g.level, rtl: Boolean(g.level % 2),
-        x: g.left, right: g.right, text: "" };
+      run = {
+        line: g.line,
+        level: g.level,
+        rtl: Boolean(g.level % 2),
+        x: g.left,
+        right: g.right,
+        text: "",
+      };
       runs.push(run);
     }
     run.x = Math.min(run.x, g.left);

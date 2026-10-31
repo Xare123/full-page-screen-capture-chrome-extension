@@ -1,7 +1,7 @@
 (() => {
   if (globalThis.__captureStudio) return;
   globalThis.__captureStudio = true;
-  let saved, timer, selectionCleanup, selectedTarget;
+  let saved, timer, selectionCleanup, selectedTarget, selectedElement;
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const ownershipAttribute = "data-capture-studio-owned";
   function inlineStyle(text) {
@@ -130,6 +130,7 @@
     clearTimeout(timer);
     selectionCleanup?.();
     selectedTarget = null;
+    selectedElement = null;
     if (!saved) return;
     // Drain pending insertions before disconnecting, including clones inserted just
     // before cancellation. Ownership is scoped to this capture session only.
@@ -167,6 +168,7 @@
       const source = paneBox(saved.target);
       return {
         kind: "pane",
+        originalPane: saved.originalPane,
         width: saved.target.scrollWidth,
         height: saved.target.scrollHeight,
         captureViewportWidth: source.width,
@@ -180,6 +182,12 @@
     const root = document.documentElement,
       body = document.body;
     return {
+      ...(saved?.element ? { element: elementBox(saved.element) } : {}),
+      rootPosition: { x: scrollX, y: scrollY },
+      rootRTL: document.scrollingElement
+        ? rtlScroller(document.scrollingElement)
+        : false,
+      rootMaxX: Math.max(0, root.scrollWidth - root.clientWidth),
       width: Math.max(
         root.scrollWidth,
         root.clientWidth,
@@ -489,6 +497,154 @@
     if (second && second.score >= first.score * 0.8) return { kind: "choose" };
     selectedTarget = first.node;
     return { kind: "pane" };
+  }
+  function elementBox(node) {
+    if (
+      !node?.isConnected ||
+      !node.checkVisibility({ opacityProperty: true, visibilityProperty: true })
+    )
+      throw new Error("The selected element was removed or hidden.");
+    const rect = node.getBoundingClientRect();
+    for (
+      let parent = node;
+      parent && parent !== document.documentElement && parent !== document.body;
+      parent = parent.parentElement
+    ) {
+      const css = getComputedStyle(parent);
+      if (
+        css.transform !== "none" ||
+        css.rotate !== "none" ||
+        css.scale !== "none" ||
+        css.clipPath !== "none" ||
+        css.maskImage !== "none"
+      )
+        throw new Error(
+          "This element is transformed or masked. Use a visible-region capture instead.",
+        );
+      if (
+        parent !== node &&
+        /auto|scroll|hidden|clip|overlay/.test(
+          `${css.overflowX} ${css.overflowY}`,
+        )
+      ) {
+        const clip = parent.getBoundingClientRect();
+        if (
+          rect.left < clip.left - 0.5 ||
+          rect.right > clip.right + 0.5 ||
+          rect.top < clip.top - 0.5 ||
+          rect.bottom > clip.bottom + 0.5
+        )
+          throw new Error(
+            "This element is clipped by a scrolling ancestor. Capture that scrolling area instead.",
+          );
+      }
+    }
+    if (rect.width < 1 || rect.height < 1)
+      throw new Error("Choose a visible element.");
+    return {
+      x: rect.left + captureView().x,
+      y: rect.top + scrollY,
+      width: rect.width,
+      height: rect.height,
+    };
+  }
+  function selectElement() {
+    return new Promise((resolve, reject) => {
+      const host = document.createElement("div");
+      host.dataset.captureStudioPicker = "element";
+      host.style.cssText =
+        "position:fixed;inset:0;z-index:2147483647;cursor:crosshair";
+      const shadow = host.attachShadow({ mode: "closed" }),
+        box = document.createElement("div"),
+        hint = document.createElement("div");
+      box.style.cssText =
+        "position:fixed;border:3px solid #8b5cf6;background:#8b5cf618;box-sizing:border-box;pointer-events:none";
+      hint.style.cssText =
+        "position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:14px;background:#111827;color:white;font:14px system-ui;border-radius:10px;pointer-events:none";
+      hint.textContent =
+        "Choose a page element · click/Enter to capture · ↑ parent · ↓ child · Esc cancel";
+      shadow.append(box, hint);
+      document.documentElement.append(host);
+      let target,
+        finished = false;
+      function update() {
+        if (!target) return;
+        const r = target.getBoundingClientRect();
+        Object.assign(box.style, {
+          left: `${r.left}px`,
+          top: `${r.top}px`,
+          width: `${r.width}px`,
+          height: `${r.height}px`,
+        });
+      }
+      function cleanup() {
+        clearTimeout(timeout);
+        host.remove();
+        window.removeEventListener("keydown", key, true);
+        selectionCleanup = null;
+        if (!finished) {
+          finished = true;
+          reject(new Error("Element selection cancelled."));
+        }
+      }
+      function choose() {
+        if (!target) return;
+        try {
+          const css = getComputedStyle(target),
+            scrollable =
+              /auto|scroll|overlay/.test(`${css.overflowX} ${css.overflowY}`) &&
+              (target.scrollHeight > target.clientHeight + 2 ||
+                target.scrollWidth > target.clientWidth + 2);
+          if (scrollable) {
+            paneBox(target);
+            selectedTarget = target;
+            selectedElement = null;
+          } else {
+            elementBox(target);
+            selectedElement = target;
+            selectedTarget = null;
+          }
+          finished = true;
+          cleanup();
+          resolve({ kind: scrollable ? "pane" : "element" });
+        } catch (error) {
+          hint.textContent = error.message;
+        }
+      }
+      function key(event) {
+        if (!["Escape", "Enter", "ArrowUp", "ArrowDown"].includes(event.key))
+          return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if (event.key === "Escape") cleanup();
+        else if (event.key === "Enter") choose();
+        else {
+          target =
+            event.key === "ArrowUp"
+              ? target?.parentElement || target
+              : target?.firstElementChild || target;
+          update();
+        }
+      }
+      host.onpointermove = (event) => {
+        host.style.pointerEvents = "none";
+        target = document.elementFromPoint(event.clientX, event.clientY);
+        host.style.pointerEvents = "auto";
+        update();
+      };
+      host.onpointerdown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      };
+      host.onpointerup = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        choose();
+      };
+      window.addEventListener("keydown", key, true);
+      const timeout = setTimeout(cleanup, 120000);
+      selectionCleanup = cleanup;
+    });
   }
   function selectPane() {
     const candidates = scrollingCandidates();
@@ -821,6 +977,8 @@
       for (const sibling of branch.parentElement.children)
         if (
           sibling !== branch &&
+          !sibling.hasAttribute("data-capture-studio-presentation") &&
+          !sibling.hasAttribute("data-capture-studio-inline") &&
           !/^(HEAD|STYLE|SCRIPT|LINK|META)$/.test(sibling.tagName)
         ) {
           branches.push(sibling);
@@ -1246,8 +1404,107 @@
     }
     hidePaneOverlays();
   }
+  function maskView(target) {
+    if (target) {
+      const box = clientBox(target);
+      return { left: box.x, top: box.y, ...scrollOffset(target) };
+    }
+    return captureView();
+  }
+  function maskPosition(node, target, range) {
+    const view = maskView(target),
+      r = range ? range.getBoundingClientRect() : node.getBoundingClientRect();
+    return {
+      x: r.x - view.left + view.x,
+      y: r.y - view.top + view.y,
+      width: r.width,
+      height: r.height,
+    };
+  }
+  function checkMaskAnchors() {
+    for (const anchor of saved?.maskAnchors || []) {
+      if (!anchor.node.isConnected)
+        throw new Error(
+          "Content under an on-page redaction changed. Use a visible capture or redact in the studio.",
+        );
+      const r = maskPosition(anchor.node, saved.target, anchor.range);
+      if (
+        ["x", "y", "width", "height"].some(
+          (key) => Math.abs(r[key] - anchor.rect[key]) > 0.75,
+        )
+      )
+        throw new Error(
+          "Content under an on-page redaction moved during full capture. Use a visible capture or redact in the studio.",
+        );
+    }
+  }
+  function prepareMaskAnchors(target, masks) {
+    if (!masks?.length) return [];
+    const anchors = new Map(),
+      rects = masks.map((r) => ({ ...r, x: r.x - scrollX, y: r.y - scrollY }));
+    const moving = target
+      ? target.querySelectorAll("*")
+      : document.querySelectorAll("body *");
+    for (const node of moving) {
+      const css = getComputedStyle(node);
+      if (
+        !["fixed", "sticky"].includes(css.position) ||
+        css.visibility === "hidden" ||
+        css.display === "none" ||
+        Number(css.opacity) === 0
+      )
+        continue;
+      const r = node.getBoundingClientRect();
+      if (
+        r.width &&
+        r.height &&
+        rects.some(
+          (m) =>
+            m.x < r.right &&
+            m.x + m.width > r.left &&
+            m.y < r.bottom &&
+            m.y + m.height > r.top,
+        )
+      )
+        throw new Error(
+          "Full capture cannot keep on-page redactions aligned over moving sticky or fixed content. Use Visible area, select a region, or redact the finished capture in the studio.",
+        );
+    }
+    for (const r of rects)
+      for (const fx of [0.01, 0.5, 0.99])
+        for (const fy of [0.01, 0.5, 0.99]) {
+          const x = r.x + r.width * fx,
+            y = r.y + r.height * fy;
+          if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) continue;
+          const node = document
+            .elementsFromPoint(x, y)
+            .find(
+              (n) =>
+                !n.hasAttribute("data-capture-studio-presentation") &&
+                (!target || (n !== target && target.contains(n))),
+            );
+          if (node && !anchors.has(node)) {
+            let range;
+            if (!node.childElementCount && node.textContent.trim()) {
+              range = document.createRange();
+              range.selectNodeContents(node);
+            }
+            anchors.set(node, {
+              node,
+              range,
+              rect: maskPosition(node, target, range),
+            });
+          }
+        }
+    return [...anchors.values()];
+  }
   async function prepare(message) {
     const target = message.mode === "full" ? selectedTarget : null;
+    const element = message.mode === "full" ? selectedElement : null;
+    const maskAnchors =
+      message.mode === "full"
+        ? prepareMaskAnchors(target, message.presentationRedactions)
+        : [];
     restore();
     const style = document.createElement("style");
     style.textContent =
@@ -1267,6 +1524,16 @@
       paintStyles: new Map(),
       paintPrefix: `cs-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
       target,
+      maskAnchors,
+      originalPane: target
+        ? {
+            box: clientBox(target),
+            scroll: scrollOffset(target),
+            rootX: scrollX,
+            rootY: scrollY,
+          }
+        : null,
+      element,
       scrolls: new Map(),
       bars: message.bars || "smart",
     };
@@ -1280,6 +1547,25 @@
       for (let node = target; node; node = node.parentElement)
         saved.scrolls.set(node, { left: node.scrollLeft, top: node.scrollTop });
     document.documentElement.append(style);
+    if (message.clean) {
+      style.textContent +=
+        "*{pointer-events:none!important} [role=tooltip]{visibility:hidden!important}";
+      for (const node of document.querySelectorAll("body *")) {
+        if (node.hasAttribute("data-capture-studio-picker")) continue;
+        const css = getComputedStyle(node),
+          r = node.getBoundingClientRect();
+        if (
+          css.position === "fixed" &&
+          r.width > 0 &&
+          r.height > 0 &&
+          r.width < innerWidth * 0.35 &&
+          r.height < innerHeight * 0.35 &&
+          (r.right > innerWidth - 70 || r.left < 70) &&
+          (r.bottom > innerHeight - 100 || r.top < 100)
+        )
+          setStyle(node, "visibility", "hidden");
+      }
+    }
     arm();
     if (target) {
       target.scrollIntoView({
@@ -1350,6 +1636,7 @@
       await wait(100);
     }
     if (saved !== session) throw new Error("Capture was cancelled.");
+    checkMaskAnchors();
     return dimensions();
   }
   async function scroll(message) {
@@ -1393,6 +1680,7 @@
     if (!saved)
       throw new Error("The capture session expired. Please try again.");
     arm();
+    checkMaskAnchors();
     const { x, y } = captureView();
     return {
       ...dimensions(),
@@ -1473,6 +1761,8 @@
     )
       return;
     const execute = async () => {
+      if (message.type === "CS_PAGE_PING") return true;
+      if (message.type === "CS_PAGE_SELECT_ELEMENT") return selectElement();
       if (message.type === "CS_PAGE_PREPARE") return prepare(message);
       if (message.type === "CS_PAGE_TARGET")
         return resolveTarget(message.scope);

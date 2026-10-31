@@ -4,7 +4,13 @@ import { mkdir, cp, rm, readFile, writeFile } from "node:fs/promises";
 await rm("dist", { recursive: true, force: true });
 await mkdir("dist", { recursive: true });
 await build({
-  entryPoints: ["src/app.js", "src/popup.js", "src/background.js"],
+  entryPoints: [
+    "src/app.js",
+    "src/popup.js",
+    "src/background.js",
+    "src/recording-worker.js",
+    "src/gif-worker.js",
+  ],
   bundle: true,
   outdir: "dist",
   format: "esm",
@@ -12,6 +18,23 @@ await build({
   sourcemap: false,
   legalComments: "eof",
   minify: false,
+  plugins: [
+    {
+      name: "owned-ocr-worker",
+      setup(builder) {
+        builder.onResolve({ filter: /^\.\/spawnWorker$/ }, (args) =>
+          args.resolveDir
+            .replaceAll("\\", "/")
+            .endsWith("tesseract.js/src/worker/browser")
+            ? {
+                path: new URL("../src/ocr-spawn-worker.cjs", import.meta.url)
+                  .pathname,
+              }
+            : null,
+        );
+      },
+    },
+  ],
 });
 await build({
   entryPoints: ["src/content.js"],
@@ -20,7 +43,21 @@ await build({
   target: "chrome147",
   format: "iife",
 });
-for (const name of ["app.html", "popup.html", "styles.css", "popup.css"])
+for (const name of ["inline-host", "presentation"])
+  await build({
+    entryPoints: [`src/${name}.js`],
+    bundle: true,
+    outfile: `dist/${name}.js`,
+    target: "chrome147",
+    format: "iife",
+  });
+for (const name of [
+  "app.html",
+  "popup.html",
+  "styles.css",
+  "popup.css",
+  "suite.css",
+])
   await cp(`src/${name}`, `dist/${name}`);
 for (const name of [
   "manifest.json",
@@ -34,6 +71,22 @@ for (const name of [
   await cp(name, `dist/${name}`);
 await cp("docs", "dist/docs", { recursive: true });
 await cp("src/fonts", "dist/fonts", { recursive: true });
+await mkdir("dist/ocr/core", { recursive: true });
+await cp(
+  "node_modules/tesseract.js/dist/worker.min.js",
+  "dist/ocr/worker.min.js",
+);
+await cp("src/ocr-models", "dist/ocr/models", { recursive: true });
+for (const variant of ["lstm", "simd-lstm", "relaxedsimd-lstm"]) {
+  await cp(
+    `node_modules/tesseract.js-core/tesseract-core-${variant}.wasm.js`,
+    `dist/ocr/core/tesseract-core-${variant}.wasm.js`,
+  );
+  await cp(
+    `node_modules/tesseract.js-core/tesseract-core-${variant}.wasm`,
+    `dist/ocr/core/tesseract-core-${variant}.wasm`,
+  );
+}
 await cp(
   "node_modules/pdfjs-dist/build/pdf.worker.min.mjs",
   "dist/pdf.worker.min.mjs",
@@ -50,6 +103,14 @@ const packages = await Promise.all(
     "@pdf-lib/upng",
     "pako",
     "tslib",
+    "tesseract.js",
+    "tesseract.js-core",
+    "gifenc",
+    "bmp-js",
+    "idb-keyval",
+    "regenerator-runtime",
+    "wasm-feature-detect",
+    "zlibjs",
   ].map(async (name) => {
     const pkg = JSON.parse(
       await readFile(`node_modules/${name}/package.json`, "utf8"),

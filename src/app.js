@@ -1,3 +1,33 @@
+import { createSuite } from "./suite.js";
+import { el, button, field } from "./suite-ui.js";
+import { finishImage } from "./finishes.js";
+import {
+  objectBounds,
+  objectHandles,
+  hitObject,
+  moveObject,
+  resizeObject,
+} from "./objects.js";
+// Embedded editors must authenticate before any database access or workspace setup.
+const embedded = window.top !== window;
+const embeddedToken = new URLSearchParams(location.search).get("grant");
+let embeddedGrant;
+if (embedded) {
+  embeddedGrant = await chrome.runtime.sendMessage({
+    type: "CS_EMBED_AUTH",
+    token: embeddedToken,
+  });
+  if (!embeddedGrant?.ok) {
+    document.body.replaceChildren(
+      document.createTextNode(
+        "Open Capture Studio from the extension to edit this capture.",
+      ),
+    );
+    throw new Error("Unauthenticated embedded studio.");
+  }
+}
+let suite;
+let drawingKeys = {};
 import {
   clamp,
   formatBytes,
@@ -79,6 +109,8 @@ let project,
   textSession,
   selectedTextIndex = null,
   textDraft,
+  selectedObjectIndex = null,
+  objectDraft,
   textListKey,
   cropPreview;
 const defaultTextStyle = {
@@ -114,11 +146,13 @@ const editorId = crypto.randomUUID(),
 const tools = [
   ["select", "cursor", "Pan", "V"],
   ["text-select", "cursor", "Select text", "S"],
+  ["object-select", "cursor", "Select objects", "Q"],
   ["arrow", "arrow", "Arrow", "A"],
   ["rectangle", "rectangle", "Rectangle", "R"],
   ["ellipse", "ellipse", "Ellipse", "O"],
   ["pen", "pen", "Draw", "P"],
   ["text", "text", "Text", "T"],
+  ["callout", "text", "Callout", "L"],
   ["highlight", "highlight", "Highlight", "H"],
   ["blur", "blur", "Pixelate", "B"],
   ["redact", "redact", "Redact", "X"],
@@ -126,6 +160,9 @@ const tools = [
   ["step", "step", "Numbered step", "N"],
 ];
 const hints = {
+  "object-select":
+    "Select, move or resize any object · use the object list for small marks",
+  callout: "Click to type a callout directly on the image",
   select: "Drag to pan around your capture",
   arrow: "Drag to point something out",
   rectangle: "Drag to frame a detail",
@@ -211,6 +248,8 @@ function updateUndo() {
 }
 async function persist(target = project, makeThumbnail = false) {
   if (!target) return;
+  if (embedded && target.id !== embeddedGrant.projectId)
+    throw new Error("This embedded editor is limited to its captured project.");
   target.updated = Date.now();
   if (!saveStates.has(target))
     saveStates.set(target, {
@@ -336,7 +375,10 @@ function sourceLabel(source) {
   }
 }
 async function refreshLibrary() {
-  summaries = await listProjects();
+  if (embedded) return;
+  summaries = (await listProjects()).filter(
+    (item) => item.mode !== "whiteboard",
+  );
   $("nav-count").textContent = summaries.length;
   $("library-count").textContent = summaries.length;
   $("storage-size").textContent = formatBytes(
@@ -382,6 +424,8 @@ function renderLibrary() {
   }
 }
 function showHome() {
+  if (embedded) return;
+  suite?.hide();
   const finishing = finishText();
   if (finishing) {
     void finishing.then((completed) => {
@@ -413,6 +457,10 @@ function showHome() {
   void refreshLibrary().catch(fail);
 }
 async function openProject(id) {
+  if (embedded && id !== embeddedGrant.projectId)
+    throw new Error("This embedded editor is limited to its captured project.");
+  await suite?.flush();
+  suite?.hide();
   if ((await finishText()) === false) return;
   await flushSaves();
   window.history.replaceState(null, "", `app.html#${id}`);
@@ -438,10 +486,13 @@ async function openProject(id) {
   $("home-button").classList.remove("active");
   $("breadcrumb").textContent = "My captures";
   $("page-name").textContent = "Editor";
+  suite?.projectChanged();
   $("project-title").value = project.title;
   document.title = `${project.title} · Capture Studio`;
   $("project-meta").textContent =
     `${sourceLabel(project.source)} · ${new Date(project.created).toLocaleString()} · ${project.mode === "import" ? "Imported image" : "Captured locally"}`;
+  refreshPartChoices();
+  /* parts configured below */
   $("part-select").hidden = project.images.length <= 1;
   $("scope-field").hidden = project.images.length <= 1;
   $("part-select").innerHTML = project.images
@@ -578,6 +629,7 @@ function fitZoom() {
     );
 }
 function selectTool(next) {
+  if (next !== "object-select") selectedObjectIndex = null;
   const finishing = finishText();
   if (finishing) {
     void finishing.then((completed) => {
@@ -611,6 +663,7 @@ function selectedText() {
   return annotation?.type === "text" ? textDraft || annotation : null;
 }
 function cancelGesture() {
+  objectDraft = null;
   const previous = drag;
   drag = null;
   draft = null;
@@ -622,6 +675,7 @@ function cancelGesture() {
 function clearEditorInteractions() {
   cancelGesture();
   selectedTextIndex = null;
+  selectedObjectIndex = null;
   cropPreview = null;
   textListKey = undefined;
   cancelText();
@@ -639,7 +693,9 @@ function sessionCurrent(session) {
   );
 }
 function syncTextControls() {
-  $("text-controls").hidden = !["text", "text-select"].includes(tool);
+  $("text-controls").hidden = !["text", "text-select", "callout"].includes(
+    tool,
+  );
   const entries = (image()?.annotations || []).flatMap((a, index) =>
     a.type === "text" ? [{ a, index }] : [],
   );
@@ -774,6 +830,9 @@ function beginText(position, index = null) {
         ...position,
         text: "",
         ...newTextStyle,
+        ...(tool === "callout"
+          ? { boxShape: "callout", background: "#ede9fe", color: "#312e81" }
+          : {}),
         layoutVersion: 2,
         boxWidth: Math.min(360, Math.max(60, image().width - position.x)),
         boxHeight: 0,
@@ -986,7 +1045,9 @@ function drawOverlay() {
                 ? { ...textSession.draft, hideText: true }
                 : index === selectedTextIndex && textDraft
                   ? textDraft
-                  : a,
+                  : index === selectedObjectIndex && objectDraft
+                    ? objectDraft
+                    : a,
             ],
       ),
       ...(textSession?.index === null
@@ -1017,6 +1078,14 @@ function drawOverlay() {
     drawSelection(ctx, r);
     drawHandleSquares(ctx, textHandles(ctx, annotation));
   }
+  if (tool === "object-select" && selectedObjectIndex !== null) {
+    const a = objectDraft || image().annotations[selectedObjectIndex];
+    if (a) {
+      drawSelection(ctx, objectBounds(ctx, a));
+      drawHandleSquares(ctx, objectHandles(ctx, a));
+    }
+  }
+  syncObjectControls();
   syncTextControls();
   syncCropControls();
   positionTextInput();
@@ -1119,6 +1188,36 @@ stage.addEventListener("pointerdown", (event) => {
   const p = point(event),
     color = $("annotation-color").value,
     size = Number($("stroke-size").value);
+  if (tool === "object-select") {
+    const ctx = overlay.getContext("2d"),
+      a = image().annotations[selectedObjectIndex],
+      handle = a ? hitHandle(objectHandles(ctx, a), p) : null;
+    const index = handle
+      ? selectedObjectIndex
+      : hitObject(ctx, image().annotations, p);
+    selectedObjectIndex = index;
+    selectedTextIndex = null;
+    if (index !== null) {
+      const original = image().annotations[index];
+      drag = {
+        ...editorSession(),
+        kind: "object",
+        index,
+        handle,
+        point: p,
+        annotation: original,
+        original: structuredClone(original),
+        pointerId: event.pointerId,
+      };
+      overlay.setPointerCapture(event.pointerId);
+    }
+    drawOverlay();
+    return;
+  }
+  if (tool === "callout") {
+    beginText(p);
+    return;
+  }
   if (["text", "text-select"].includes(tool)) {
     const handle = selectedText()
       ? hitHandle(textHandles(overlay.getContext("2d"), selectedText()), p)
@@ -1219,6 +1318,19 @@ stage.addEventListener("pointermove", (event) => {
     return;
   }
   const p = point(event);
+  if (drag.kind === "object") {
+    objectDraft = drag.handle
+      ? resizeObject(
+          overlay.getContext("2d"),
+          drag.original,
+          drag.handle,
+          drag.point,
+          p,
+        )
+      : moveObject(drag.original, p.x - drag.point.x, p.y - drag.point.y);
+    drawOverlay();
+    return;
+  }
   if (drag.kind === "text") {
     textDraft = drag.handle
       ? resizeText(
@@ -1267,6 +1379,8 @@ stage.addEventListener("pointerup", (event) => {
   if (!drag) return;
   if (event.pointerId !== drag.pointerId) return;
   const gesture = drag;
+  const nextObject = objectDraft;
+  objectDraft = null;
   const nextText = textDraft;
   const annotation = draft;
   drag = null;
@@ -1276,6 +1390,18 @@ stage.addEventListener("pointerup", (event) => {
     overlay.releasePointerCapture(event.pointerId);
   if (!sessionCurrent(gesture)) {
     drawOverlay();
+    return;
+  }
+  if (gesture.kind === "object") {
+    if (
+      nextObject &&
+      image().annotations[gesture.index] === gesture.annotation &&
+      JSON.stringify(nextObject) !== JSON.stringify(gesture.original)
+    ) {
+      pushUndo();
+      image().annotations[gesture.index] = nextObject;
+      void changed().catch(fail);
+    } else drawOverlay();
     return;
   }
   if (gesture.kind === "text") {
@@ -1322,7 +1448,15 @@ overlay.addEventListener("lostpointercapture", () => {
 stage.addEventListener("dblclick", (event) => {
   if (textFrame.contains(event.target)) return;
   if (
-    !["text", "text-select"].includes(tool) ||
+    tool === "object-select" &&
+    image()?.annotations[selectedObjectIndex]?.type === "text"
+  ) {
+    selectText(selectedObjectIndex);
+    beginText(null, selectedObjectIndex);
+    return;
+  }
+  if (
+    !["text", "text-select", "callout"].includes(tool) ||
     !image() ||
     working ||
     $("editor-view").inert
@@ -1377,6 +1511,7 @@ async function rasterOperation(label, { crop, rotate } = {}) {
           height: canvas.height,
         }),
         crop: null,
+        finish: null,
         layoutChanged: true,
       };
       invalidateExport();
@@ -1538,6 +1673,8 @@ function updateExportPanel() {
   updateDimensions();
 }
 async function importFiles(files) {
+  if (embedded) throw new Error("Open the full studio to import files.");
+  await suite?.flush();
   if (!files.length) return;
   closeImageMenu();
   const pdfs = files.filter(
@@ -1687,6 +1824,7 @@ $("home-button").addEventListener("click", async () => {
   try {
     if ((await finishText()) === false) return;
     await flushSaves();
+    await suite?.flush();
     showHome();
   } catch (error) {
     fail(error);
@@ -1901,6 +2039,15 @@ $("text-object-select").addEventListener("change", () =>
   ),
 );
 $("annotation-color").addEventListener("change", () => {
+  if (tool === "object-select" && selectedObjectIndex !== null) {
+    const a = image().annotations[selectedObjectIndex];
+    if (a && a.type !== "redact") {
+      pushUndo();
+      a.color = $("annotation-color").value;
+      void changed().catch(fail);
+    }
+    return;
+  }
   if (!["text", "text-select"].includes(tool)) {
     drawingColor = $("annotation-color").value;
     return;
@@ -2184,6 +2331,41 @@ window.addEventListener("keydown", (event) => {
     return;
   }
   if (event.ctrlKey || event.metaKey || event.altKey) return;
+  if (
+    tool === "object-select" &&
+    selectedObjectIndex !== null &&
+    stage.contains(document.activeElement)
+  ) {
+    if (["Delete", "Backspace"].includes(event.key)) {
+      event.preventDefault();
+      void deleteSelectedObject().catch(fail);
+      return;
+    }
+    if (event.key.toLowerCase() === "d") {
+      event.preventDefault();
+      void duplicateSelectedObject().catch(fail);
+      return;
+    }
+    if (
+      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)
+    ) {
+      event.preventDefault();
+      const step = event.shiftKey ? 10 : 1,
+        a = image().annotations[selectedObjectIndex];
+      pushUndo();
+      image().annotations[selectedObjectIndex] = moveObject(
+        a,
+        event.key === "ArrowLeft"
+          ? -step
+          : event.key === "ArrowRight"
+            ? step
+            : 0,
+        event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0,
+      );
+      void changed().catch(fail);
+      return;
+    }
+  }
   if (selectedText() && stage.contains(document.activeElement)) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -2221,7 +2403,9 @@ window.addEventListener("keydown", (event) => {
     }
   }
   const entry = tools.find(
-    (item) => item[3].toLowerCase() === event.key.toLowerCase(),
+    (item) =>
+      (drawingKeys[item[0]] || item[3]).toLowerCase() ===
+      event.key.toLowerCase(),
   );
   if (entry) {
     event.preventDefault();
@@ -2229,13 +2413,20 @@ window.addEventListener("keydown", (event) => {
   }
 });
 window.addEventListener("beforeunload", (event) => {
-  if (textDirty() || pendingSaves || (project && failedSaves.has(project.id))) {
+  if (
+    textDirty() ||
+    pendingSaves ||
+    suite?.hasPending() ||
+    (project && failedSaves.has(project.id))
+  ) {
     event.preventDefault();
     event.returnValue = "";
   }
 });
 window.addEventListener("hashchange", () => {
-  if (location.hash) void openProject(location.hash.slice(1)).catch(fail);
+  if (suite?.handles(location.hash.slice(1)))
+    void suite.open(location.hash.slice(1)).catch(fail);
+  else if (location.hash) void openProject(location.hash.slice(1)).catch(fail);
   else showHome();
 });
 let dragDepth = 0;
@@ -2274,6 +2465,11 @@ window.addEventListener("drop", (event) => {
 });
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes.libraryChanged) {
+    if (
+      embedded &&
+      changes.libraryChanged.newValue?.id !== embeddedGrant.projectId
+    )
+      return;
     const change = changes.libraryChanged.newValue,
       target = project;
     if (change?.editor === editorId) return;
@@ -2292,6 +2488,10 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 $("conflict-copy").addEventListener("click", async () => {
+  if (embedded) {
+    toast("Open the full studio to save a separate copy.");
+    return;
+  }
   await flushSaves().catch(() => {});
   await busy("Saving your edits as a separate copy…", async () => {
     const copy = structuredClone(project);
@@ -2315,9 +2515,208 @@ $("conflict-reload").addEventListener("click", async () => {
   saveChain = Promise.resolve();
   void openProject(id).catch(fail);
 });
+function refreshPartChoices() {
+  if (!project) return;
+  $("part-select").innerHTML = project.images
+    .map(
+      (_, i) =>
+        `<option value="${i}">${project.mode === "whiteboard" ? "Page" : "Part"} ${i + 1} of ${project.images.length}</option>`,
+    )
+    .join("");
+  $("part-select").value = part;
+  $("part-select").hidden = project.images.length <= 1;
+  $("scope-field").hidden = project.images.length <= 1;
+}
+const objectList = el("select", {
+    id: "object-list",
+    ariaLabel: "Drawing objects",
+    onchange: (event) => {
+      selectTool("object-select");
+      selectedObjectIndex =
+        event.target.value === "" ? null : Number(event.target.value);
+      drawOverlay();
+    },
+  }),
+  objectPanel = el(
+    "div",
+    { className: "object-panel" },
+    field("Objects", objectList),
+    el(
+      "div",
+      { className: "suite-row" },
+      button("Duplicate", () => void duplicateSelectedObject().catch(fail)),
+      button("Delete", () => void deleteSelectedObject().catch(fail)),
+      button("Edit text", () => {
+        if (image()?.annotations[selectedObjectIndex]?.type === "text") {
+          selectText(selectedObjectIndex);
+          beginText(null, selectedObjectIndex);
+        }
+      }),
+    ),
+  );
+$("drawing-tools").parentNode.after(objectPanel);
+let objectListKey;
+function syncObjectControls() {
+  if (!image()) return;
+  objectPanel.hidden = tool !== "object-select";
+  const key = JSON.stringify(
+    image().annotations.map((a) =>
+      a.type === "text" ? `${a.type}:${a.text}` : a.type,
+    ),
+  );
+  if (key !== objectListKey) {
+    objectListKey = key;
+    objectList.replaceChildren(
+      el("option", { value: "" }, "Select an object…"),
+      ...image().annotations.map((a, i) =>
+        el(
+          "option",
+          { value: i },
+          `${i + 1}. ${a.type}${a.type === "text" ? ` · ${a.text.slice(0, 40)}` : ""}`,
+        ),
+      ),
+    );
+  }
+  objectList.value = selectedObjectIndex ?? "";
+}
+async function duplicateSelectedObject() {
+  if ((await finishText()) === false) return;
+  if (!image() || selectedObjectIndex === null || working) return;
+  const a = image().annotations[selectedObjectIndex];
+  if (!a) return;
+  pushUndo();
+  const copy = moveObject(a, 24, 24);
+  copy.id = crypto.randomUUID();
+  if (copy.type === "step")
+    copy.number =
+      Math.max(
+        0,
+        ...image()
+          .annotations.filter((a) => a.type === "step")
+          .map((a) => a.number),
+      ) + 1;
+  image().annotations.push(copy);
+  selectedObjectIndex = image().annotations.length - 1;
+  void changed().catch(fail);
+}
+async function deleteSelectedObject() {
+  if ((await finishText()) === false) return;
+  if (!image() || selectedObjectIndex === null || working) return;
+  pushUndo();
+  image().annotations.splice(selectedObjectIndex, 1);
+  selectedObjectIndex = null;
+  void changed().catch(fail);
+}
+if (!embedded) {
+  drawingKeys =
+    (await chrome.storage.local.get("drawingKeys")).drawingKeys || {};
+  suite = createSuite({
+    toast,
+    fail,
+    project: () => project,
+    defaultKeys: Object.fromEntries(
+      tools.map((t) => [t[0], t[3].toLowerCase()]),
+    ),
+    updateKeys: (keys) => {
+      drawingKeys = keys;
+    },
+    leave: async () => {
+      if ((await finishText()) === false) return false;
+      await flushSaves();
+      showHome();
+      return true;
+    },
+    openProject,
+    commit: async () => {
+      if ((await finishText()) === false)
+        throw new Error("Finish composing text first.");
+      await flushSaves();
+      if (cropPreview) throw new Error("Apply or cancel the crop first.");
+    },
+    snapshot: async () => {
+      if ((await finishText()) === false)
+        throw new Error("Finish composing text first.");
+      await flushSaves();
+      if (cropPreview) throw new Error("Apply or cancel the crop first.");
+      if (!image()) throw new Error("Open an image first.");
+      return flattenedPNG(image());
+    },
+    importImage: async (blob, title) => {
+      await importFiles([
+        new File([blob], `${title}.png`, { type: blob.type }),
+      ]);
+    },
+    finish: async (options) => {
+      await busy("Applying your image finish…", async () => {
+        if (!image()) return;
+        if (cropPreview) throw new Error("Apply or cancel the crop first.");
+        const session = editorSession(),
+          next = await finishImage(session.record, options);
+        if (!sessionCurrent(session))
+          throw new Error("The image changed during this operation.");
+        pushUndo();
+        project.images[part] = next;
+        invalidateExport();
+        await Promise.all([persist(project, part === 0), loadPart()]);
+      });
+    },
+    pages: async (action, page) => {
+      if ((await finishText()) === false) return;
+      await flushSaves();
+      if (project?.mode !== "whiteboard") return;
+      const target = project;
+      if (action === "add") {
+        target.images.push(page);
+        part = target.images.length - 1;
+      }
+      if (action === "duplicate") {
+        if (target.images.length >= 100)
+          throw new Error("Each board supports up to 100 pages.");
+        target.images.splice(part + 1, 0, structuredClone(image()));
+        part++;
+      }
+      if (action === "earlier" && part > 0) {
+        [target.images[part - 1], target.images[part]] = [
+          target.images[part],
+          target.images[part - 1],
+        ];
+        part--;
+      }
+      if (action === "later" && part < target.images.length - 1) {
+        [target.images[part], target.images[part + 1]] = [
+          target.images[part + 1],
+          target.images[part],
+        ];
+        part++;
+      }
+      if (action === "delete") {
+        if (target.images.length === 1)
+          throw new Error("Keep at least one page in the board.");
+        target.images.splice(part, 1);
+        part = Math.min(part, target.images.length - 1);
+      }
+      histories.clear();
+      invalidateExport();
+      refreshPartChoices();
+      await Promise.all([persist(target, true), loadPart()]);
+    },
+  });
+} else {
+  document.body.classList.add("embedded-studio");
+  $("conflict-copy").hidden = true;
+}
 await document.fonts.load('500 24px "Capture Inter"');
 await document.fonts.load('600 28px "Capture Inter"');
-if (location.hash) {
+if (embedded) {
+  await openProject(embeddedGrant.projectId);
+  await chrome.runtime.sendMessage({
+    type: "CS_EMBED_READY",
+    projectId: embeddedGrant.projectId,
+    token: embeddedToken,
+  });
+} else if (suite?.handles(location.hash.slice(1))) {
+  await suite.open(location.hash.slice(1));
+} else if (location.hash) {
   try {
     await openProject(location.hash.slice(1));
   } catch (error) {
@@ -2325,3 +2724,33 @@ if (location.hash) {
     showHome();
   }
 } else showHome();
+
+$("stroke-size").addEventListener("change", () => {
+  if (tool === "object-select" && selectedObjectIndex !== null) {
+    const a = image().annotations[selectedObjectIndex];
+    if (a && a.type !== "redact") {
+      pushUndo();
+      a.size = Number($("stroke-size").value);
+      void changed().catch(fail);
+    }
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, respond) => {
+  if (
+    !embedded ||
+    sender.id !== chrome.runtime.id ||
+    message.type !== "CS_EMBED_FLUSH" ||
+    message.projectId !== embeddedGrant.projectId
+  )
+    return;
+  (async () => {
+    if ((await finishText()) === false)
+      throw new Error("Finish composing text before closing.");
+    await flushSaves();
+    if (failedSaves.has(project.id))
+      throw new Error("Save your changes before closing.");
+    return { ok: true };
+  })().then(respond, (error) => respond({ ok: false, error: error.message }));
+  return true;
+});

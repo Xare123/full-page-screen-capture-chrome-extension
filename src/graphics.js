@@ -37,6 +37,12 @@ export function drawAnnotations(ctx, annotations, base) {
     ...annotations.filter((a) => a.type === "redact"),
   ]) {
     ctx.save();
+    if (a.clip) {
+      const r = a.clip;
+      ctx.beginPath();
+      ctx.rect(r.x, r.y, r.width, r.height);
+      ctx.clip();
+    }
     if (a.transform && !["redact", "blur"].includes(a.type))
       ctx.transform(...a.transform);
     ctx.strokeStyle = a.color || "#7856ff";

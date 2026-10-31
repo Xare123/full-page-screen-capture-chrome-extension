@@ -11,7 +11,7 @@ export function inversePoint(matrix = IDENTITY, point) {
     y: (-b * (point.x - e) + a * (point.y - f)) / determinant,
   };
 }
-function multiply(a, b) {
+export function multiply(a, b) {
   return [
     a[0] * b[0] + a[2] * b[1],
     a[1] * b[0] + a[3] * b[1],
@@ -20,6 +20,32 @@ function multiply(a, b) {
     a[0] * b[4] + a[2] * b[5] + a[4],
     a[1] * b[4] + a[3] * b[5] + a[5],
   ];
+}
+export function inverseMatrix(matrix = IDENTITY) {
+  const [a, b, c, d, e, f] = matrix,
+    det = a * d - b * c;
+  if (!Number.isFinite(det) || Math.abs(det) < 1e-12)
+    throw new Error("Invalid object transform.");
+  return [
+    d / det,
+    -b / det,
+    -c / det,
+    a / det,
+    (c * f - d * e) / det,
+    (b * e - a * f) / det,
+  ];
+}
+export function affineAnnotations(annotations, matrix) {
+  return annotations.map((annotation) => {
+    const a = structuredClone(annotation);
+    a.transform = multiply(matrix, a.transform || IDENTITY);
+    if (a.clip) a.clip = coveredPixels(transformedRect(matrix, a.clip));
+    if (a.type === "redact")
+      a.coverage = coveredPixels(
+        transformedRect(matrix, redactionBounds(annotation)),
+      );
+    return a;
+  });
 }
 export function transformedRect(matrix, rect) {
   const corners = [
@@ -71,6 +97,7 @@ export function transformAnnotations(
   return annotations.map((annotation) => {
     const a = structuredClone(annotation);
     a.transform = multiply(transform, a.transform || IDENTITY);
+    if (a.clip) a.clip = coveredPixels(transformedRect(transform, a.clip));
     if (a.type === "redact")
       a.coverage = coveredPixels(
         transformedRect(transform, redactionBounds(annotation)),
