@@ -934,7 +934,7 @@ details a {
     gap: 15px;
     font-size: 12px;
   }
-  .site-header nav a:nth-child(-n + 2) {
+  .site-header nav a:not(.github-link) {
     display: none;
   }
   .brand {
