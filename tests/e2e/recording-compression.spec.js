@@ -1,5 +1,5 @@
 import { test, expect } from "./fixtures.js";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -164,6 +164,27 @@ for (const sourceFormat of ["webm", "mp4"])
           expect(
             probe.streams.some((s) => s.codec_type === "audio"),
           ).toBeTruthy();
+          const volume = spawnSync(
+            "ffmpeg",
+            [
+              "-v",
+              "info",
+              "-i",
+              out,
+              "-map",
+              "0:a:0",
+              "-af",
+              "volumedetect",
+              "-f",
+              "null",
+              "-",
+            ],
+            { encoding: "utf8" },
+          );
+          expect(volume.status).toBe(0);
+          const mean = volume.stderr.match(/mean_volume: (-?[\d.]+|-inf) dB/);
+          expect(mean).toBeTruthy();
+          expect(Number(mean[1])).toBeGreaterThan(-50);
           execFileSync("ffmpeg", [
             "-v",
             "error",
@@ -185,7 +206,7 @@ for (const sourceFormat of ["webm", "mp4"])
                 "v:0",
                 "-show_packets",
                 "-show_entries",
-                "packet=dts_time",
+                "packet=dts",
                 "-of",
                 "json",
                 out,
@@ -193,10 +214,17 @@ for (const sourceFormat of ["webm", "mp4"])
               { encoding: "utf8" },
             ),
           ).packets;
-          for (let i = 1; i < packets.length; i++)
-            expect(Number(packets[i].dts_time)).toBeGreaterThan(
-              Number(packets[i - 1].dts_time),
-            );
+          // Matroska/WebM permits equal packet timestamps (AVFMT_TS_NONSTRICT).
+          // MP4 requires strictly increasing DTS. Neither may move backwards.
+          for (const packet of packets)
+            expect(Number.isSafeInteger(Number(packet.dts))).toBeTruthy();
+          for (let i = 1; i < packets.length; i++) {
+            const current = Number(packets[i].dts),
+              previous = Number(packets[i - 1].dts);
+            if (format === "webm")
+              expect(current).toBeGreaterThanOrEqual(previous);
+            else expect(current).toBeGreaterThan(previous);
+          }
           const framePath = join(dir, "corner.png");
           execFileSync("ffmpeg", [
             "-v",
