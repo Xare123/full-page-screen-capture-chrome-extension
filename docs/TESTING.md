@@ -13,7 +13,7 @@ npm run test:engines
 
 `verify` builds the extension, runs the unit suite, and runs the complete MV3 extension suite in Chromium. `test:engines` independently exercises content-script layout and cleanup in Chromium, Firefox and WebKit. The latter is a rendering compatibility check; the extension remains a Chrome/Chromium MV3 application, and these checks do not establish Firefox or Safari extension support.
 
-CI runs extension regressions and the full compression sweep in separate jobs, with three workers per job, plus the rendering-engine suite. It retains release files, screenshots, traces and reports. A failed pixel assertion retains its capture for inspection. Existing test fixtures cover capture locking, cancellation, malformed files, persistence, conflicting tabs, redaction, image/PDF export and compression, alongside the expanded email, web-page and policy matrices.
+CI runs extension regressions in three Playwright shards and the full compression sweep in five input-format jobs, with three workers per job, plus the rendering-engine suite. All matrix jobs must succeed; no cases are removed. It retains release files, screenshots, traces and reports. A failed pixel assertion retains its capture for inspection. Existing test fixtures cover capture locking, cancellation, malformed files, persistence, conflicting tabs, redaction, image/PDF export and compression, alongside the expanded email, web-page and policy matrices.
 
 ## Three-version extension matrix
 

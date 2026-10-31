@@ -7,6 +7,10 @@ concurrency:
   cancel-in-progress: true
 jobs:
   verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -20,22 +24,31 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run build
       - run: npm test
-      - run: npm run test:e2e -- --grep-invert 'input →|motion cadence' --fully-parallel --workers=3
+      - run: npm run test:e2e -- --grep-invert 'input →|motion cadence' --fully-parallel --workers=3 --shard=${{ matrix.shard }}/3
       # Cadence is a real-time quality measurement; run without competing encodes.
-      - run: npm run test:e2e -- --grep 'motion cadence' --workers=1
-      - run: npm run test:engines
-      - run: npm run package
-      - run: node scripts/release-smoke.mjs
-      - run: python3 scripts/package-source.py
+      - if: matrix.shard == 1
+        run: npm run test:e2e -- --grep 'motion cadence' --workers=1
+      - if: matrix.shard == 1
+        run: npm run test:engines
+      - if: matrix.shard == 1
+        run: npm run package
+      - if: matrix.shard == 1
+        run: node scripts/release-smoke.mjs
+      - if: matrix.shard == 1
+        run: python3 scripts/package-source.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: capture-studio-artifacts
+          name: capture-studio-artifacts-${{ matrix.shard }}
           path: |
             release/
             artifacts/
             playwright-report/
   compression:
+    strategy:
+      fail-fast: false
+      matrix:
+        input: [PNG, JPEG, WebP, GIF, AVIF]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -47,13 +60,13 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - run: npm run test:e2e -- tests/e2e/compression-matrix.spec.js --grep 'input →' --workers=3
+      - run: npm run test:e2e -- tests/e2e/compression-matrix.spec.js --grep '${{ matrix.input }} input →' --workers=3
         env:
-          CS_MATRIX_REPORT: artifacts/ci-compression-matrix.json
+          CS_MATRIX_REPORT: artifacts/ci-compression-matrix-${{ matrix.input }}.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: capture-studio-compression-matrix
+          name: capture-studio-compression-matrix-${{ matrix.input }}
           path: |
             artifacts/
             test-results/
